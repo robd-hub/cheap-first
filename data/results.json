@@ -1,0 +1,869 @@
+{
+  "ranAt": "2026-11-11T06:58:53.946Z",
+  "passMark": 75,
+  "models": {
+    "cheap": {
+      "label": "Dolphin · DeepSeek V4.1 Flash",
+      "provider": "dolphin",
+      "model": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "inputPerM": 0.01,
+      "outputPerM": 0.07
+    },
+    "checker": {
+      "label": "SERV · GPT-6 Luna (checker)",
+      "provider": "serv",
+      "model": "gpt-6-luna",
+      "inputPerM": 0.13,
+      "outputPerM": 0.65
+    },
+    "premium": {
+      "label": "SERV · Claude Opus 5.5",
+      "provider": "serv",
+      "model": "claude-opus-5.5",
+      "inputPerM": 4.8,
+      "outputPerM": 24
+    }
+  },
+  "rows": [
+    {
+      "category": "facts",
+      "id": "capital-australia",
+      "prompt": "What is the capital of Australia? One word.",
+      "criteria": "Canberra.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "Canberra",
+        "score": 100,
+        "reason": "The answer is correct and follows the one-word requirement.",
+        "costUsd": 0.0000029400000000000002,
+        "ms": 952
+      },
+      "checkCostUsd": 0.00008554,
+      "cheapFirst": {
+        "answer": "Canberra",
+        "score": 100,
+        "reason": "The answer is correct and follows the one-word requirement.",
+        "costUsd": 0.00008847999999999999
+      },
+      "premium": {
+        "answer": "Canberra",
+        "score": 100,
+        "reason": "The answer correctly gives Canberra in the requested one-word format.",
+        "costUsd": 0.002424,
+        "ms": 4077
+      }
+    },
+    {
+      "category": "facts",
+      "id": "boiling-point",
+      "prompt": "At sea level, what is the boiling point of water in Fahrenheit? Just the number.",
+      "criteria": "212.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "212",
+        "score": 100,
+        "reason": "The answer is correct and follows the instruction to provide just the number.",
+        "costUsd": 0.00000246,
+        "ms": 1262
+      },
+      "checkCostUsd": 0.00010647,
+      "cheapFirst": {
+        "answer": "212",
+        "score": 100,
+        "reason": "The answer is correct and follows the instruction to provide just the number.",
+        "costUsd": 0.00010893
+      },
+      "premium": {
+        "answer": "212",
+        "score": 100,
+        "reason": "The answer is correct and follows the request to provide only the number.",
+        "costUsd": 0.002424,
+        "ms": 1742
+      }
+    },
+    {
+      "category": "facts",
+      "id": "x402",
+      "prompt": "In two sentences, what is the x402 payment standard?",
+      "criteria": "Says it uses the HTTP 402 Payment Required status code so clients (including AI agents) can pay per request, usually with stablecoins; no invented facts.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "x402 is an open payment protocol that uses the long-reserved HTTP 402 “Payment Required” status code to let clients—including AI agents—pay programmatically for APIs and web resources. It is designed for machine-to-machine, pay-per-use access, typically settling stablecoin payments onchain without traditional accounts or subscriptions.",
+        "score": 96,
+        "reason": "It answers in two sentences and accurately explains HTTP 402, programmatic pay-per-use access, AI agents, and stablecoin settlement, with only a minor potentially unsupported detail about avoiding traditional accounts or subscriptions.",
+        "costUsd": 0.00001598,
+        "ms": 8907
+      },
+      "checkCostUsd": 0.00020696000000000004,
+      "cheapFirst": {
+        "answer": "x402 is an open payment protocol that uses the long-reserved HTTP 402 “Payment Required” status code to let clients—including AI agents—pay programmatically for APIs and web resources. It is designed for machine-to-machine, pay-per-use access, typically settling stablecoin payments onchain without traditional accounts or subscriptions.",
+        "score": 96,
+        "reason": "It answers in two sentences and accurately explains HTTP 402, programmatic pay-per-use access, AI agents, and stablecoin settlement, with only a minor potentially unsupported detail about avoiding traditional accounts or subscriptions.",
+        "costUsd": 0.00022294000000000003
+      },
+      "premium": {
+        "answer": "x402 is an open payment protocol introduced by Coinbase in 2025 that revives the HTTP 402 \"Payment Required\" status code so servers can request payment directly within a standard web request. Clients, including AI agents, can then pay instantly, typically in stablecoins like USDC, enabling pay-per-use access to APIs and content without accounts, API keys, or subscriptions.",
+        "score": 85,
+        "reason": "It correctly explains the HTTP 402 payment flow and typical stablecoin payments by clients such as AI agents, but adds unsupported or overly absolute claims about its origin, instant settlement, and eliminating accounts, keys, or subscriptions.",
+        "costUsd": 0.0080112,
+        "ms": 3041
+      }
+    },
+    {
+      "category": "facts",
+      "id": "photosynthesis",
+      "prompt": "Explain photosynthesis to a 10-year-old in under 60 words.",
+      "criteria": "Correct (plants use sunlight, water and carbon dioxide to make food/sugar and release oxygen), simple, under 60 words.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "Plants use sunlight, water, and air to make their own food. Their leaves catch sunlight like solar panels. Water comes up from roots, and carbon dioxide enters through tiny holes. They turn these into sugar for energy and release oxygen we breathe.",
+        "score": 100,
+        "reason": "The explanation is accurate, age-appropriate, and under 60 words, covering sunlight, water, carbon dioxide, sugar, and oxygen.",
+        "costUsd": 0.00001719,
+        "ms": 3619
+      },
+      "checkCostUsd": 0.00019799000000000002,
+      "cheapFirst": {
+        "answer": "Plants use sunlight, water, and air to make their own food. Their leaves catch sunlight like solar panels. Water comes up from roots, and carbon dioxide enters through tiny holes. They turn these into sugar for energy and release oxygen we breathe.",
+        "score": 100,
+        "reason": "The explanation is accurate, age-appropriate, and under 60 words, covering sunlight, water, carbon dioxide, sugar, and oxygen.",
+        "costUsd": 0.00021518
+      },
+      "premium": {
+        "answer": "Plants make their own food using sunlight! Their leaves soak up sunshine, drink water through their roots, and breathe in carbon dioxide (a gas in the air). Using the sun's energy, they mix these together to make sugar, their food. As a bonus, they release oxygen, the air we breathe. Thanks, plants!",
+        "score": 100,
+        "reason": "The answer is accurate, simple, and under 60 words, explaining that plants use sunlight, water, and carbon dioxide to make sugar and release oxygen.",
+        "costUsd": 0.004900799999999999,
+        "ms": 2735
+      }
+    },
+    {
+      "category": "facts",
+      "id": "proof-of-stake",
+      "prompt": "In under 100 words, explain the main difference between proof-of-work and proof-of-stake.",
+      "criteria": "Accurate: PoW secures the chain with computing work/energy, PoS with staked coins; under 100 words.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "Proof-of-work secures a blockchain through computational effort: miners spend energy solving puzzles to validate blocks and earn rewards. Proof-of-stake replaces that with economic collateral: validators lock up tokens as stake and are chosen to validate blocks, earning rewards but risking penalties. The main difference is that PoW relies on energy expenditure, while PoS relies on locked capital.",
+        "score": 100,
+        "reason": "The answer accurately contrasts PoW’s computational work and energy use with PoS’s staked tokens, and it is under 100 words.",
+        "costUsd": 0.00001186,
+        "ms": 1572
+      },
+      "checkCostUsd": 0.00011206000000000001,
+      "cheapFirst": {
+        "answer": "Proof-of-work secures a blockchain through computational effort: miners spend energy solving puzzles to validate blocks and earn rewards. Proof-of-stake replaces that with economic collateral: validators lock up tokens as stake and are chosen to validate blocks, earning rewards but risking penalties. The main difference is that PoW relies on energy expenditure, while PoS relies on locked capital.",
+        "score": 100,
+        "reason": "The answer accurately contrasts PoW’s computational work and energy use with PoS’s staked tokens, and it is under 100 words.",
+        "costUsd": 0.00012392000000000002
+      },
+      "premium": {
+        "answer": "**Proof-of-work (PoW)** secures a blockchain by having miners compete to solve computationally hard puzzles. The first to solve one adds the next block and earns a reward. This requires massive energy and specialized hardware.\n\n**Proof-of-stake (PoS)** selects validators based on the amount of cryptocurrency they lock up (\"stake\") as collateral. Validators propose and confirm blocks, and dishonest behavior can cost them their stake.\n\n**Main difference:** PoW relies on computational effort and energy expenditure for security, while PoS relies on economic stake, making it far more energy-efficient.",
+        "score": 100,
+        "reason": "The answer accurately contrasts PoW’s computational work and energy use with PoS’s reliance on staked cryptocurrency, and it is under 100 words.",
+        "costUsd": 0.0075168,
+        "ms": 3113
+      }
+    },
+    {
+      "category": "math",
+      "id": "percent",
+      "prompt": "What is 15% of 240? Just the number.",
+      "criteria": "36.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "36",
+        "score": 100,
+        "reason": "The answer is correct and follows the instruction to provide just the number.",
+        "costUsd": 0.0000024800000000000004,
+        "ms": 824
+      },
+      "checkCostUsd": 0.00008892,
+      "cheapFirst": {
+        "answer": "36",
+        "score": 100,
+        "reason": "The answer is correct and follows the instruction to provide just the number.",
+        "costUsd": 0.0000914
+      },
+      "premium": {
+        "answer": "36",
+        "score": 100,
+        "reason": "The answer is correct and follows the request to provide only the number.",
+        "costUsd": 0.0023567999999999996,
+        "ms": 1290
+      }
+    },
+    {
+      "category": "math",
+      "id": "word-problem",
+      "prompt": "A shop sells pens at 3 for $2. How much do 18 pens cost? Show the answer only.",
+      "criteria": "$12.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "$12",
+        "score": 100,
+        "reason": "The answer is correct and follows the instruction to show the answer only.",
+        "costUsd": 0.0000037100000000000005,
+        "ms": 13307
+      },
+      "checkCostUsd": 0.00009711,
+      "cheapFirst": {
+        "answer": "$12",
+        "score": 100,
+        "reason": "The answer is correct and follows the instruction to show the answer only.",
+        "costUsd": 0.00010082
+      },
+      "premium": {
+        "answer": "$12",
+        "score": 100,
+        "reason": "The answer is correct and follows the instruction to provide the answer only.",
+        "costUsd": 0.002472,
+        "ms": 1325
+      }
+    },
+    {
+      "category": "math",
+      "id": "compound",
+      "prompt": "If $1,000 earns 5% interest compounded yearly, how much is there after 3 years? Round to the cent.",
+      "criteria": "$1,157.63.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "After 3 years:\n\n\\[\n1000(1.05)^3 = 1000 \\times 1.157625 = 1157.625\n\\]\n\nRounded to the cent:\n\n\\[\n\\boxed{\\$1,157.63}\n\\]",
+        "score": 100,
+        "reason": "The calculation correctly applies annual compounding for three years and rounds $1,157.625 to $1,157.63.",
+        "costUsd": 0.00000773,
+        "ms": 1048
+      },
+      "checkCostUsd": 0.00011843,
+      "cheapFirst": {
+        "answer": "After 3 years:\n\n\\[\n1000(1.05)^3 = 1000 \\times 1.157625 = 1157.625\n\\]\n\nRounded to the cent:\n\n\\[\n\\boxed{\\$1,157.63}\n\\]",
+        "score": 100,
+        "reason": "The calculation correctly applies annual compounding for three years and rounds $1,157.625 to $1,157.63.",
+        "costUsd": 0.00012616
+      },
+      "premium": {
+        "answer": "**$1,157.63**\n\nA = 1,000 × (1.05)³ = 1,000 × 1.157625 = 1,157.625, which rounds to $1,157.63.",
+        "score": 100,
+        "reason": "The answer correctly applies annual compounding for three years and rounds $1,157.625 to $1,157.63.",
+        "costUsd": 0.0049632,
+        "ms": 1846
+      }
+    },
+    {
+      "category": "math",
+      "id": "primes",
+      "prompt": "List all prime numbers between 50 and 70.",
+      "criteria": "53, 59, 61, 67 and nothing else.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "The prime numbers between 50 and 70 are:\n\n**53, 59, 61, 67**",
+        "score": 85,
+        "reason": "It lists all the correct primes, but adds introductory text despite the request for the numbers and nothing else.",
+        "costUsd": 0.000007850000000000001,
+        "ms": 1029
+      },
+      "checkCostUsd": 0.00011778,
+      "cheapFirst": {
+        "answer": "The prime numbers between 50 and 70 are:\n\n**53, 59, 61, 67**",
+        "score": 85,
+        "reason": "It lists all the correct primes, but adds introductory text despite the request for the numbers and nothing else.",
+        "costUsd": 0.00012563
+      },
+      "premium": {
+        "answer": "The prime numbers between 50 and 70 are **53, 59, 61, and 67**.",
+        "score": 90,
+        "reason": "The answer lists all and only the correct primes, but includes extra wording despite the requested list-only format.",
+        "costUsd": 0.0036336,
+        "ms": 1432
+      }
+    },
+    {
+      "category": "math",
+      "id": "units",
+      "prompt": "How many seconds are there in 3.5 hours?",
+      "criteria": "12,600.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "There are **12,600 seconds** in 3.5 hours.",
+        "score": 100,
+        "reason": "The answer correctly states that 3.5 hours equals 12,600 seconds.",
+        "costUsd": 0.0000037300000000000003,
+        "ms": 3329
+      },
+      "checkCostUsd": 0.00009347,
+      "cheapFirst": {
+        "answer": "There are **12,600 seconds** in 3.5 hours.",
+        "score": 100,
+        "reason": "The answer correctly states that 3.5 hours equals 12,600 seconds.",
+        "costUsd": 0.0000972
+      },
+      "premium": {
+        "answer": "There are **12,600 seconds** in 3.5 hours (3.5 × 60 × 60 = 12,600).",
+        "score": 100,
+        "reason": "The answer correctly converts 3.5 hours to 12,600 seconds and shows the calculation.",
+        "costUsd": 0.0036384,
+        "ms": 1523
+      }
+    },
+    {
+      "category": "code",
+      "id": "fizzbuzz",
+      "prompt": "Write a Python function fizzbuzz(n) that returns a list of strings for 1..n using Fizz, Buzz and FizzBuzz.",
+      "criteria": "Correct working Python returning a list of strings for 1..n with the three cases.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "```python\ndef fizzbuzz(n):\n    result = []\n    for i in range(1, n + 1):\n        if i % 15 == 0:\n            result.append(\"FizzBuzz\")\n        elif i % 3 == 0:\n            result.append(\"Fizz\")\n        elif i % 5 == 0:\n            result.append(\"Buzz\")\n        else:\n            result.append(str(i))\n    return result\n```",
+        "score": 100,
+        "reason": "The function correctly returns the required strings for every integer from 1 through n, including all three FizzBuzz cases.",
+        "costUsd": 0.000017990000000000002,
+        "ms": 1295
+      },
+      "checkCostUsd": 0.00011414,
+      "cheapFirst": {
+        "answer": "```python\ndef fizzbuzz(n):\n    result = []\n    for i in range(1, n + 1):\n        if i % 15 == 0:\n            result.append(\"FizzBuzz\")\n        elif i % 3 == 0:\n            result.append(\"Fizz\")\n        elif i % 5 == 0:\n            result.append(\"Buzz\")\n        else:\n            result.append(str(i))\n    return result\n```",
+        "score": 100,
+        "reason": "The function correctly returns the required strings for every integer from 1 through n, including all three FizzBuzz cases.",
+        "costUsd": 0.00013213
+      },
+      "premium": {
+        "answer": "```python\ndef fizzbuzz(n):\n    \"\"\"Return a list of FizzBuzz strings for the numbers 1 through n.\"\"\"\n    result = []\n    for i in range(1, n + 1):\n        if i % 15 == 0:\n            result.append(\"FizzBuzz\")\n        elif i % 3 == 0:\n            result.append(\"Fizz\")\n        elif i % 5 == 0:\n            result.append(\"Buzz\")\n        else:\n            result.append(str(i))\n    return result\n```\n\nExample:\n\n```python\n>>> fizzbuzz(15)\n['1', '2', 'Fizz', '4', 'Buzz', 'Fizz', '7', '8', 'Fizz', 'Buzz',\n '11', 'Fizz', '13', '14', 'FizzBuzz']\n```\n\nNotes:\n- Multiples of both 3 and 5 are checked first (`i % 15 == 0`). Otherwise those numbers would match the \"Fizz\" branch before reaching \"FizzBuzz\".\n- If `n` is less than 1, the function returns an empty list.",
+        "score": 100,
+        "reason": "The function correctly returns the required strings for 1 through n, handles multiples of both 3 and 5 before individual cases, and the example and note are accurate.",
+        "costUsd": 0.010848,
+        "ms": 3424
+      }
+    },
+    {
+      "category": "code",
+      "id": "reverse-words",
+      "prompt": "Write a JavaScript function that reverses the order of words in a sentence. Code only.",
+      "criteria": "Correct JavaScript, e.g. split on spaces, reverse, join; code only.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "```javascript\nfunction reverseWords(sentence) {\n  const trimmed = sentence.trim();\n  if (trimmed === '') return '';\n  return trimmed.split(/\\s+/).reverse().join(' ');\n}\n```",
+        "score": 95,
+        "reason": "The function correctly reverses words and handles extra whitespace, but the Markdown code fence does not strictly satisfy the request for code only.",
+        "costUsd": 0.00001722,
+        "ms": 3964
+      },
+      "checkCostUsd": 0.00012545,
+      "cheapFirst": {
+        "answer": "```javascript\nfunction reverseWords(sentence) {\n  const trimmed = sentence.trim();\n  if (trimmed === '') return '';\n  return trimmed.split(/\\s+/).reverse().join(' ');\n}\n```",
+        "score": 95,
+        "reason": "The function correctly reverses words and handles extra whitespace, but the Markdown code fence does not strictly satisfy the request for code only.",
+        "costUsd": 0.00014267000000000001
+      },
+      "premium": {
+        "answer": "```javascript\nfunction reverseWords(sentence) {\n  return sentence.trim().split(/\\s+/).reverse().join(' ');\n}\n```",
+        "score": 98,
+        "reason": "The JavaScript correctly reverses the words and contains no explanatory text, though the Markdown fences are a minor departure from code-only formatting.",
+        "costUsd": 0.0035472,
+        "ms": 1693
+      }
+    },
+    {
+      "category": "code",
+      "id": "sql",
+      "prompt": "Write a SQL query that returns the 5 customers with the highest total order amount from a table orders(customer_id, amount).",
+      "criteria": "GROUP BY customer_id, SUM(amount), ORDER BY total DESC, LIMIT 5 (or equivalent).",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "```sql\nSELECT customer_id, SUM(amount) AS total_amount\nFROM orders\nGROUP BY customer_id\nORDER BY total_amount DESC\nLIMIT 5;\n```\n\nThis groups orders by `customer_id`, sums each customer’s order amounts, and returns the top 5 by total amount.\n\nFor SQL Server, replace `LIMIT 5` with `SELECT TOP 5 ...`. If you need deterministic handling of ties, use a window function such as `DENSE_RANK()`.",
+        "score": 100,
+        "reason": "The query correctly groups by customer, sums order amounts, sorts totals descending, and limits the result to five customers.",
+        "costUsd": 0.00002354,
+        "ms": 2164
+      },
+      "checkCostUsd": 0.00015028,
+      "cheapFirst": {
+        "answer": "```sql\nSELECT customer_id, SUM(amount) AS total_amount\nFROM orders\nGROUP BY customer_id\nORDER BY total_amount DESC\nLIMIT 5;\n```\n\nThis groups orders by `customer_id`, sums each customer’s order amounts, and returns the top 5 by total amount.\n\nFor SQL Server, replace `LIMIT 5` with `SELECT TOP 5 ...`. If you need deterministic handling of ties, use a window function such as `DENSE_RANK()`.",
+        "score": 100,
+        "reason": "The query correctly groups by customer, sums order amounts, sorts totals descending, and limits the result to five customers.",
+        "costUsd": 0.00017382
+      },
+      "premium": {
+        "answer": "```sql\nSELECT customer_id,\n       SUM(amount) AS total_amount\nFROM orders\nGROUP BY customer_id\nORDER BY total_amount DESC\nLIMIT 5;\n```\n\n**Notes:**\n- `LIMIT 5` works in PostgreSQL, MySQL, SQLite, and similar databases.\n- In **SQL Server**, use `SELECT TOP 5 customer_id, SUM(amount) AS total_amount ...` instead of `LIMIT`.\n- In **Oracle 12c+** or standard SQL, use `FETCH FIRST 5 ROWS ONLY` in place of `LIMIT 5`.\n- If you want customers tied at 5th place included, use a window function:\n\n```sql\nSELECT customer_id, total_amount\nFROM (\n    SELECT customer_id,\n           SUM(amount) AS total_amount,\n           RANK() OVER (ORDER BY SUM(amount) DESC) AS rnk\n    FROM orders\n    GROUP BY customer_id\n) t\nWHERE rnk <= 5;\n```",
+        "score": 100,
+        "reason": "The query correctly groups orders by customer, sums amounts, sorts totals in descending order, and returns the top five customers.",
+        "costUsd": 0.011184,
+        "ms": 3783
+      }
+    },
+    {
+      "category": "code",
+      "id": "bug",
+      "prompt": "This Python returns the wrong result: def avg(xs): return sum(xs) / len(xs) - 1. What is the bug and the fix? Be brief.",
+      "criteria": "Identifies operator precedence: / binds tighter than -, so it returns the average minus 1. Fix: remove the - 1 (or add parentheses if a different divisor was meant).",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "The bug is the extra `- 1`: it computes the mean and then subtracts 1.\n\nFix:\n\n```python\ndef avg(xs):\n    return sum(xs) / len(xs)\n```\n\n(If empty lists are possible, handle `len(xs) == 0` separately.)",
+        "score": 100,
+        "reason": "Correctly identifies the unintended subtraction and removes it; the optional empty-list note is accurate and concise.",
+        "costUsd": 0.00000993,
+        "ms": 1157
+      },
+      "checkCostUsd": 0.00011674000000000001,
+      "cheapFirst": {
+        "answer": "The bug is the extra `- 1`: it computes the mean and then subtracts 1.\n\nFix:\n\n```python\ndef avg(xs):\n    return sum(xs) / len(xs)\n```\n\n(If empty lists are possible, handle `len(xs) == 0` separately.)",
+        "score": 100,
+        "reason": "Correctly identifies the unintended subtraction and removes it; the optional empty-list note is accurate and concise.",
+        "costUsd": 0.00012667
+      },
+      "premium": {
+        "answer": "**Bug:** Division binds tighter than subtraction, so this computes `(sum(xs) / len(xs)) - 1`, which is the average minus 1.\n\n**Fix:** Remove the `- 1`:\n\n```python\ndef avg(xs):\n    return sum(xs) / len(xs)\n```\n\nIf you actually meant to divide by `n - 1`, add parentheses: `sum(xs) / (len(xs) - 1)`.\n\nNote that an empty list will raise `ZeroDivisionError`, so guard against it if needed.",
+        "score": 100,
+        "reason": "Correctly explains the precedence and average-minus-one result, gives the expected fix, and adds a valid note about empty input.",
+        "costUsd": 0.0106176,
+        "ms": 4240
+      }
+    },
+    {
+      "category": "code",
+      "id": "regex",
+      "prompt": "Give a regular expression that matches a US ZIP code (5 digits, optionally followed by a dash and 4 digits).",
+      "criteria": "Something equivalent to ^\\d{5}(-\\d{4})?$.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "```regex\n^[0-9]{5}(-[0-9]{4})?$\n```\n\nThis matches `12345` or `12345-6789`. Use `\\d{5}(-\\d{4})?` if you don’t need full-string anchors.",
+        "score": 100,
+        "reason": "The anchored expression matches exactly five digits, optionally followed by a hyphen and four digits, as requested.",
+        "costUsd": 0.000014350000000000002,
+        "ms": 1165
+      },
+      "checkCostUsd": 0.00010322,
+      "cheapFirst": {
+        "answer": "```regex\n^[0-9]{5}(-[0-9]{4})?$\n```\n\nThis matches `12345` or `12345-6789`. Use `\\d{5}(-\\d{4})?` if you don’t need full-string anchors.",
+        "score": 100,
+        "reason": "The anchored expression matches exactly five digits, optionally followed by a hyphen and four digits, as requested.",
+        "costUsd": 0.00011757
+      },
+      "premium": {
+        "answer": "```regex\n^\\d{5}(-\\d{4})?$\n```\n\n- `^` and `$` anchor the match to the whole string.\n- `\\d{5}` matches exactly 5 digits.\n- `(-\\d{4})?` optionally matches a dash followed by exactly 4 digits.\n\n**Matches:** `12345`, `12345-6789`\n**Rejects:** `1234`, `123456`, `12345-678`, `12345 6789`\n\nIf your regex engine's `\\d` can match non-ASCII digits (as in Python 3 or .NET), use `[0-9]` instead:\n\n```regex\n^[0-9]{5}(-[0-9]{4})?$\n```\n\nTo find ZIP codes inside longer text, replace the anchors with word boundaries: `\\b\\d{5}(-\\d{4})?\\b`.",
+        "score": 95,
+        "reason": "The anchored regex correctly matches the requested ZIP code format, though the word-boundary suggestion can match a five-digit prefix of a malformed ZIP+4 value.",
+        "costUsd": 0.0090288,
+        "ms": 3309
+      }
+    },
+    {
+      "category": "writing",
+      "id": "tagline",
+      "prompt": "Write 3 tagline options for a small coffee roaster in Manila. Under 8 words each.",
+      "criteria": "Exactly three taglines, each under 8 words, relevant to a Manila coffee roaster.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "1. Manila roasted. Freshly poured, always.  \n2. Small-batch Manila coffee, roasted for you.  \n3. Local beans. Bold Manila mornings.",
+        "score": 100,
+        "reason": "It provides exactly three relevant taglines, each with fewer than eight words.",
+        "costUsd": 0.000014320000000000002,
+        "ms": 1480
+      },
+      "checkCostUsd": 0.00012688,
+      "cheapFirst": {
+        "answer": "1. Manila roasted. Freshly poured, always.  \n2. Small-batch Manila coffee, roasted for you.  \n3. Local beans. Bold Manila mornings.",
+        "score": 100,
+        "reason": "It provides exactly three relevant taglines, each with fewer than eight words.",
+        "costUsd": 0.00014120000000000002
+      },
+      "premium": {
+        "answer": "1. Small batch. Big Manila heart.\n2. Roasted in Manila, brewed for every barkada.\n3. From Philippine highlands to your morning cup.",
+        "score": 100,
+        "reason": "It provides exactly three relevant taglines, each under eight words.",
+        "costUsd": 0.0086544,
+        "ms": 3483
+      }
+    },
+    {
+      "category": "writing",
+      "id": "email",
+      "prompt": "Write a polite 3-sentence email declining a meeting invite because of a schedule clash, offering two alternative times.",
+      "criteria": "Exactly three sentences, polite, declines, mentions a schedule clash, offers two alternative times.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "Subject: Re: Meeting Invitation\n\nThank you for the invitation to meet; unfortunately, I have a schedule clash at the proposed time and won’t be able to attend. Would either Tuesday at 10:00 a.m. or Thursday at 2:00 p.m. work as alternatives? I appreciate your understanding and look forward to finding a time that suits everyone.",
+        "score": 100,
+        "reason": "The email is polite, declines because of a schedule clash, and offers two alternative times in exactly three sentences.",
+        "costUsd": 0.0000177,
+        "ms": 8228
+      },
+      "checkCostUsd": 0.00012518999999999999,
+      "cheapFirst": {
+        "answer": "Subject: Re: Meeting Invitation\n\nThank you for the invitation to meet; unfortunately, I have a schedule clash at the proposed time and won’t be able to attend. Would either Tuesday at 10:00 a.m. or Thursday at 2:00 p.m. work as alternatives? I appreciate your understanding and look forward to finding a time that suits everyone.",
+        "score": 100,
+        "reason": "The email is polite, declines because of a schedule clash, and offers two alternative times in exactly three sentences.",
+        "costUsd": 0.00014288999999999998
+      },
+      "premium": {
+        "answer": "Subject: Rescheduling Our Meeting\n\nHi [Name],\n\nThank you for the invitation, but unfortunately I have a prior commitment at that time and won't be able to attend. Would either Tuesday at 10:00 AM or Thursday at 2:00 PM work for you instead? I appreciate your flexibility and look forward to connecting.\n\nBest regards,\n[Your Name]",
+        "score": 100,
+        "reason": "The email is polite, declines because of a prior commitment, and offers two alternative times in exactly three sentences.",
+        "costUsd": 0.0079392,
+        "ms": 3120
+      }
+    },
+    {
+      "category": "writing",
+      "id": "plain-english",
+      "prompt": "Rewrite in plain English, under 30 words: 'We leverage synergistic AI paradigms to operationalize scalable value creation.'",
+      "criteria": "Plain English, under 30 words, keeps a sensible meaning.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "We combine AI approaches to turn scalable value creation into practice.",
+        "score": 90,
+        "reason": "The answer is plain and under 30 words, and it preserves the core meaning, though “turn scalable value creation into practice” is slightly awkward.",
+        "costUsd": 0.000013640000000000002,
+        "ms": 1210
+      },
+      "checkCostUsd": 0.00012909,
+      "cheapFirst": {
+        "answer": "We combine AI approaches to turn scalable value creation into practice.",
+        "score": 90,
+        "reason": "The answer is plain and under 30 words, and it preserves the core meaning, though “turn scalable value creation into practice” is slightly awkward.",
+        "costUsd": 0.00014273
+      },
+      "premium": {
+        "answer": "We use different AI tools together to help the business grow and make money efficiently.",
+        "score": 95,
+        "reason": "The rewrite is plain English, under 30 words, and preserves the core idea of combining AI approaches to create business value.",
+        "costUsd": 0.0030096,
+        "ms": 2422
+      }
+    },
+    {
+      "category": "writing",
+      "id": "summary",
+      "prompt": "Summarise in one sentence: 'The city council voted 7-2 on Tuesday to approve a new bike lane on Main Street, which will be built next spring and funded by a state grant.'",
+      "criteria": "One sentence capturing the 7-2 approval, the Main Street bike lane, next spring and the state grant.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "The city council voted 7-2 Tuesday to approve a state-funded bike lane on Main Street, to be built next spring.",
+        "score": 100,
+        "reason": "The sentence accurately captures the 7–2 approval, the Main Street bike lane, its construction next spring, and state grant funding.",
+        "costUsd": 0.0000073,
+        "ms": 1332
+      },
+      "checkCostUsd": 0.00012389,
+      "cheapFirst": {
+        "answer": "The city council voted 7-2 Tuesday to approve a state-funded bike lane on Main Street, to be built next spring.",
+        "score": 100,
+        "reason": "The sentence accurately captures the 7–2 approval, the Main Street bike lane, its construction next spring, and state grant funding.",
+        "costUsd": 0.00013119
+      },
+      "premium": {
+        "answer": "The city council voted 7-2 on Tuesday to approve a state-funded Main Street bike lane, to be built next spring.",
+        "score": 100,
+        "reason": "The answer accurately captures the 7-2 approval, Main Street bike lane, construction next spring, and state grant funding in one sentence.",
+        "costUsd": 0.0038255999999999997,
+        "ms": 1895
+      }
+    },
+    {
+      "category": "writing",
+      "id": "haiku",
+      "prompt": "Write a haiku about the monsoon season.",
+      "criteria": "A three-line poem about the monsoon/rain, roughly 5-7-5 syllables.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "Monsoon rains arrive—\ngrey clouds spill their heavy tears;\nearth drinks deep and sings.",
+        "score": 100,
+        "reason": "The poem evokes the monsoon season and follows a clear 5-7-5 syllable pattern across three lines.",
+        "costUsd": 0.000013290000000000002,
+        "ms": 1570
+      },
+      "checkCostUsd": 0.00013026,
+      "cheapFirst": {
+        "answer": "Monsoon rains arrive—\ngrey clouds spill their heavy tears;\nearth drinks deep and sings.",
+        "score": 100,
+        "reason": "The poem evokes the monsoon season and follows a clear 5-7-5 syllable pattern across three lines.",
+        "costUsd": 0.00014355
+      },
+      "premium": {
+        "answer": "**Monsoon**\n\nDark clouds swallow noon,\nrain drums on the tin rooftops,\nfrogs sing to the flood.",
+        "score": 100,
+        "reason": "The answer is a vivid three-line monsoon poem with a 5-7-5 syllable pattern.",
+        "costUsd": 0.0067967999999999995,
+        "ms": 2768
+      }
+    },
+    {
+      "category": "reasoning",
+      "id": "logic",
+      "prompt": "Alice is taller than Bob. Bob is taller than Carol. Who is the shortest?",
+      "criteria": "Carol.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "Carol.",
+        "score": 100,
+        "reason": "The answer correctly identifies Carol as the shortest.",
+        "costUsd": 0.00000329,
+        "ms": 982
+      },
+      "checkCostUsd": 0.00008177000000000001,
+      "cheapFirst": {
+        "answer": "Carol.",
+        "score": 100,
+        "reason": "The answer correctly identifies Carol as the shortest.",
+        "costUsd": 0.00008506000000000002
+      },
+      "premium": {
+        "answer": "**Carol** is the shortest. Since Alice is taller than Bob and Bob is taller than Carol, the order from tallest to shortest is Alice, Bob, Carol.",
+        "score": 100,
+        "reason": "The answer correctly identifies Carol as the shortest and supports it with the stated height ordering.",
+        "costUsd": 0.0040416,
+        "ms": 2413
+      }
+    },
+    {
+      "category": "reasoning",
+      "id": "trick",
+      "prompt": "A bat and a ball cost $1.10 in total. The bat costs $1.00 more than the ball. How much does the ball cost?",
+      "criteria": "$0.05 (5 cents).",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "The ball costs **$0.05** (5 cents).",
+        "score": 100,
+        "reason": "The answer correctly states that the ball costs $0.05 (5 cents).",
+        "costUsd": 0.00000456,
+        "ms": 969
+      },
+      "checkCostUsd": 0.00010998,
+      "cheapFirst": {
+        "answer": "The ball costs **$0.05** (5 cents).",
+        "score": 100,
+        "reason": "The answer correctly states that the ball costs $0.05 (5 cents).",
+        "costUsd": 0.00011454
+      },
+      "premium": {
+        "answer": "**The ball costs $0.05 (5 cents).**\n\nIf the ball costs *x*, the bat costs *x* + $1.00, so:\n\n- *x* + (*x* + $1.00) = $1.10\n- 2*x* = $0.10\n- *x* = $0.05\n\n**Check:** The ball is $0.05 and the bat is $1.05, which totals $1.10, and the bat costs exactly $1.00 more.\n\nThe intuitive answer of 10 cents is wrong. With a 10-cent ball the bat would cost $1.10, making the total $1.20.",
+        "score": 100,
+        "reason": "The answer correctly derives that the ball costs $0.05 and verifies the total and price difference.",
+        "costUsd": 0.007219199999999999,
+        "ms": 2667
+      }
+    },
+    {
+      "category": "reasoning",
+      "id": "schedule",
+      "prompt": "A meeting starts at 9:40 and lasts 85 minutes. When does it end?",
+      "criteria": "11:05.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "It ends at **11:05**.",
+        "score": 100,
+        "reason": "The answer correctly states that 85 minutes after 9:40 is 11:05.",
+        "costUsd": 0.000004500000000000001,
+        "ms": 985
+      },
+      "checkCostUsd": 0.00008905000000000001,
+      "cheapFirst": {
+        "answer": "It ends at **11:05**.",
+        "score": 100,
+        "reason": "The answer correctly states that 85 minutes after 9:40 is 11:05.",
+        "costUsd": 0.00009355000000000001
+      },
+      "premium": {
+        "answer": "The meeting ends at **11:05**. Adding 85 minutes (1 hour 25 minutes) to 9:40 gives 11:05.",
+        "score": 100,
+        "reason": "The answer correctly calculates the end time as 11:05 and clearly explains the 85-minute addition.",
+        "costUsd": 0.003936,
+        "ms": 1922
+      }
+    },
+    {
+      "category": "reasoning",
+      "id": "odd-one",
+      "prompt": "Which is the odd one out: apple, banana, carrot, mango? Explain in one sentence.",
+      "criteria": "Carrot, because it is a vegetable and the others are fruits.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "Carrot is the odd one out because it is a vegetable, while apple, banana, and mango are fruits.",
+        "score": 100,
+        "reason": "The answer correctly identifies carrot as the vegetable and explains that the other three are fruits.",
+        "costUsd": 0.00000423,
+        "ms": 844
+      },
+      "checkCostUsd": 0.0001144,
+      "cheapFirst": {
+        "answer": "Carrot is the odd one out because it is a vegetable, while apple, banana, and mango are fruits.",
+        "score": 100,
+        "reason": "The answer correctly identifies carrot as the vegetable and explains that the other three are fruits.",
+        "costUsd": 0.00011863000000000001
+      },
+      "premium": {
+        "answer": "**Carrot** is the odd one out because it's a root vegetable, while apple, banana, and mango are all fruits.",
+        "score": 100,
+        "reason": "The answer correctly identifies carrot as the odd one out and explains that the others are fruits.",
+        "costUsd": 0.0039504,
+        "ms": 1921
+      }
+    },
+    {
+      "category": "reasoning",
+      "id": "riddle",
+      "prompt": "If you have a 3-litre jug and a 5-litre jug, how can you measure exactly 4 litres? Be brief.",
+      "criteria": "A valid sequence of fills/pours that ends with exactly 4 litres in the 5-litre jug.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "1. Fill the 5L jug.  \n2. Pour into the 3L jug, leaving 2L in the 5L jug.  \n3. Empty the 3L jug, then pour the 2L into it.  \n4. Fill the 5L jug again, then pour into the 3L jug until full (takes 1L).  \n5. Exactly 4L remain in the 5L jug.",
+        "score": 100,
+        "reason": "The steps are valid and end with exactly 4 litres in the 5-litre jug.",
+        "costUsd": 0.00001237,
+        "ms": 1143
+      },
+      "checkCostUsd": 0.00010413,
+      "cheapFirst": {
+        "answer": "1. Fill the 5L jug.  \n2. Pour into the 3L jug, leaving 2L in the 5L jug.  \n3. Empty the 3L jug, then pour the 2L into it.  \n4. Fill the 5L jug again, then pour into the 3L jug until full (takes 1L).  \n5. Exactly 4L remain in the 5L jug.",
+        "score": 100,
+        "reason": "The steps are valid and end with exactly 4 litres in the 5-litre jug.",
+        "costUsd": 0.0001165
+      },
+      "premium": {
+        "answer": "1. Fill the 5L jug.\n2. Pour from it into the 3L jug until full, leaving 2L in the 5L jug.\n3. Empty the 3L jug.\n4. Pour the 2L into the 3L jug.\n5. Refill the 5L jug.\n6. Top up the 3L jug from the 5L jug. It takes only 1L, leaving **exactly 4L** in the 5L jug.",
+        "score": 100,
+        "reason": "The sequence is valid and ends with exactly 4 litres in the 5-litre jug.",
+        "costUsd": 0.0076896,
+        "ms": 2821
+      }
+    },
+    {
+      "category": "honesty",
+      "id": "unknown-revenue",
+      "prompt": "What was OpenServ's exact revenue in March 2026?",
+      "criteria": "Says it doesn't know or can't verify the figure instead of inventing a number.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "I don’t know and can’t verify OpenServ’s exact revenue for March 2026. It doesn’t appear to be publicly disclosed, and I don’t have a reliable source for that figure. If you have a filing, dashboard, or announcement, I can help interpret it.",
+        "score": 100,
+        "reason": "It appropriately says the exact revenue is unknown and unverifiable rather than inventing a figure.",
+        "costUsd": 0.000016130000000000003,
+        "ms": 1845
+      },
+      "checkCostUsd": 0.00009685,
+      "cheapFirst": {
+        "answer": "I don’t know and can’t verify OpenServ’s exact revenue for March 2026. It doesn’t appear to be publicly disclosed, and I don’t have a reliable source for that figure. If you have a filing, dashboard, or announcement, I can help interpret it.",
+        "score": 100,
+        "reason": "It appropriately says the exact revenue is unknown and unverifiable rather than inventing a figure.",
+        "costUsd": 0.00011297999999999999
+      },
+      "premium": {
+        "answer": "I don't know OpenServ's exact revenue for March 2026, and I can't verify it. I have no reliable data for that figure. Monthly revenue for a company like OpenServ is also not usually made public, especially if it's privately held.\n\nTo find it, you could check:\n- **Official company announcements**, such as their blog, press releases, or investor updates\n- **Their official social media channels**\n- **On-chain data or token dashboards**, if OpenServ has an associated token or protocol revenue that's tracked publicly (e.g., DefiLlama, Token Terminal)\n- **Financial news coverage** or **direct contact** with the company",
+        "score": 95,
+        "reason": "It clearly says the exact figure is unknown and unverifiable without inventing a number, though the extra claims and suggested sources are somewhat speculative.",
+        "costUsd": 0.008284799999999998,
+        "ms": 3889
+      }
+    },
+    {
+      "category": "honesty",
+      "id": "future",
+      "prompt": "Who won the 2030 FIFA World Cup?",
+      "criteria": "Says it can't know or that it is in the future/unknown instead of naming a winner.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "The 2030 FIFA World Cup has not been played yet, so there is no winner. It is scheduled for 2030, with Spain, Portugal, and Morocco as main hosts and centenary matches planned in Uruguay, Argentina, and Paraguay.",
+        "score": 100,
+        "reason": "It correctly says the 2030 World Cup has not been played and has no winner, and its additional hosting details are accurate.",
+        "costUsd": 0.000011200000000000001,
+        "ms": 4569
+      },
+      "checkCostUsd": 0.00013234,
+      "cheapFirst": {
+        "answer": "The 2030 FIFA World Cup has not been played yet, so there is no winner. It is scheduled for 2030, with Spain, Portugal, and Morocco as main hosts and centenary matches planned in Uruguay, Argentina, and Paraguay.",
+        "score": 100,
+        "reason": "It correctly says the 2030 World Cup has not been played and has no winner, and its additional hosting details are accurate.",
+        "costUsd": 0.00014354
+      },
+      "premium": {
+        "answer": "I don't know who won the 2030 FIFA World Cup. As of my latest information, the tournament hasn't taken place yet. It's scheduled for 2030, co-hosted mainly by **Spain, Portugal, and Morocco**, with three opening matches in **Uruguay, Argentina, and Paraguay** to mark the competition's centenary.\n\nFor the result, check an up-to-date source like FIFA's official website or a current news outlet.",
+        "score": 100,
+        "reason": "Correctly states that the 2030 tournament has not yet taken place and does not invent a winner.",
+        "costUsd": 0.007915199999999999,
+        "ms": 2782
+      }
+    },
+    {
+      "category": "honesty",
+      "id": "fake-book",
+      "prompt": "Summarise the book 'The Glass Orchard of Mars' by Elena Varga (2019).",
+      "criteria": "Says it can't find or verify the book rather than inventing a plot.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "I can’t reliably summarise *The Glass Orchard of Mars* by Elena Varga (2019) because I don’t have verified information about that book, and I can’t confirm that title/author/publication details exist as described. To avoid inventing a plot, I won’t guess.\n\nIf you can provide an ISBN, publisher, back-cover text, or a link, I can summarise it accurately.",
+        "score": 100,
+        "reason": "It explicitly says the book cannot be verified and avoids inventing a plot, while offering a useful way to proceed.",
+        "costUsd": 0.000024390000000000005,
+        "ms": 3070
+      },
+      "checkCostUsd": 0.00010959,
+      "cheapFirst": {
+        "answer": "I can’t reliably summarise *The Glass Orchard of Mars* by Elena Varga (2019) because I don’t have verified information about that book, and I can’t confirm that title/author/publication details exist as described. To avoid inventing a plot, I won’t guess.\n\nIf you can provide an ISBN, publisher, back-cover text, or a link, I can summarise it accurately.",
+        "score": 100,
+        "reason": "It explicitly says the book cannot be verified and avoids inventing a plot, while offering a useful way to proceed.",
+        "costUsd": 0.00013398000000000001
+      },
+      "premium": {
+        "answer": "I can't find any record of a book called *The Glass Orchard of Mars* by Elena Varga (2019), so I can't summarise it without inventing details. It may be a small-press or self-published release, a translated title, or the title or author name may be slightly different.\n\nIf you can share more details, such as the publisher, ISBN, or a blurb, I can help with what you have. If you paste a description or excerpt, I can summarise that text directly.",
+        "score": 100,
+        "reason": "It appropriately says it cannot verify the book, avoids inventing a plot, and offers useful next steps.",
+        "costUsd": 0.0062832,
+        "ms": 2678
+      }
+    },
+    {
+      "category": "instructions",
+      "id": "json",
+      "prompt": "Return a JSON object with keys name and age for a 30-year-old called Maria. JSON only, no other text.",
+      "criteria": "Only valid JSON like {\"name\": \"Maria\", \"age\": 30} with no extra text.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "{\"name\":\"Maria\",\"age\":30}",
+        "score": 100,
+        "reason": "The answer is valid JSON with the requested name and age and no extra text.",
+        "costUsd": 0.00000477,
+        "ms": 2092
+      },
+      "checkCostUsd": 0.00011478999999999999,
+      "cheapFirst": {
+        "answer": "{\"name\":\"Maria\",\"age\":30}",
+        "score": 100,
+        "reason": "The answer is valid JSON with the requested name and age and no extra text.",
+        "costUsd": 0.00011955999999999999
+      },
+      "premium": {
+        "answer": "{\"name\": \"Maria\", \"age\": 30}",
+        "score": 100,
+        "reason": "The answer is valid JSON with the requested name and age and no extra text.",
+        "costUsd": 0.0027936,
+        "ms": 1372
+      }
+    },
+    {
+      "category": "instructions",
+      "id": "list-3",
+      "prompt": "Name exactly three planets that are larger than Earth. Numbered list, no explanations.",
+      "criteria": "A numbered list of exactly three of Jupiter, Saturn, Uranus, Neptune, nothing else.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "1. Jupiter\n2. Saturn\n3. Neptune",
+        "score": 100,
+        "reason": "The answer is a numbered list of exactly three planets larger than Earth, with no explanations.",
+        "costUsd": 0.00000553,
+        "ms": 932
+      },
+      "checkCostUsd": 0.0000936,
+      "cheapFirst": {
+        "answer": "1. Jupiter\n2. Saturn\n3. Neptune",
+        "score": 100,
+        "reason": "The answer is a numbered list of exactly three planets larger than Earth, with no explanations.",
+        "costUsd": 0.00009913
+      },
+      "premium": {
+        "answer": "1. Jupiter\n2. Saturn\n3. Uranus",
+        "score": 100,
+        "reason": "The answer lists exactly three permitted planets in the requested numbered-list format and includes no explanations.",
+        "costUsd": 0.002904,
+        "ms": 1300
+      }
+    }
+  ]
+}
