@@ -60,7 +60,7 @@ export async function servModel(label: string, model: string): Promise<ModelSpec
 }
 
 /** Room for long answers (and reasoning tokens) without hitting any model's cap. */
-const MAX_TOKENS = 16_000;
+const MAX_TOKENS = Number(process.env.CF_MAX_TOKENS) || 16_000;
 const TIMEOUT_MS = 5 * 60_000;
 
 export function costOf(spec: ModelSpec, inputTokens: number, outputTokens: number): number {

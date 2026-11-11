@@ -28,6 +28,9 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+        env:
+          # The live "Try it" box calls the Vercel function (api/ask.ts).
+          ASK_URL: https://cheap-first-designimp-projects.vercel.app/api/ask
       - uses: actions/upload-pages-artifact@v3
         with:
           path: out
