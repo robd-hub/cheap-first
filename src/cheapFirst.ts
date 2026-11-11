@@ -2,7 +2,7 @@
  * Cheap First: answer with the cheap model, check the answer, and escalate
  * to the premium model only when the check fails.
  */
-import { CHEAP, chat, servModel, type CallResult, type ModelSpec } from "./models";
+import { CHEAP, chat, servModel, type CallResult, type ModelSpec } from "./models.js";
 
 export const SYSTEM_PROMPT = "You are a helpful, accurate assistant. Follow the user's instructions exactly, including any length limits. If you don't know or can't verify something, say so instead of guessing.";
 

@@ -33,6 +33,8 @@ interface CheckerTest {
 }
 
 const REPO = "https://github.com/robd-hub/cheap-first";
+/** Where the live "try it" box sends questions. Same-origin on Vercel; set ASK_URL for other hosts. */
+const ASK_URL = process.env.ASK_URL || "/api/ask";
 
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const usd = (n: number) => (n >= 0.01 ? `$${n.toFixed(2)}` : n >= 0.0001 ? `$${n.toFixed(4)}` : `$${n.toFixed(6)}`);
@@ -247,6 +249,16 @@ code{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding
 footer{margin-top:64px;padding:24px max(16px,calc((100vw - 1040px)/2));border-top:1px solid var(--line);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;color:var(--muted);font-size:.85rem}
 footer a{color:var(--soft)}
 .empty{color:var(--muted)}
+.ask{background:var(--card2);border:1px solid var(--line2);border-radius:16px;padding:14px}
+.ask textarea{width:100%;font:16px/1.5 var(--sans);background:transparent;border:0;color:var(--text);resize:vertical;min-height:72px;outline:none}
+.askbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:12px}
+.examples{display:flex;flex-wrap:wrap;gap:6px}.btn{border:0;cursor:pointer;font-family:var(--sans)}.btn:disabled{opacity:.6;cursor:wait}
+.answer{margin-top:12px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
+.ahead{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:.8rem}
+.ameta{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:10px;color:var(--muted);font-size:.85rem}.ameta b{color:var(--text);font-family:var(--mono)}
+.steps{display:flex;gap:16px;flex-wrap:wrap;font:.8rem var(--mono);color:var(--muted)}.steps .on{color:var(--cyan)}.steps .on::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--cyan);margin-right:8px;animation:pulse 1.4s infinite}
+.err{color:var(--warn);margin:0}.rej{margin-top:10px;color:var(--muted);font-size:.85rem}.rej summary{cursor:pointer}.rej pre{margin-top:8px}
+
 @media (max-width:820px){.tiles{grid-template-columns:1fr 1fr}.tile.accent,.tile:last-child{grid-column:1/-1}.flow,.models,.ct,.calcout{grid-template-columns:1fr}}
 @media (max-width:720px){.nav nav a:not(.gh){display:none}.head{display:none}.row summary{grid-template-columns:1fr auto;grid-template-areas:"cat pill" "q q" "num cost"}.row summary .cat{grid-area:cat}.row summary .pill{grid-area:pill}.row summary .q{grid-area:q}.row summary .num:not(.cost){grid-area:num;text-align:left}.row summary .cost:not(.muted){grid-area:cost}.row summary .muted{display:none}.detail{grid-template-columns:1fr}}
 </style>
@@ -255,16 +267,50 @@ footer a{color:var(--soft)}
 <div class="bg"></div>
 <header class="nav">
   <a class="logo" href="#top"><span class="logo-mark">C</span>Cheap First</a>
-  <nav><a href="#how">How it works</a><a href="#escalated">Escalations</a><a href="#results">All results</a><a class="gh" href="${REPO}">GitHub</a></nav>
+  <nav><a href="#try">Try it</a><a href="#how">How it works</a><a href="#escalated">Escalations</a><a href="#results">All results</a><a class="gh" href="${REPO}">GitHub</a></nav>
 </header>
 <main class="wrap" id="top">
 <section class="hero">
   <span class="kicker"><span class="pulse"></span>Live · SERV Hackathon 02 · Dolphin track</span>
   <h1>Frontier quality,<br><span class="grad">cheap-model prices.</span></h1>
   <p class="lede">Most questions don't need a frontier model. Cheap First answers with Dolphin's very cheap model, has SERV Reasoning check the answer, and only pays for a premium model when the check fails.</p>
-  <div class="ctas"><a class="btn primary" href="#calc">Work out your savings</a><a class="btn ghost" href="#escalated">See the safety net</a></div>
+  <div class="ctas"><a class="btn primary" href="#try">Try it live</a><a class="btn ghost" href="#calc">Work out your savings</a><a class="btn ghost" href="#escalated">See the safety net</a></div>
   ${tiles}
 </section>
+<section id="try">
+  <p class="eyebrow">Try it live</p>
+  <h2>Ask your own question.</h2>
+  <p class="sub">It runs for real: Dolphin answers, SERV checks, and the premium model steps in only if the check fails. You'll see who answered and what it cost.</p>
+  <form class="ask" id="ask">
+    <textarea id="askq" maxlength="600" rows="3" placeholder="e.g. How many times does the letter r appear in strawberry?" aria-label="Your question"></textarea>
+    <div class="askbar">
+      <div class="examples">
+        <button type="button" class="chip ex">What is 17% of 2,450?</button>
+        <button type="button" class="chip ex">Explain x402 in two sentences.</button>
+        <button type="button" class="chip ex">Write a haiku about cheap tokens.</button>
+      </div>
+      <button class="btn primary" id="askbtn" type="submit">Ask</button>
+    </div>
+  </form>
+  <div class="answer" id="askout" hidden></div>
+</section>
+<script>
+(function(){var URL=${JSON.stringify(ASK_URL)},f=document.getElementById("ask"),q=document.getElementById("askq"),b=document.getElementById("askbtn"),o=document.getElementById("askout");
+function esc(t){return String(t).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function money(x){return x>=0.01?"$"+x.toFixed(2):x>=0.0001?"$"+x.toFixed(4):"$"+x.toFixed(6)}
+[].forEach.call(document.querySelectorAll(".chip.ex"),function(c){c.addEventListener("click",function(){q.value=c.textContent;q.focus()})});
+f.addEventListener("submit",function(e){e.preventDefault();var v=q.value.trim();if(!v){q.focus();return}
+b.disabled=true;b.textContent="Thinking…";o.hidden=false;o.innerHTML='<div class="steps"><span class="on">Dolphin is answering</span><span>SERV is checking</span></div>';
+var t=setTimeout(function(){var s=o.querySelectorAll(".steps span");if(s[1])s[1].className="on"},2500);
+fetch(URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({question:v})}).then(function(r){return r.json().then(function(j){return{ok:r.ok,j:j}})}).then(function(x){var j=x.j;
+if(!x.ok){o.innerHTML='<p class="err">'+esc(j.error||"Something went wrong.")+'</p>';return}
+var prem=j.answeredBy==="premium";
+o.innerHTML='<div class="ahead"><span class="pill '+(prem?"prem":"cheap")+'">'+(prem?"ESCALATED":"DOLPHIN")+'</span><span class="mono muted">'+esc(j.model)+'</span></div>'+
+'<pre>'+esc(j.answer)+'</pre>'+
+'<div class="ameta"><span>'+(prem?"Dolphin's check":"Check")+' <b>'+j.check.score+'/100</b></span><span>Cost <b>'+money(j.costUsd)+'</b></span><span>Time <b>'+(j.ms/1000).toFixed(1)+'s</b></span></div>'+
+'<p class="why">'+(prem?"Why Dolphin's answer was rejected: ":"")+esc(j.check.reason)+'</p>'+(prem&&j.cheapAnswer?'<details class="rej"><summary>Dolphin\\'s rejected answer</summary><pre>'+esc(j.cheapAnswer)+'</pre></details>':"")
+}).catch(function(){o.innerHTML='<p class="err">Couldn\\'t reach the live demo. Please try again in a moment.</p>'}).then(function(){clearTimeout(t);b.disabled=false;b.textContent="Ask"})});})();
+</script>
 <section id="how">
   <p class="eyebrow">How it works</p>
   <h2>Cheap first. Premium only when it matters.</h2>
@@ -295,7 +341,7 @@ ${filters}
 (function(){var f="all",q="",rows=[].slice.call(document.querySelectorAll("#rows .row")),s=document.getElementById("search");
 function apply(){var n=0;rows.forEach(function(r){var ok=(f==="all"||(f.indexOf("by:")===0&&r.dataset.by===f.slice(3))||(f.indexOf("cat:")===0&&r.dataset.cat===f.slice(4)))&&(!q||r.dataset.text.indexOf(q)>=0);r.hidden=!ok;if(ok)n++});
 document.getElementById("shown").textContent="Showing "+n+" of "+rows.length;document.getElementById("none").hidden=n>0}
-[].forEach.call(document.querySelectorAll(".chip"),function(b){b.addEventListener("click",function(){[].forEach.call(document.querySelectorAll(".chip"),function(c){c.classList.remove("on")});b.classList.add("on");f=b.dataset.f;apply()})});
+[].forEach.call(document.querySelectorAll(".filters .chip"),function(b){b.addEventListener("click",function(){[].forEach.call(document.querySelectorAll(".filters .chip"),function(c){c.classList.remove("on")});b.classList.add("on");f=b.dataset.f;apply()})});
 if(s)s.addEventListener("input",function(){q=s.value.trim().toLowerCase();apply()});apply();})();
 </script>
 </section>

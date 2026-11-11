@@ -7,6 +7,7 @@
 
 <p align="center">
   <a href="https://robd-hub.github.io/cheap-first/"><b>Live results</b></a> ·
+  <a href="https://robd-hub.github.io/cheap-first/#try"><b>Try it</b></a> ·
   <a href="#how-it-works">How it works</a> ·
   <a href="#results">Results</a> ·
   <a href="#run-it-yourself">Run it yourself</a>
@@ -91,11 +92,19 @@ console.log(result.answer, result.answeredBy, result.costUsd);
 | `npx tsx scripts/check-sanity.ts` | Grade deliberately wrong answers and save `data/checker-test.json` |
 | `npx tsx scripts/probe.ts file.json` | Try questions on Dolphin and the checker only, to find ones Dolphin gets wrong |
 
+## Live demo server
+
+`api/ask.ts` is a small serverless function (deployed on Vercel, see `vercel.json`) that powers the
+"Try it live" box on the results page. The keys stay on the server. Every call spends real credits, so
+it limits questions to 600 characters, 10 an hour per visitor and 300 a day per server
+(`CF_PER_IP_PER_HOUR`, `CF_DAILY_CAP`), and `CF_MAX_TOKENS` caps each model reply.
+
 ## Project layout
 
 ```
 src/models.ts          Dolphin and SERV API calls, with real per-call costs
 src/cheapFirst.ts      answer → check → escalate
+api/ask.ts             the live "try it" endpoint
 data/questions.json    143 questions with written criteria
 data/results.json      the latest benchmark run
 scripts/build-site.ts  builds the public results page
