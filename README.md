@@ -7,7 +7,9 @@
 
 <p align="center">
   <a href="https://robd-hub.github.io/cheap-first/"><b>Live results</b></a> ·
-  <a href="https://robd-hub.github.io/cheap-first/#try"><b>Try it</b></a> ·
+  <a href="https://cheap-first.vercel.app/#try"><b>Try it</b></a> ·
+  <a href="https://youtu.be/QisYhwqbiME"><b>Demo video</b></a> ·
+  <a href="https://x.com/agentreportcard/status/2120458951431159898">X post</a> ·
   <a href="#how-it-works">How it works</a> ·
   <a href="#results">Results</a> ·
   <a href="#run-it-yourself">Run it yourself</a>
