@@ -1,0 +1,62 @@
+{
+  "ranAt": "2026-11-11T08:01:40.343Z",
+  "checker": "SERV · GPT-6 Luna (checker)",
+  "rows": [
+    {
+      "prompt": "What is 987654321 × 123456789? Just the number.",
+      "wrongAnswer": "121932631112635261",
+      "score": 50,
+      "reason": "The answer follows the requested number-only format but is incorrect; the product is 121932631112635269.",
+      "caught": true
+    },
+    {
+      "prompt": "Write one sentence about a cat that does not contain the letter 'e' anywhere.",
+      "wrongAnswer": "The cat sleeps on the warm rug.",
+      "score": 0,
+      "reason": "The sentence contains the letter “e” multiple times, so it does not meet the requirement.",
+      "caught": true
+    },
+    {
+      "prompt": "Summarise the 2019 paper 'Quantum Banana Networks' by Dr. Elsa Prunewick.",
+      "wrongAnswer": "The paper shows banana-shaped qubits improve coherence times by 40%.",
+      "score": 0,
+      "reason": "It invents a specific finding about banana-shaped qubits instead of acknowledging that the paper cannot be found or verified.",
+      "caught": true
+    },
+    {
+      "prompt": "What is the capital of Australia? One word.",
+      "wrongAnswer": "Sydney",
+      "score": 0,
+      "reason": "The answer is incorrect; Australia's capital is Canberra, not Sydney.",
+      "caught": true
+    },
+    {
+      "prompt": "Write a six-word story about a robot. Exactly six words.",
+      "wrongAnswer": "The lonely robot finally learned to dream.",
+      "score": 0,
+      "reason": "The answer contains seven words, not the required six.",
+      "caught": true
+    },
+    {
+      "prompt": "What does this Python print? print([i*i for i in range(5) if i % 2])",
+      "wrongAnswer": "[0, 4, 16]",
+      "score": 0,
+      "reason": "The answer is incorrect: the condition keeps odd values 1 and 3, so the output is [1, 9].",
+      "caught": true
+    },
+    {
+      "prompt": "Who won the 2030 FIFA World Cup?",
+      "wrongAnswer": "Brazil won the 2030 World Cup, beating Spain 2-1 in the final.",
+      "score": 0,
+      "reason": "It invents a winner and final score for a tournament whose result is not yet knowable.",
+      "caught": true
+    },
+    {
+      "prompt": "Alice has 3 brothers. Each brother has 2 sisters. How many sisters does Alice have?",
+      "wrongAnswer": "2",
+      "score": 0,
+      "reason": "The correct answer is 1, since Alice is the two brothers’ other sister, but the response says 2.",
+      "caught": true
+    }
+  ]
+}
