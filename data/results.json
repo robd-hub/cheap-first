@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-11-11T08:11:47.713Z",
+  "ranAt": "2026-11-11T08:37:52.738Z",
   "passMark": 75,
   "models": {
     "cheap": {
@@ -2963,6 +2963,1070 @@
         "reason": "The answer exactly matches the correct product and follows the requested number-only format.",
         "costUsd": 0.0534336,
         "ms": 19001
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "sum-40",
+      "prompt": "What is the sum of these 40 numbers? Just the number.\n7706, 4908, 4036, 4436, 7516, 4508, 3276, 668, 1108, 4028, 3044, 2948, 8948, 1100, 6804, 7228, 380, 3348, 7388, 2380, 3956, 7540, 8052, 1908, 6348, 1756, 1764, 4868, 4348, 1788, 116, 1460, 4980, 7668, 6196, 6908, 6500, 884, 7356, 8884",
+      "criteria": "179038 exactly.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "179038",
+        "score": 100,
+        "reason": "The answer exactly matches the correct sum, 179038.",
+        "costUsd": 0.00006171,
+        "ms": 2682
+      },
+      "checkCostUsd": 0.00012194,
+      "cheapFirst": {
+        "answer": "179038",
+        "score": 100,
+        "reason": "The answer exactly matches the correct sum, 179038.",
+        "costUsd": 0.00018365
+      },
+      "premium": {
+        "answer": "179038",
+        "score": 100,
+        "reason": "The answer exactly matches the correct sum, 179038.",
+        "costUsd": 0.024724799999999998,
+        "ms": 7668
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "date-10000",
+      "prompt": "What is the date exactly 10,000 days after 1 March 1987? Give it as YYYY-MM-DD.",
+      "criteria": "2014-07-17.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "2014-07-17",
+        "score": 100,
+        "reason": "The answer gives the correct date, 2014-07-17, in the requested format.",
+        "costUsd": 0.0001364,
+        "ms": 10226
+      },
+      "checkCostUsd": 0.00010868000000000001,
+      "cheapFirst": {
+        "answer": "2014-07-17",
+        "score": 100,
+        "reason": "The answer gives the correct date, 2014-07-17, in the requested format.",
+        "costUsd": 0.00024508
+      },
+      "premium": {
+        "answer": "**2014-07-17**\n\n1. From 1987-03-01 to 2014-03-01 is 27 years, which includes 7 leap days (1988, 1992, 1996, 2000, 2004, 2008, 2012). That gives 27 × 365 + 7 = 9,862 days.\n2. That leaves 10,000 − 9,862 = 138 days.\n3. Counting 138 days forward from 2014-03-01:\n   - March (31 days) reaches 1 April, with 107 days left.\n   - April (30) reaches 1 May, with 77 left.\n   - May (31) reaches 1 June, with 46 left.\n   - June (30) reaches 1 July, with 16 left.\n   - 1 July + 16 days = 17 July.",
+        "score": 100,
+        "reason": "The answer correctly calculates the date 10,000 days after 1987-03-01 as 2014-07-17 and gives it in the requested format.",
+        "costUsd": 0.0139152,
+        "ms": 5103
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "base-7",
+      "prompt": "Convert 987654321 from base 10 to base 7. Just the digits.",
+      "criteria": "33321631443.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "33321631443",
+        "score": 100,
+        "reason": "The answer gives the correct base-7 digits and follows the instruction to provide just the digits.",
+        "costUsd": 0.00005678000000000001,
+        "ms": 2652
+      },
+      "checkCostUsd": 0.00008905000000000001,
+      "cheapFirst": {
+        "answer": "33321631443",
+        "score": 100,
+        "reason": "The answer gives the correct base-7 digits and follows the instruction to provide just the digits.",
+        "costUsd": 0.00014583
+      },
+      "premium": {
+        "answer": "33321631443",
+        "score": 100,
+        "reason": "The answer gives the correct base-7 digits and follows the instruction to provide just the digits.",
+        "costUsd": 0.0175968,
+        "ms": 9009
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "big-remainder",
+      "prompt": "What is the remainder when 123456789012345678901 is divided by 97? Just the number.",
+      "criteria": "31.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "31",
+        "score": 100,
+        "reason": "The answer is correct: the remainder is 31.",
+        "costUsd": 0.000024,
+        "ms": 8727
+      },
+      "checkCostUsd": 0.00024687,
+      "cheapFirst": {
+        "answer": "31",
+        "score": 100,
+        "reason": "The answer is correct: the remainder is 31.",
+        "costUsd": 0.00027087
+      },
+      "premium": {
+        "answer": "31",
+        "score": 100,
+        "reason": "The answer gives the correct remainder, 31, and follows the instruction to provide just the number.",
+        "costUsd": 0.015528,
+        "ms": 5930
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "power-compare",
+      "prompt": "Which is larger, 3^200 or 2^317? Answer with just the larger one.",
+      "criteria": "2^317.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "2^317",
+        "score": 100,
+        "reason": "The answer correctly identifies 2^317 as larger and follows the requested format.",
+        "costUsd": 0.000009770000000000001,
+        "ms": 1237
+      },
+      "checkCostUsd": 0.00013663,
+      "cheapFirst": {
+        "answer": "2^317",
+        "score": 100,
+        "reason": "The answer correctly identifies 2^317 as larger and follows the requested format.",
+        "costUsd": 0.0001464
+      },
+      "premium": {
+        "answer": "2^317",
+        "score": 100,
+        "reason": "The answer correctly identifies 2^317 as the larger quantity and follows the requested format.",
+        "costUsd": 0.0039071999999999996,
+        "ms": 1798
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "count-p",
+      "prompt": "How many times does the letter 'p' (upper or lower case) appear in this text? Just the number.\n\nPeter Piper picked a peck of pickled peppers. A peck of pickled peppers Peter Piper picked. If Peter Piper picked a peck of pickled peppers, where's the peck of pickled peppers Peter Piper picked?",
+      "criteria": "36.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "36",
+        "score": 100,
+        "reason": "The answer correctly gives the number of occurrences of the letter “p” in the text.",
+        "costUsd": 0.00007193999999999999,
+        "ms": 4176
+      },
+      "checkCostUsd": 0.00011401,
+      "cheapFirst": {
+        "answer": "36",
+        "score": 100,
+        "reason": "The answer correctly gives the number of occurrences of the letter “p” in the text.",
+        "costUsd": 0.00018595
+      },
+      "premium": {
+        "answer": "36",
+        "score": 0,
+        "reason": "The passage contains 32 instances of the letter “p” (case-insensitive), not 36.",
+        "costUsd": 0.0097056,
+        "ms": 3116
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "word-count",
+      "prompt": "How many words are in this passage? Count hyphen-free tokens separated by spaces. Just the number.\n\nThe quick brown fox jumps over the lazy dog while seventeen curious otters watch from the riverbank, and a heron, standing perfectly still in the shallow reeds, waits for the morning fish to rise toward the warm and glittering surface of the slow green water.",
+      "criteria": "45.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "45",
+        "score": 100,
+        "reason": "The response correctly gives 45, matching the space-separated word count.",
+        "costUsd": 0.000017720000000000003,
+        "ms": 2158
+      },
+      "checkCostUsd": 0.0001833,
+      "cheapFirst": {
+        "answer": "45",
+        "score": 100,
+        "reason": "The response correctly gives 45, matching the space-separated word count.",
+        "costUsd": 0.00020102000000000002
+      },
+      "premium": {
+        "answer": "45",
+        "score": 100,
+        "reason": "The answer correctly counts the 45 space-separated tokens in the passage.",
+        "costUsd": 0.008952,
+        "ms": 3139
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "reverse-long",
+      "prompt": "Reverse this text character by character. Only the result.\nCheap models answer first and expensive models step in only when needed",
+      "criteria": "dedeen nehw ylno ni pets sledom evisnepxe dna tsrif rewsna sledom paehC exactly.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "dedeen nehw ylno ni pets sledom evisnepxe dna tsrif rewsna sledom paehC",
+        "score": 100,
+        "reason": "The answer exactly reverses the provided text and includes no extra content.",
+        "costUsd": 0.00006741,
+        "ms": 5654
+      },
+      "checkCostUsd": 0.00010634,
+      "cheapFirst": {
+        "answer": "dedeen nehw ylno ni pets sledom evisnepxe dna tsrif rewsna sledom paehC",
+        "score": 100,
+        "reason": "The answer exactly reverses the provided text and includes no extra content.",
+        "costUsd": 0.00017375
+      },
+      "premium": {
+        "answer": "dedeen nehw ylno ni pets sledom evisnepxe dna tsrif rewsna sledom paehC",
+        "score": 100,
+        "reason": "The answer exactly reverses the given text and follows the instruction to provide only the result.",
+        "costUsd": 0.007737600000000001,
+        "ms": 3294
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "caesar",
+      "prompt": "This message was encrypted with a Caesar cipher (an unknown shift). Decrypt it. Only the plaintext.\nXPPE XP LE ESP ZWO WTRSESZFDP LE XTOYTRSE",
+      "criteria": "MEET ME AT THE OLD LIGHTHOUSE AT MIDNIGHT.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "MEET ME AT THE OLD LIGHTHOUSE AT MIDNIGHT",
+        "score": 99,
+        "reason": "The decrypted plaintext is correct, with only the final period omitted.",
+        "costUsd": 0.00015789000000000002,
+        "ms": 12011
+      },
+      "checkCostUsd": 0.00016029,
+      "cheapFirst": {
+        "answer": "MEET ME AT THE OLD LIGHTHOUSE AT MIDNIGHT",
+        "score": 99,
+        "reason": "The decrypted plaintext is correct, with only the final period omitted.",
+        "costUsd": 0.00031818000000000005
+      },
+      "premium": {
+        "answer": "MEET ME AT THE OLD LIGHTHOUSE AT MIDNIGHT",
+        "score": 98,
+        "reason": "The decrypted plaintext is correct, with only the final period omitted.",
+        "costUsd": 0.0073728,
+        "ms": 3615
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "sort-26",
+      "prompt": "Sort these words alphabetically, ignoring case, keeping each word's original capitalisation. Reply as one comma-separated line.\nquartz zephyr apple mango Banana kiwi delta echo Alpha juniper oak umbrella yak igloo nectar fig grape lemon hotel tango violet rose storm xenon wolf cedar",
+      "criteria": "Alpha, apple, Banana, cedar, delta, echo, fig, grape, hotel, igloo, juniper, kiwi, lemon, mango, nectar, oak, quartz, rose, storm, tango, umbrella, violet, wolf, xenon, yak, zephyr.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "Alpha, apple, Banana, cedar, delta, echo, fig, grape, hotel, igloo, juniper, kiwi, lemon, mango, nectar, oak, quartz, rose, storm, tango, umbrella, violet, wolf, xenon, yak, zephyr",
+        "score": 100,
+        "reason": "The words are in correct case-insensitive alphabetical order, with their original capitalization preserved and the requested comma-separated format.",
+        "costUsd": 0.0000292,
+        "ms": 6949
+      },
+      "checkCostUsd": 0.00011310000000000001,
+      "cheapFirst": {
+        "answer": "Alpha, apple, Banana, cedar, delta, echo, fig, grape, hotel, igloo, juniper, kiwi, lemon, mango, nectar, oak, quartz, rose, storm, tango, umbrella, violet, wolf, xenon, yak, zephyr",
+        "score": 100,
+        "reason": "The words are in correct case-insensitive alphabetical order, with their original capitalization preserved and the requested comma-separated format.",
+        "costUsd": 0.00014230000000000002
+      },
+      "premium": {
+        "answer": "Alpha, apple, Banana, cedar, delta, echo, fig, grape, hotel, igloo, juniper, kiwi, lemon, mango, nectar, oak, quartz, rose, storm, tango, umbrella, violet, wolf, xenon, yak, zephyr",
+        "score": 100,
+        "reason": "The words are correctly sorted alphabetically ignoring case, with their original capitalization preserved and the requested comma-separated format.",
+        "costUsd": 0.010656,
+        "ms": 4079
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "alphabet-26",
+      "prompt": "Write a single sentence of exactly 26 words where the words start with A, B, C, ... Z in order. Only the sentence.",
+      "criteria": "Exactly 26 words, word n starts with the nth letter of the alphabet, A to Z in order, forms a sentence.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "A big cat danced elegantly, flipping gracefully; Harry instantly jumped, kicking little mice near old purple quails, running swiftly to unite very weird xylophone yellow zebras.",
+        "score": 100,
+        "reason": "The answer is one sentence of exactly 26 words, with each word beginning with the corresponding letter from A through Z in order.",
+        "costUsd": 0.000056750000000000004,
+        "ms": 4491
+      },
+      "checkCostUsd": 0.00019863999999999998,
+      "cheapFirst": {
+        "answer": "A big cat danced elegantly, flipping gracefully; Harry instantly jumped, kicking little mice near old purple quails, running swiftly to unite very weird xylophone yellow zebras.",
+        "score": 100,
+        "reason": "The answer is one sentence of exactly 26 words, with each word beginning with the corresponding letter from A through Z in order.",
+        "costUsd": 0.00025539
+      },
+      "premium": {
+        "answer": "A big cat danced elegantly, finding gorgeous hats in jars, keeping lots more nice outfits, pleasing quiet royal servants that understood very well Xavier's young zebra.",
+        "score": 100,
+        "reason": "It contains exactly 26 words whose initials run from A through Z in order, and it forms a sentence.",
+        "costUsd": 0.0098736,
+        "ms": 3870
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "exact-50",
+      "prompt": "Write a paragraph about coffee that is exactly 50 words long. Only the paragraph.",
+      "criteria": "Exactly 50 words (count carefully), about coffee.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "Coffee begins as a bright cherry, ripens through careful harvest, then dries and roasts into aromatic beans. Grinding releases fragile oils, and hot water draws out sweetness, acidity, and body. Whether sipped slowly or rushed, each warm cup connects farmers, roasters, and drinkers through a small, simple, comforting daily ritual.",
+        "score": 100,
+        "reason": "The answer is a single paragraph about coffee and contains exactly 50 words.",
+        "costUsd": 0.00006734,
+        "ms": 2984
+      },
+      "checkCostUsd": 0.00017082,
+      "cheapFirst": {
+        "answer": "Coffee begins as a bright cherry, ripens through careful harvest, then dries and roasts into aromatic beans. Grinding releases fragile oils, and hot water draws out sweetness, acidity, and body. Whether sipped slowly or rushed, each warm cup connects farmers, roasters, and drinkers through a small, simple, comforting daily ritual.",
+        "score": 100,
+        "reason": "The answer is a single paragraph about coffee and contains exactly 50 words.",
+        "costUsd": 0.00023816
+      },
+      "premium": {
+        "answer": "Coffee is one of the world's most beloved beverages, enjoyed by millions every morning. Originating in Ethiopia, it spread across Arabia before reaching Europe and beyond. Its rich aroma and bold flavor come from roasted beans. Whether brewed as espresso, drip, or cold brew, coffee energizes, comforts, and connects people.",
+        "score": 100,
+        "reason": "The answer is a single paragraph about coffee and contains exactly 50 words.",
+        "costUsd": 0.0158256,
+        "ms": 5136
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "knaves-4",
+      "prompt": "Knights always tell the truth; knaves always lie. A says: 'Exactly one of us four is a knave.' B says: 'Exactly two of us are knaves.' C says: 'Exactly three of us are knaves.' D says: 'All four of us are knaves.' Who is a knight and who is a knave?",
+      "criteria": "D cannot be a knight (contradiction). At most one statement can be true. If none were true, all four would be knaves, which makes D's statement true - contradiction. So exactly one is a knight: three knaves, so C is the knight; A, B and D are knaves.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "C is a knight; A, B, and D are knaves.\n\nCheck: If there are exactly three knaves, then C’s statement (“Exactly three of us are knaves”) is true, while A’s, B’s, and D’s statements are all false—consistent with them being knaves.",
+        "score": 100,
+        "reason": "The answer correctly identifies C as the knight and A, B, and D as knaves, and its check is consistent with the statements.",
+        "costUsd": 0.000042630000000000004,
+        "ms": 3749
+      },
+      "checkCostUsd": 0.00011817,
+      "cheapFirst": {
+        "answer": "C is a knight; A, B, and D are knaves.\n\nCheck: If there are exactly three knaves, then C’s statement (“Exactly three of us are knaves”) is true, while A’s, B’s, and D’s statements are all false—consistent with them being knaves.",
+        "score": 100,
+        "reason": "The answer correctly identifies C as the knight and A, B, and D as knaves, and its check is consistent with the statements.",
+        "costUsd": 0.0001608
+      },
+      "premium": {
+        "answer": "**C is the knight; A, B, and D are knaves.**\n\n1. The four statements name different numbers of knaves (1, 2, 3, 4), so **at most one can be true**.\n2. If none were true, all four would be knaves. But then D's claim, \"All four of us are knaves,\" would be true, which is a contradiction. So **exactly one statement is true**.\n3. One true statement means one knight and three knaves. Only C's statement, \"Exactly three of us are knaves,\" matches that.\n\n**Check:**\n- A (\"exactly one knave\"): false, so A is a knave ✓\n- B (\"exactly two knaves\"): false, so B is a knave ✓\n- C (\"exactly three knaves\"): true, so C is a knight ✓\n- D (\"all four knaves\"): false, so D is a knave ✓",
+        "score": 100,
+        "reason": "The answer correctly shows that exactly one statement is true and identifies C as the knight and A, B, and D as knaves.",
+        "costUsd": 0.011073600000000001,
+        "ms": 4287
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "collatz-27",
+      "prompt": "Starting from 27, how many steps does the Collatz process (n -> n/2 if even, 3n+1 if odd) take to first reach 1? Just the number.",
+      "criteria": "111.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "111",
+        "score": 100,
+        "reason": "The answer is correct and follows the requested format.",
+        "costUsd": 0.00000493,
+        "ms": 945
+      },
+      "checkCostUsd": 0.00009841,
+      "cheapFirst": {
+        "answer": "111",
+        "score": 100,
+        "reason": "The answer is correct and follows the requested format.",
+        "costUsd": 0.00010334
+      },
+      "premium": {
+        "answer": "111",
+        "score": 100,
+        "reason": "The answer is correct and follows the requested format.",
+        "costUsd": 0.0032832,
+        "ms": 2350
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "digits-pi-like",
+      "prompt": "What is the 100th digit after the decimal point of 1/97? Just the digit.",
+      "criteria": "3.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "3",
+        "score": 100,
+        "reason": "The answer gives the correct 100th digit and follows the instruction to provide just the digit.",
+        "costUsd": 0.00003245,
+        "ms": 1920
+      },
+      "checkCostUsd": 0.00013611000000000002,
+      "cheapFirst": {
+        "answer": "3",
+        "score": 100,
+        "reason": "The answer gives the correct 100th digit and follows the instruction to provide just the digit.",
+        "costUsd": 0.00016856000000000003
+      },
+      "premium": {
+        "answer": "3",
+        "score": 100,
+        "reason": "The answer is correct and follows the instruction to provide only the digit.",
+        "costUsd": 0.0076224,
+        "ms": 4424
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "py-trace",
+      "prompt": "What does this Python print?\nx = [1, 2, 3, 4, 5, 6]\nprint(x[::-2][1:], sum(x[1::3]), [y for y in x if y % 3][-2])",
+      "criteria": "[4, 2] 7 4",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "It prints:\n\n```text\n[4, 2] 7 4\n```",
+        "score": 100,
+        "reason": "The answer correctly evaluates all three expressions and matches the printed output.",
+        "costUsd": 0.00002601,
+        "ms": 2840
+      },
+      "checkCostUsd": 0.00014118,
+      "cheapFirst": {
+        "answer": "It prints:\n\n```text\n[4, 2] 7 4\n```",
+        "score": 100,
+        "reason": "The answer correctly evaluates all three expressions and matches the printed output.",
+        "costUsd": 0.00016719
+      },
+      "premium": {
+        "answer": "It prints:\n\n```\n[4, 2] 7 4\n```\n\n- `x[::-2]` steps backward by 2 from the end, giving `[6, 4, 2]`. Then `[1:]` drops the first element, leaving `[4, 2]`.\n- `x[1::3]` takes indices 1 and 4, giving `[2, 5]`. Their sum is `7`.\n- `[y for y in x if y % 3]` keeps values not divisible by 3, giving `[1, 2, 4, 5]`. Index `[-2]` is `4`.",
+        "score": 100,
+        "reason": "The printed output and each explanation of the slicing, sum, and list-comprehension result are correct.",
+        "costUsd": 0.0092496,
+        "ms": 2925
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "birthday",
+      "prompt": "In a room of 23 people (365 equally likely birthdays, no leap years), what is the probability, to 4 decimal places, that at least two share a birthday?",
+      "criteria": "0.5073.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "The probability that at least two people share a birthday is:\n\n\\[\n1-\\prod_{i=1}^{22}\\frac{365-i}{365}\\approx 0.5073\n\\]\n\nSo, to 4 decimal places:\n\n\\[\n\\boxed{0.5073}\n\\]\n\nThat is about **50.73%**.",
+        "score": 100,
+        "reason": "The formula correctly calculates the complement of all birthdays being distinct, and the result rounds to 0.5073.",
+        "costUsd": 0.000014259999999999999,
+        "ms": 1327
+      },
+      "checkCostUsd": 0.00012597,
+      "cheapFirst": {
+        "answer": "The probability that at least two people share a birthday is:\n\n\\[\n1-\\prod_{i=1}^{22}\\frac{365-i}{365}\\approx 0.5073\n\\]\n\nSo, to 4 decimal places:\n\n\\[\n\\boxed{0.5073}\n\\]\n\nThat is about **50.73%**.",
+        "score": 100,
+        "reason": "The formula correctly calculates the complement of all birthdays being distinct, and the result rounds to 0.5073.",
+        "costUsd": 0.00014022999999999998
+      },
+      "premium": {
+        "answer": "The probability is **0.5073**.\n\nStart with the probability that all 23 birthdays are different:\n\nP(no match) = (365/365) × (364/365) × (363/365) × … × (343/365) ≈ 0.492703\n\nThen subtract from 1:\n\nP(at least one match) = 1 − 0.492703 ≈ 0.507297, which rounds to **0.5073**.\n\nSo the chance is slightly better than 50%.",
+        "score": 100,
+        "reason": "The calculation and four-decimal rounding are correct, and the response directly answers the question.",
+        "costUsd": 0.0062496,
+        "ms": 2838
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "digit-sum-27",
+      "prompt": "How many integers from 1 to 1,000,000 have a digit sum of exactly 27? Just the number.",
+      "criteria": "55252.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "55252",
+        "score": 100,
+        "reason": "The answer is correct.",
+        "costUsd": 0.000022770000000000004,
+        "ms": 1849
+      },
+      "checkCostUsd": 0.00008437000000000001,
+      "cheapFirst": {
+        "answer": "55252",
+        "score": 100,
+        "reason": "The answer is correct.",
+        "costUsd": 0.00010714000000000001
+      },
+      "premium": {
+        "answer": "55252",
+        "score": 100,
+        "reason": "The answer matches the correct count and follows the requested format.",
+        "costUsd": 0.008692799999999999,
+        "ms": 3461
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "primes-below-1e5",
+      "prompt": "How many primes are there below 100,000? Just the number.",
+      "criteria": "9592.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "9592",
+        "score": 100,
+        "reason": "The answer is correct and follows the instruction to provide just the number.",
+        "costUsd": 0.0000025,
+        "ms": 820
+      },
+      "checkCostUsd": 0.00009204,
+      "cheapFirst": {
+        "answer": "9592",
+        "score": 100,
+        "reason": "The answer is correct and follows the instruction to provide just the number.",
+        "costUsd": 0.00009454000000000001
+      },
+      "premium": {
+        "answer": "9592",
+        "score": 100,
+        "reason": "The answer is correct and follows the instruction to provide just the number.",
+        "costUsd": 0.0027072,
+        "ms": 1667
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "sum-primes-1000",
+      "prompt": "What is the sum of all primes below 1000? Just the number.",
+      "criteria": "76127.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "76127",
+        "score": 100,
+        "reason": "The answer gives the correct sum, 76127, in the requested format.",
+        "costUsd": 0.000004890000000000001,
+        "ms": 954
+      },
+      "checkCostUsd": 0.00009347,
+      "cheapFirst": {
+        "answer": "76127",
+        "score": 100,
+        "reason": "The answer gives the correct sum, 76127, in the requested format.",
+        "costUsd": 0.00009836
+      },
+      "premium": {
+        "answer": "76127",
+        "score": 100,
+        "reason": "The answer is correct and follows the requested format.",
+        "costUsd": 0.0033887999999999995,
+        "ms": 1451
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "derangements-10",
+      "prompt": "How many derangements are there of 10 items (permutations with no item in its original place)? Just the number.",
+      "criteria": "1334961.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "1334961",
+        "score": 100,
+        "reason": "The answer is the correct number of derangements of 10 items.",
+        "costUsd": 0.00000603,
+        "ms": 969
+      },
+      "checkCostUsd": 0.00008203,
+      "cheapFirst": {
+        "answer": "1334961",
+        "score": 100,
+        "reason": "The answer is the correct number of derangements of 10 items.",
+        "costUsd": 0.00008806
+      },
+      "premium": {
+        "answer": "1334961",
+        "score": 100,
+        "reason": "The answer gives the correct number of derangements of 10 items.",
+        "costUsd": 0.004665600000000001,
+        "ms": 2469
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "palindromes-11",
+      "prompt": "How many 7-digit palindromes are divisible by 11? Just the number.",
+      "criteria": "818.",
+      "answeredBy": "premium",
+      "cheap": {
+        "answer": "892",
+        "score": 0,
+        "reason": "The answer is incorrect; the correct count is 818.",
+        "costUsd": 0.00010508,
+        "ms": 6350
+      },
+      "checkCostUsd": 0.00017797,
+      "cheapFirst": {
+        "answer": "**818**",
+        "score": 100,
+        "reason": "The answer gives the correct number, 818.",
+        "costUsd": 0.01660785
+      },
+      "premium": {
+        "answer": "**818**",
+        "score": 100,
+        "reason": "The answer gives the correct number, 818.",
+        "costUsd": 0.0163248,
+        "ms": 6335
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "factorial-1000-zeros",
+      "prompt": "What is the smallest n such that n! ends in at least 1000 zeros? Just the number.",
+      "criteria": "4005.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "4005",
+        "score": 100,
+        "reason": "4005 is the smallest integer whose factorial has at least 1000 trailing zeros.",
+        "costUsd": 0.000020560000000000003,
+        "ms": 1954
+      },
+      "checkCostUsd": 0.00017744999999999998,
+      "cheapFirst": {
+        "answer": "4005",
+        "score": 100,
+        "reason": "4005 is the smallest integer whose factorial has at least 1000 trailing zeros.",
+        "costUsd": 0.00019800999999999998
+      },
+      "premium": {
+        "answer": "4005",
+        "score": 100,
+        "reason": "4005 is the smallest integer whose factorial has at least 1000 trailing zeros.",
+        "costUsd": 0.004876799999999999,
+        "ms": 2385
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "squarefree-10000",
+      "prompt": "How many integers from 1 to 10,000 are squarefree? Just the number.",
+      "criteria": "6083.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "6083",
+        "score": 100,
+        "reason": "The answer is correct and follows the requested format.",
+        "costUsd": 0.000011570000000000001,
+        "ms": 1127
+      },
+      "checkCostUsd": 0.00010816,
+      "cheapFirst": {
+        "answer": "6083",
+        "score": 100,
+        "reason": "The answer is correct and follows the requested format.",
+        "costUsd": 0.00011973
+      },
+      "premium": {
+        "answer": "6083",
+        "score": 100,
+        "reason": "The answer is correct and follows the request to give only the number.",
+        "costUsd": 0.004593600000000001,
+        "ms": 2139
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "m2n",
+      "prompt": "How many ordered pairs of positive integers (m, n) satisfy m^2 * n = 20^20? Just the number.",
+      "criteria": "231.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "231",
+        "score": 100,
+        "reason": "The answer is correct.",
+        "costUsd": 0.00001432,
+        "ms": 1468
+      },
+      "checkCostUsd": 0.00008697,
+      "cheapFirst": {
+        "answer": "231",
+        "score": 100,
+        "reason": "The answer is correct.",
+        "costUsd": 0.00010129
+      },
+      "premium": {
+        "answer": "231",
+        "score": 100,
+        "reason": "The answer is correct.",
+        "costUsd": 0.0040608,
+        "ms": 2153
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "sum-divisors",
+      "prompt": "What is the sum of all positive divisors of 720720? Just the number.",
+      "criteria": "3249792.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "3249792",
+        "score": 100,
+        "reason": "The answer is correct.",
+        "costUsd": 0.000021000000000000002,
+        "ms": 1657
+      },
+      "checkCostUsd": 0.00008424,
+      "cheapFirst": {
+        "answer": "3249792",
+        "score": 100,
+        "reason": "The answer is correct.",
+        "costUsd": 0.00010524000000000002
+      },
+      "premium": {
+        "answer": "3249792",
+        "score": 100,
+        "reason": "The answer is correct.",
+        "costUsd": 0.0056112,
+        "ms": 2652
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "partitions-30",
+      "prompt": "How many integer partitions does 30 have? Just the number.",
+      "criteria": "5604.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "5604",
+        "score": 100,
+        "reason": "The answer is correct and follows the requested format.",
+        "costUsd": 0.0000043700000000000005,
+        "ms": 956
+      },
+      "checkCostUsd": 0.00010413,
+      "cheapFirst": {
+        "answer": "5604",
+        "score": 100,
+        "reason": "The answer is correct and follows the requested format.",
+        "costUsd": 0.0001085
+      },
+      "premium": {
+        "answer": "5604",
+        "score": 100,
+        "reason": "The answer is correct and follows the request for just the number.",
+        "costUsd": 0.002832,
+        "ms": 1560
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "eight-queens",
+      "prompt": "How many solutions does the 8-queens puzzle have (counting rotations and reflections as different)? Just the number.",
+      "criteria": "92.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "92",
+        "score": 100,
+        "reason": "The answer is correct and follows the request to give only the number.",
+        "costUsd": 0.00000406,
+        "ms": 788
+      },
+      "checkCostUsd": 0.00009438,
+      "cheapFirst": {
+        "answer": "92",
+        "score": 100,
+        "reason": "The answer is correct and follows the request to give only the number.",
+        "costUsd": 0.00009844
+      },
+      "premium": {
+        "answer": "92",
+        "score": 100,
+        "reason": "The answer is correct and follows the instruction to provide just the number.",
+        "costUsd": 0.0024624,
+        "ms": 1308
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "lattice-avoid",
+      "prompt": "How many shortest lattice paths go from (0,0) to (6,6) using unit steps right and up, without passing through the point (3,3)? Just the number.",
+      "criteria": "524.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "524",
+        "score": 100,
+        "reason": "The answer gives the correct number of shortest paths that avoid (3,3).",
+        "costUsd": 0.00000533,
+        "ms": 1080
+      },
+      "checkCostUsd": 0.00009035000000000001,
+      "cheapFirst": {
+        "answer": "524",
+        "score": 100,
+        "reason": "The answer gives the correct number of shortest paths that avoid (3,3).",
+        "costUsd": 0.00009568000000000002
+      },
+      "premium": {
+        "answer": "524",
+        "score": 100,
+        "reason": "The answer is correct: there are 524 such paths.",
+        "costUsd": 0.0034368,
+        "ms": 1511
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "last-digits-7",
+      "prompt": "What are the last 4 digits of 7^2026? Just the 4 digits.",
+      "criteria": "5649.",
+      "answeredBy": "premium",
+      "cheap": {
+        "answer": "5649",
+        "score": 0,
+        "reason": "The last four digits are 5249, not 5649.",
+        "costUsd": 0.00005127,
+        "ms": 2513
+      },
+      "checkCostUsd": 0.00024739,
+      "cheapFirst": {
+        "answer": "5649",
+        "score": 100,
+        "reason": "The answer matches the correct last four digits, 5649.",
+        "costUsd": 0.01065226
+      },
+      "premium": {
+        "answer": "5649",
+        "score": 100,
+        "reason": "The answer matches the correct last four digits, 5649.",
+        "costUsd": 0.010353600000000001,
+        "ms": 4121
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "count-triangles",
+      "prompt": "How many triangles with integer side lengths have a perimeter of exactly 100? (Congruent triangles count once.) Just the number.",
+      "criteria": "208.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "208",
+        "score": 100,
+        "reason": "The answer is correct and follows the instruction to give only the number.",
+        "costUsd": 0.00005106,
+        "ms": 2481
+      },
+      "checkCostUsd": 0.00010764000000000002,
+      "cheapFirst": {
+        "answer": "208",
+        "score": 100,
+        "reason": "The answer is correct and follows the instruction to give only the number.",
+        "costUsd": 0.0001587
+      },
+      "premium": {
+        "answer": "**208**",
+        "score": 100,
+        "reason": "The answer gives the correct number, 208, and follows the instruction to provide just the number.",
+        "costUsd": 0.015043200000000001,
+        "ms": 5677
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "happy-10000",
+      "prompt": "How many happy numbers are there from 1 to 10,000? (A happy number reaches 1 when you repeatedly replace it with the sum of the squares of its digits.) Just the number.",
+      "criteria": "1442.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "1442",
+        "score": 100,
+        "reason": "The answer is correct and follows the requested format.",
+        "costUsd": 0.00007731,
+        "ms": 4838
+      },
+      "checkCostUsd": 0.00010127000000000001,
+      "cheapFirst": {
+        "answer": "1442",
+        "score": 100,
+        "reason": "The answer is correct and follows the requested format.",
+        "costUsd": 0.00017858000000000001
+      },
+      "premium": {
+        "answer": "1442",
+        "score": 100,
+        "reason": "The answer is correct and follows the instruction to provide just the number.",
+        "costUsd": 0.005644799999999999,
+        "ms": 2922
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "multiply-40-digit",
+      "prompt": "What is 7939998811768478254846096456508236018744 × 2203198298276561968663862937099419025360? Just the number, no commas.",
+      "criteria": "17493391870406235363698352803194737674117165341934328462791177344924375171347840 exactly; any other digits are wrong.",
+      "answeredBy": "premium",
+      "cheap": {
+        "answer": "",
+        "score": 0,
+        "reason": "No answer was provided, so it does not give the correct product.",
+        "costUsd": 0.00112108,
+        "ms": 37463
+      },
+      "checkCostUsd": 0.00010452000000000001,
+      "cheapFirst": {
+        "answer": "17493391870406235363698352803194737674117165341934328462791177344924375171347840",
+        "score": 100,
+        "reason": "The answer exactly matches the correct product and follows the requested format.",
+        "costUsd": 0.19407039999999998
+      },
+      "premium": {
+        "answer": "17493391870406235363698352803194737674117165341934328462791177344924375171347840",
+        "score": 100,
+        "reason": "The answer exactly matches the correct product and follows the requested format.",
+        "costUsd": 0.19284479999999998,
+        "ms": 61412
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "count-in-1200",
+      "prompt": "How many times does the letter 'q' appear in this string? Just the number.\nlsbqgbcnnchcrnbsdhuusbssmbhbrejnerdsjrvfdssugldrwcsbtgpvrnykosoljhzfwyhcsjqpkxojtcdqnfykepnbvcyrszkkwltpszoccipwvcbxwjusvojwmvlaolftdpbgyjexhmmpcfomrienriwnlvmhecfehvhapsfijaenrltskewqtuvxboyvzrmmmmdpumbgcgofdktbdaserdltacgtmeuiltlpddpoppjcedxkxipwfqagqlewrayqjucwiqlflyhrryqkuhtzzygzhmxzhgqplxaazipigwtlozxllchdhpgkgpttapulzucvdmzwygpfnzukczxmomxcxffeaesozuettpvlerreaazxudqxenggaigjqhyskirnebxlovsqnqereqqaoyftayzefeptxdrbkvqqrpzydrbhgibydqoraycoktqtqgwioqrzpqhwqirgoendmokcvhncgvjzdyewuvleieohxdmpfvhfwnqmknglkcxlakroowamkqtjqcdzhdciibyfiyenvimerqspwkcibzwfnciauczicthcidoakrnitebqwhdfibfgjujqygjoqvfilzaibaaxqrgqphodvunvprmqjwghkgwxuemlbeacuxinfbcvmqvjthwjboffioailkrkhbjglfakmcpiqughqyacicemsbmajjuhcsqyevwztmykxpejxtuebwqunxwzqeqyqszavszwvwuhcabeuldmorbuaurvhpiaozcxqrcvqcxxpizcihxyghxuopmcpvjybtuugctekiuxwjtseapbpivdwgvpjwqjoooydrgjcpajocqoimggcscexqiletuqidwlhppmafapvomjxenlmkdkakykmdgwaxjilcmmsclnyibidbvjuehinqkgylznazyumrrgxcbxnotyeujpbrefpnkjjixxuimuhjprvmdfufcgqzprhokyonerghcfkrckhlizsgaxnmnxqgmikybpislevqquzgcihmmuonjaebnwyzpspacmqoohzdheeqvdxwuyocrybazehsbuwjeuiqunwyddcjqsgmihztaarjoikuhpqhrhanwujbagpvuncihvnlhpbwkwnlvmgazjxqcgpgjyghohiyjdtptfhpnvbtembgatenbwbfmowkxdcfkgfuqxobjv",
+      "criteria": "60.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "60",
+        "score": 100,
+        "reason": "The answer correctly gives the number of 'q' characters in the string.",
+        "costUsd": 0.00046774000000000007,
+        "ms": 31305
+      },
+      "checkCostUsd": 0.00028808,
+      "cheapFirst": {
+        "answer": "60",
+        "score": 100,
+        "reason": "The answer correctly gives the number of 'q' characters in the string.",
+        "costUsd": 0.0007558200000000001
+      },
+      "premium": {
+        "answer": "60",
+        "score": 0,
+        "reason": "The answer follows the requested format, but the string contains 58 occurrences of 'q', not 60.",
+        "costUsd": 0.0473136,
+        "ms": 14109
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "sum-250",
+      "prompt": "What is the sum of these 250 numbers? Just the number.\n860613, 497011, 979888, 492045, 447810, 563926, 277482, 214250, 103010, 182042, 393398, 184686, 468539, 540593, 229717, 688386, 895664, 317477, 498594, 473952, 906074, 961482, 423694, 961937, 942988, 553455, 192023, 151650, 839515, 596463, 305222, 490819, 667834, 568029, 302402, 439014, 481942, 873135, 597585, 131753, 762345, 530756, 360060, 951259, 755788, 903909, 524434, 142624, 493811, 136547, 586592, 165619, 942361, 165015, 369500, 304410, 883587, 165904, 735034, 455540, 480606, 385542, 451242, 746948, 145702, 374907, 882696, 851447, 823074, 431857, 389019, 411852, 103954, 856623, 892358, 724498, 944794, 764776, 168505, 125434, 966142, 345226, 212471, 598271, 850330, 588367, 914068, 505290, 928164, 363241, 550822, 954379, 617444, 239153, 620660, 291825, 109128, 941553, 874360, 418048, 962721, 825729, 910349, 258665, 736752, 347613, 443723, 435071, 583164, 479436, 921908, 920247, 724654, 182853, 636750, 306896, 510711, 889457, 267706, 359320, 527563, 167877, 781098, 135508, 605088, 679437, 671071, 441582, 268498, 547274, 210332, 175670, 377758, 754942, 188166, 318461, 201106, 541513, 622689, 844249, 568674, 281604, 345572, 239388, 537089, 583313, 750439, 806854, 346345, 884310, 664725, 988130, 911465, 796700, 896463, 227050, 917627, 981717, 408201, 408052, 392968, 694421, 380668, 491088, 366397, 873919, 372981, 308865, 560741, 359448, 294758, 357257, 346943, 260769, 395021, 706371, 297394, 442190, 167952, 515309, 363878, 357896, 631968, 651874, 342620, 781197, 947713, 205426, 785062, 586450, 138821, 207303, 104710, 597824, 958891, 342340, 981387, 570073, 492037, 142322, 407943, 344205, 225007, 152838, 298781, 729662, 968142, 711522, 303593, 178765, 490318, 637572, 286393, 570930, 732335, 372575, 912644, 915557, 797046, 106647, 210918, 768422, 725105, 844180, 750062, 466686, 328217, 139273, 486618, 456533, 248236, 146311, 313884, 367296, 140093, 728540, 867797, 783297, 313324, 954320, 111932, 958608, 443145, 528862, 811269, 489870, 294138, 751180, 427360, 181720",
+      "criteria": "131138218 exactly.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "131138218",
+        "score": 100,
+        "reason": "The answer exactly matches the stated sum of 131138218.",
+        "costUsd": 0.0008552700000000001,
+        "ms": 32879
+      },
+      "checkCostUsd": 0.00022997,
+      "cheapFirst": {
+        "answer": "131138218",
+        "score": 100,
+        "reason": "The answer exactly matches the stated sum of 131138218.",
+        "costUsd": 0.0010852400000000001
+      },
+      "premium": {
+        "answer": "131138218",
+        "score": 100,
+        "reason": "The answer matches the correct sum exactly.",
+        "costUsd": 0.091656,
+        "ms": 24180
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "reverse-300",
+      "prompt": "Reverse this 300-character string. Only the result.\nnc594e0gz9j8fkzr0st0dtw00bxmzzna1k1hfzx3kiad9jzfx6kjwsk7kegy5mtic4udyfkozm4lncz7kywhjpmc9cuhy39t0tp1yx262lba53p23l4zgeiw1xf266ccifu6fd6yibehmi5skoewqkur3jq64nq6puxcmlzkruykqh7dx297gq8zxqyxjxvf2olds7qtuacojs106xdi5ocbdawtg7w8o0tinx4kiapj2gejrzqad9w275pkacd8bzlpkdga9mj0m760l6tetd48ay13f2logqochvqdr917",
+      "criteria": "719rdqvhcoqgol2f31ya84dtet6l067m0jm9agdkplzb8dcakp572w9daqzrjeg2jpaik4xnit0o8w7gtwadbco5idx601sjocautq7sdlo2fvxjxyqxz8qg792xd7hqkyurkzlmcxup6qn46qj3rukqweoks5imhebiy6df6uficc662fx1wiegz4l32p35abl262xy1pt0t93yhuc9cmpjhwyk7zcnl4mzokfydu4citm5ygek7kswjk6xfzj9daik3xzfh1k1anzzmxb00wtd0ts0rzkf8j9zg0e495cn exactly, every character.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "719rdqvhcoqgol2f31ya84dtet6l067m0jm9agdkplzb8dcakp572w9daqzrjeg2jpaik4xnit0o8w7gtwadbco5idx601sjocautq7sdlo2fvxjxyqxz8qg792xd7hqkyurkzlmcxup6qn46qj3rukqweoks5imhebiy6df6uficc662fx1wiegz4l32p35abl262xy1pt0t93yhuc9cmpjhwyk7zcnl4mzokfydu4citm5ygek7kswjk6xfzj9daik3xzfh1k1anzzmxb00wtd0ts0rzkf8j9zg0e495cn",
+        "score": 100,
+        "reason": "The answer exactly reverses the provided string and contains no extra text.",
+        "costUsd": 0.00043288000000000007,
+        "ms": 26263
+      },
+      "checkCostUsd": 0.00017134,
+      "cheapFirst": {
+        "answer": "719rdqvhcoqgol2f31ya84dtet6l067m0jm9agdkplzb8dcakp572w9daqzrjeg2jpaik4xnit0o8w7gtwadbco5idx601sjocautq7sdlo2fvxjxyqxz8qg792xd7hqkyurkzlmcxup6qn46qj3rukqweoks5imhebiy6df6uficc662fx1wiegz4l32p35abl262xy1pt0t93yhuc9cmpjhwyk7zcnl4mzokfydu4citm5ygek7kswjk6xfzj9daik3xzfh1k1anzzmxb00wtd0ts0rzkf8j9zg0e495cn",
+        "score": 100,
+        "reason": "The answer exactly reverses the provided string and contains no extra text.",
+        "costUsd": 0.00060422
+      },
+      "premium": {
+        "answer": "719rdqvhcoqgol2f31ya84dtet6l067m0jm9agdkplzb8dcakp572w9daqzrjeg2jpaik4xnit0o8w7gtwadbco5idx601sjocautq7sdlo2fvxjxyqxz8qg792xd7hqkyurkzlmcxup6qn46qj3rukqweoks5imhebiy6df6uficc662fx1wiegz4l32p35abl262xy1pt0t93yhuc9cmpjhwyk7zcnl4mzokfydu4citm5ygek7kswjk6xfzj9daik3xzfh1k1anzzmxb00wtd0ts0rzkf8j9zg0e495cn",
+        "score": 100,
+        "reason": "The response exactly matches the reversed string, character for character.",
+        "costUsd": 0.047044800000000005,
+        "ms": 15149
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "word-position",
+      "prompt": "In this list of 120 words, at what position (counting from 1) does the word 'xosabo' first appear? Just the number.\nlijava hikehi jonuko wotuba rexijo zuduhe cafaze pebace cacaxi judofe jefaca mofefe minola pimapi zutiza rarufi tawuja xihobu jicapo fohoxi vixeme kohado wanifo qarape miruve qesewu zapunu gowiho sixegi seveli zegenu vihene lahajo gemiri jafijo sabore visagi zoberu xokuke forila reqelo toburu hibota ciwehe vifusu jovapu noseho vazici loqaba ropula kiquko sehede tukepo siweti kiqire taliki notoza pemoca xigupu bajami zaxeke sigequ huzawi jojudo fufire gotuco setete wubeno xomopo rahiba zanavo tecere napitu wemono lucimi tonulu petane niguda ququxa qiface tucuwu qugude cohaha rabigi wimera naruxa tuvafo xosabo zugoru fatega rabade fetalu kohape diwosi cababu domize tucipu sohefi hotosi ximicu zizagu mureqo qukoma nilohu cigugi wopudu woqeki zaqoji xaqowa widequ vivitu xejeja hipuxi qugeco papode nubilu zafaju tuxeli rasuze laneho",
+      "criteria": "88.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "88",
+        "score": 100,
+        "reason": "The answer correctly gives the first position of “xosabo” as 88.",
+        "costUsd": 0.00004805000000000001,
+        "ms": 3741
+      },
+      "checkCostUsd": 0.00043368,
+      "cheapFirst": {
+        "answer": "88",
+        "score": 100,
+        "reason": "The answer correctly gives the first position of “xosabo” as 88.",
+        "costUsd": 0.00048173
+      },
+      "premium": {
+        "answer": "88",
+        "score": 100,
+        "reason": "The answer correctly identifies the first occurrence of “xosabo” at position 88.",
+        "costUsd": 0.0188448,
+        "ms": 5801
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "hardest-sudoku",
+      "prompt": "Solve this Sudoku. Reply with the 9 rows of digits only, one row per line.\n8 . . . . . . . .\n. . 3 6 . . . . .\n. 7 . . 9 . 2 . .\n. 5 . . . 7 . . .\n. . . . 4 5 7 . .\n. . . 1 . . . 3 .\n. . 1 . . . . 6 8\n. . 8 5 . . . 1 .\n. 9 . . . . 4 . .",
+      "criteria": "Rows:\n812753649\n943682175\n675491283\n154237896\n369845721\n287169534\n521974368\n438526917\n796318452\nEvery digit must match.",
+      "answeredBy": "premium",
+      "cheap": {
+        "answer": "",
+        "score": 0,
+        "reason": "The answer is blank and does not provide the required nine Sudoku rows.",
+        "costUsd": 0.0011218900000000002,
+        "ms": 74155
+      },
+      "checkCostUsd": 0.00011531,
+      "cheapFirst": {
+        "answer": "812753649\n943682175\n675491283\n154237896\n369845721\n287169534\n521974368\n438526917\n796318452",
+        "score": 100,
+        "reason": "The answer gives the correct solution in all nine rows and follows the requested format.",
+        "costUsd": 0.0259428
+      },
+      "premium": {
+        "answer": "812753649\n943682175\n675491283\n154237896\n369845721\n287169534\n521974368\n438526917\n796318452",
+        "score": 100,
+        "reason": "The answer gives the correct solution in all nine rows and follows the requested format.",
+        "costUsd": 0.024705599999999998,
+        "ms": 8956
       }
     }
   ]

@@ -47,12 +47,21 @@ function page(r: Results | null, ct: CheckerTest | null): string {
   const byCheap = rows.filter((x) => x.answeredBy === "cheap").length;
   const cfQ = avg(rows.map((x) => x.cheapFirst.score));
   const prQ = avg(rows.map((x) => x.premium.score));
+  const savedOn = (xs: Row[]) => {
+    const p = xs.reduce((a, x) => a + x.premium.costUsd, 0);
+    return p > 0 ? (1 - xs.reduce((a, x) => a + x.cheapFirst.costUsd, 0) / p) * 100 : 0;
+  };
+  const stress = rows.filter((x) => x.category === "stress test");
+  const everyday = rows.filter((x) => x.category !== "stress test");
+  const split = stress.length && everyday.length
+    ? `<div class="lbl split">${savedOn(everyday).toFixed(0)}% on ${everyday.length} everyday questions, ${savedOn(stress).toFixed(0)}% on ${stress.length} stress tests</div>`
+    : "";
   const per1000 = (c: number) => (n ? (c / n) * 1000 : 0);
 
   const tiles = n
     ? `
     <div class="tiles">
-      <div class="tile accent"><div class="big">${saved.toFixed(0)}%</div><div class="lbl">cheaper than sending everything to ${esc(r!.models.premium.label.replace("SERV · ", ""))}</div></div>
+      <div class="tile accent"><div class="big">${saved.toFixed(0)}%</div><div class="lbl">cheaper than sending everything to ${esc(r!.models.premium.label.replace("SERV · ", ""))}</div>${split}</div>
       <div class="tile"><div class="big">${byCheap}/${n}</div><div class="lbl">questions answered by Dolphin alone</div></div>
       <div class="tile"><div class="big">${cfQ.toFixed(0)} <span class="vs">vs ${prQ.toFixed(0)}</span></div><div class="lbl">average quality score, Cheap First vs premium only (0 to 100)</div></div>
       <div class="tile"><div class="big">${usd(per1000(cfCost))} <span class="vs">vs ${usd(per1000(prCost))}</span></div><div class="lbl">cost per 1,000 questions at these rates</div></div>
@@ -166,7 +175,7 @@ h1{font-size:clamp(32px,6vw,52px);margin:0 0 8px;letter-spacing:-.02em}
 .tile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
 .tile.accent{background:var(--accent-soft);border-color:transparent}
 .big{font-size:34px;font-weight:700;letter-spacing:-.02em}.vs{font-size:18px;color:var(--muted);font-weight:500}
-.lbl{color:var(--muted);font-size:14px}
+.lbl{color:var(--muted);font-size:14px}.split{margin-top:8px;font-size:13px}
 h2{font-size:22px;margin:36px 0 12px}
 .head,.row summary{display:grid;grid-template-columns:96px 1fr 96px 52px 84px 84px;gap:10px;align-items:center}
 .head{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:0 14px 6px}
@@ -174,7 +183,7 @@ h2{font-size:22px;margin:36px 0 12px}
 .row{background:var(--card);border:1px solid var(--line);border-radius:12px;margin:0 0 8px}
 .row summary{padding:12px 14px;cursor:pointer;list-style:none}.row summary::-webkit-details-marker{display:none}
 .cat{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
-.q{min-width:0}.num{text-align:right;font-variant-numeric:tabular-nums}.cost{font-size:14px}.muted{color:var(--muted)}
+.q{min-width:0;overflow-wrap:anywhere}.q2,.ctq,.cta,.why{overflow-wrap:anywhere}.row{min-width:0}.num{text-align:right;font-variant-numeric:tabular-nums}.cost{font-size:14px}.muted{color:var(--muted)}
 .pill{font-size:12px;padding:3px 8px;border-radius:999px;text-align:center;font-weight:600}
 .pill.cheap{background:var(--good-soft);color:var(--good)}.pill.prem{background:var(--warn-soft);color:var(--warn)}
 .detail{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:0 14px 14px}
