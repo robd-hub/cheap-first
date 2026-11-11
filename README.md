@@ -21,7 +21,7 @@ Cheap First costs far less than sending everything to the frontier model, while 
 
 ## The benchmark
 
-`data/questions.json` holds 30 everyday questions across facts, maths, code, writing, reasoning,
+`data/questions.json` holds 104 questions, from everyday ones to hard maths, logic and code traps, across facts, maths, code, writing, reasoning,
 honesty ("don't make things up") and instruction-following. `npm run benchmark` runs each one two ways:
 
 - **Cheap First**, as above.
@@ -54,7 +54,8 @@ console.log(result.answer, result.answeredBy, result.costUsd);
 | Command | What it does |
 |---|---|
 | `npm run ask -- "question"` | Answer one question the Cheap First way |
-| `npm run benchmark` | Run the 30-question benchmark and save `data/results.json` |
+| `npm run benchmark` | Run the 104-question benchmark and save `data/results.json` |
+| `npx tsx scripts/check-sanity.ts` | Feed the checker deliberately wrong answers to show it catches them |
 | `npm run build` | Build the results page into `out/` (no keys needed) |
 
 ## Public site
