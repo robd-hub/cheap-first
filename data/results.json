@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-11-11T07:19:45.723Z",
+  "ranAt": "2026-11-11T08:11:47.713Z",
   "passMark": 75,
   "models": {
     "cheap": {
@@ -2935,6 +2935,34 @@
         "reason": "It preserves the meaning in plain English and uses fewer than 10 words.",
         "costUsd": 0.00588,
         "ms": 2228
+      }
+    },
+    {
+      "category": "stress test",
+      "id": "huge-multiply",
+      "prompt": "What is 73829104857362918475 × 9182736450192837465? Just the number, no commas.",
+      "criteria": "677953212258815539782673965533720665875 exactly; any other digits are wrong.",
+      "answeredBy": "cheap",
+      "cheap": {
+        "answer": "677953212258815539782673965533720665875",
+        "score": 100,
+        "reason": "The answer exactly matches the correct product and follows the requested format.",
+        "costUsd": 0.00034422,
+        "ms": 23667
+      },
+      "checkCostUsd": 0.00009347,
+      "cheapFirst": {
+        "answer": "677953212258815539782673965533720665875",
+        "score": 100,
+        "reason": "The answer exactly matches the correct product and follows the requested format.",
+        "costUsd": 0.00043769
+      },
+      "premium": {
+        "answer": "677953212258815539782673965533720665875",
+        "score": 100,
+        "reason": "The answer exactly matches the correct product and follows the requested number-only format.",
+        "costUsd": 0.0534336,
+        "ms": 19001
       }
     }
   ]

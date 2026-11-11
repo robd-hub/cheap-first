@@ -622,5 +622,239 @@
     "id": "plain-postponed",
     "prompt": "Rewrite 'The meeting was postponed due to unforeseen circumstances' in plain English, under 10 words.",
     "criteria": "Plain English, same meaning, under 10 words."
+  },
+  {
+    "category": "stress test",
+    "id": "huge-multiply",
+    "prompt": "What is 73829104857362918475 × 9182736450192837465? Just the number, no commas.",
+    "criteria": "677953212258815539782673965533720665875 exactly; any other digits are wrong."
+  },
+  {
+    "category": "stress test",
+    "id": "sum-40",
+    "prompt": "What is the sum of these 40 numbers? Just the number.\n7706, 4908, 4036, 4436, 7516, 4508, 3276, 668, 1108, 4028, 3044, 2948, 8948, 1100, 6804, 7228, 380, 3348, 7388, 2380, 3956, 7540, 8052, 1908, 6348, 1756, 1764, 4868, 4348, 1788, 116, 1460, 4980, 7668, 6196, 6908, 6500, 884, 7356, 8884",
+    "criteria": "179038 exactly."
+  },
+  {
+    "category": "stress test",
+    "id": "date-10000",
+    "prompt": "What is the date exactly 10,000 days after 1 March 1987? Give it as YYYY-MM-DD.",
+    "criteria": "2014-07-17."
+  },
+  {
+    "category": "stress test",
+    "id": "base-7",
+    "prompt": "Convert 987654321 from base 10 to base 7. Just the digits.",
+    "criteria": "33321631443."
+  },
+  {
+    "category": "stress test",
+    "id": "big-remainder",
+    "prompt": "What is the remainder when 123456789012345678901 is divided by 97? Just the number.",
+    "criteria": "31."
+  },
+  {
+    "category": "stress test",
+    "id": "power-compare",
+    "prompt": "Which is larger, 3^200 or 2^317? Answer with just the larger one.",
+    "criteria": "2^317."
+  },
+  {
+    "category": "stress test",
+    "id": "count-p",
+    "prompt": "How many times does the letter 'p' (upper or lower case) appear in this text? Just the number.\n\nPeter Piper picked a peck of pickled peppers. A peck of pickled peppers Peter Piper picked. If Peter Piper picked a peck of pickled peppers, where's the peck of pickled peppers Peter Piper picked?",
+    "criteria": "36."
+  },
+  {
+    "category": "stress test",
+    "id": "word-count",
+    "prompt": "How many words are in this passage? Count hyphen-free tokens separated by spaces. Just the number.\n\nThe quick brown fox jumps over the lazy dog while seventeen curious otters watch from the riverbank, and a heron, standing perfectly still in the shallow reeds, waits for the morning fish to rise toward the warm and glittering surface of the slow green water.",
+    "criteria": "45."
+  },
+  {
+    "category": "stress test",
+    "id": "reverse-long",
+    "prompt": "Reverse this text character by character. Only the result.\nCheap models answer first and expensive models step in only when needed",
+    "criteria": "dedeen nehw ylno ni pets sledom evisnepxe dna tsrif rewsna sledom paehC exactly."
+  },
+  {
+    "category": "stress test",
+    "id": "caesar",
+    "prompt": "This message was encrypted with a Caesar cipher (an unknown shift). Decrypt it. Only the plaintext.\nXPPE XP LE ESP ZWO WTRSESZFDP LE XTOYTRSE",
+    "criteria": "MEET ME AT THE OLD LIGHTHOUSE AT MIDNIGHT."
+  },
+  {
+    "category": "stress test",
+    "id": "sort-26",
+    "prompt": "Sort these words alphabetically, ignoring case, keeping each word's original capitalisation. Reply as one comma-separated line.\nquartz zephyr apple mango Banana kiwi delta echo Alpha juniper oak umbrella yak igloo nectar fig grape lemon hotel tango violet rose storm xenon wolf cedar",
+    "criteria": "Alpha, apple, Banana, cedar, delta, echo, fig, grape, hotel, igloo, juniper, kiwi, lemon, mango, nectar, oak, quartz, rose, storm, tango, umbrella, violet, wolf, xenon, yak, zephyr."
+  },
+  {
+    "category": "stress test",
+    "id": "alphabet-26",
+    "prompt": "Write a single sentence of exactly 26 words where the words start with A, B, C, ... Z in order. Only the sentence.",
+    "criteria": "Exactly 26 words, word n starts with the nth letter of the alphabet, A to Z in order, forms a sentence."
+  },
+  {
+    "category": "stress test",
+    "id": "exact-50",
+    "prompt": "Write a paragraph about coffee that is exactly 50 words long. Only the paragraph.",
+    "criteria": "Exactly 50 words (count carefully), about coffee."
+  },
+  {
+    "category": "stress test",
+    "id": "knaves-4",
+    "prompt": "Knights always tell the truth; knaves always lie. A says: 'Exactly one of us four is a knave.' B says: 'Exactly two of us are knaves.' C says: 'Exactly three of us are knaves.' D says: 'All four of us are knaves.' Who is a knight and who is a knave?",
+    "criteria": "D cannot be a knight (contradiction). At most one statement can be true. If none were true, all four would be knaves, which makes D's statement true - contradiction. So exactly one is a knight: three knaves, so C is the knight; A, B and D are knaves."
+  },
+  {
+    "category": "stress test",
+    "id": "collatz-27",
+    "prompt": "Starting from 27, how many steps does the Collatz process (n -> n/2 if even, 3n+1 if odd) take to first reach 1? Just the number.",
+    "criteria": "111."
+  },
+  {
+    "category": "stress test",
+    "id": "digits-pi-like",
+    "prompt": "What is the 100th digit after the decimal point of 1/97? Just the digit.",
+    "criteria": "3."
+  },
+  {
+    "category": "stress test",
+    "id": "py-trace",
+    "prompt": "What does this Python print?\nx = [1, 2, 3, 4, 5, 6]\nprint(x[::-2][1:], sum(x[1::3]), [y for y in x if y % 3][-2])",
+    "criteria": "[4, 2] 7 4"
+  },
+  {
+    "category": "stress test",
+    "id": "birthday",
+    "prompt": "In a room of 23 people (365 equally likely birthdays, no leap years), what is the probability, to 4 decimal places, that at least two share a birthday?",
+    "criteria": "0.5073."
+  },
+  {
+    "category": "stress test",
+    "id": "digit-sum-27",
+    "prompt": "How many integers from 1 to 1,000,000 have a digit sum of exactly 27? Just the number.",
+    "criteria": "55252."
+  },
+  {
+    "category": "stress test",
+    "id": "primes-below-1e5",
+    "prompt": "How many primes are there below 100,000? Just the number.",
+    "criteria": "9592."
+  },
+  {
+    "category": "stress test",
+    "id": "sum-primes-1000",
+    "prompt": "What is the sum of all primes below 1000? Just the number.",
+    "criteria": "76127."
+  },
+  {
+    "category": "stress test",
+    "id": "derangements-10",
+    "prompt": "How many derangements are there of 10 items (permutations with no item in its original place)? Just the number.",
+    "criteria": "1334961."
+  },
+  {
+    "category": "stress test",
+    "id": "palindromes-11",
+    "prompt": "How many 7-digit palindromes are divisible by 11? Just the number.",
+    "criteria": "818."
+  },
+  {
+    "category": "stress test",
+    "id": "factorial-1000-zeros",
+    "prompt": "What is the smallest n such that n! ends in at least 1000 zeros? Just the number.",
+    "criteria": "4005."
+  },
+  {
+    "category": "stress test",
+    "id": "squarefree-10000",
+    "prompt": "How many integers from 1 to 10,000 are squarefree? Just the number.",
+    "criteria": "6083."
+  },
+  {
+    "category": "stress test",
+    "id": "m2n",
+    "prompt": "How many ordered pairs of positive integers (m, n) satisfy m^2 * n = 20^20? Just the number.",
+    "criteria": "231."
+  },
+  {
+    "category": "stress test",
+    "id": "sum-divisors",
+    "prompt": "What is the sum of all positive divisors of 720720? Just the number.",
+    "criteria": "3249792."
+  },
+  {
+    "category": "stress test",
+    "id": "partitions-30",
+    "prompt": "How many integer partitions does 30 have? Just the number.",
+    "criteria": "5604."
+  },
+  {
+    "category": "stress test",
+    "id": "eight-queens",
+    "prompt": "How many solutions does the 8-queens puzzle have (counting rotations and reflections as different)? Just the number.",
+    "criteria": "92."
+  },
+  {
+    "category": "stress test",
+    "id": "lattice-avoid",
+    "prompt": "How many shortest lattice paths go from (0,0) to (6,6) using unit steps right and up, without passing through the point (3,3)? Just the number.",
+    "criteria": "524."
+  },
+  {
+    "category": "stress test",
+    "id": "last-digits-7",
+    "prompt": "What are the last 4 digits of 7^2026? Just the 4 digits.",
+    "criteria": "5649."
+  },
+  {
+    "category": "stress test",
+    "id": "count-triangles",
+    "prompt": "How many triangles with integer side lengths have a perimeter of exactly 100? (Congruent triangles count once.) Just the number.",
+    "criteria": "208."
+  },
+  {
+    "category": "stress test",
+    "id": "happy-10000",
+    "prompt": "How many happy numbers are there from 1 to 10,000? (A happy number reaches 1 when you repeatedly replace it with the sum of the squares of its digits.) Just the number.",
+    "criteria": "1442."
+  },
+  {
+    "category": "stress test",
+    "id": "multiply-40-digit",
+    "prompt": "What is 7939998811768478254846096456508236018744 × 2203198298276561968663862937099419025360? Just the number, no commas.",
+    "criteria": "17493391870406235363698352803194737674117165341934328462791177344924375171347840 exactly; any other digits are wrong."
+  },
+  {
+    "category": "stress test",
+    "id": "count-in-1200",
+    "prompt": "How many times does the letter 'q' appear in this string? Just the number.\nlsbqgbcnnchcrnbsdhuusbssmbhbrejnerdsjrvfdssugldrwcsbtgpvrnykosoljhzfwyhcsjqpkxojtcdqnfykepnbvcyrszkkwltpszoccipwvcbxwjusvojwmvlaolftdpbgyjexhmmpcfomrienriwnlvmhecfehvhapsfijaenrltskewqtuvxboyvzrmmmmdpumbgcgofdktbdaserdltacgtmeuiltlpddpoppjcedxkxipwfqagqlewrayqjucwiqlflyhrryqkuhtzzygzhmxzhgqplxaazipigwtlozxllchdhpgkgpttapulzucvdmzwygpfnzukczxmomxcxffeaesozuettpvlerreaazxudqxenggaigjqhyskirnebxlovsqnqereqqaoyftayzefeptxdrbkvqqrpzydrbhgibydqoraycoktqtqgwioqrzpqhwqirgoendmokcvhncgvjzdyewuvleieohxdmpfvhfwnqmknglkcxlakroowamkqtjqcdzhdciibyfiyenvimerqspwkcibzwfnciauczicthcidoakrnitebqwhdfibfgjujqygjoqvfilzaibaaxqrgqphodvunvprmqjwghkgwxuemlbeacuxinfbcvmqvjthwjboffioailkrkhbjglfakmcpiqughqyacicemsbmajjuhcsqyevwztmykxpejxtuebwqunxwzqeqyqszavszwvwuhcabeuldmorbuaurvhpiaozcxqrcvqcxxpizcihxyghxuopmcpvjybtuugctekiuxwjtseapbpivdwgvpjwqjoooydrgjcpajocqoimggcscexqiletuqidwlhppmafapvomjxenlmkdkakykmdgwaxjilcmmsclnyibidbvjuehinqkgylznazyumrrgxcbxnotyeujpbrefpnkjjixxuimuhjprvmdfufcgqzprhokyonerghcfkrckhlizsgaxnmnxqgmikybpislevqquzgcihmmuonjaebnwyzpspacmqoohzdheeqvdxwuyocrybazehsbuwjeuiqunwyddcjqsgmihztaarjoikuhpqhrhanwujbagpvuncihvnlhpbwkwnlvmgazjxqcgpgjyghohiyjdtptfhpnvbtembgatenbwbfmowkxdcfkgfuqxobjv",
+    "criteria": "60."
+  },
+  {
+    "category": "stress test",
+    "id": "sum-250",
+    "prompt": "What is the sum of these 250 numbers? Just the number.\n860613, 497011, 979888, 492045, 447810, 563926, 277482, 214250, 103010, 182042, 393398, 184686, 468539, 540593, 229717, 688386, 895664, 317477, 498594, 473952, 906074, 961482, 423694, 961937, 942988, 553455, 192023, 151650, 839515, 596463, 305222, 490819, 667834, 568029, 302402, 439014, 481942, 873135, 597585, 131753, 762345, 530756, 360060, 951259, 755788, 903909, 524434, 142624, 493811, 136547, 586592, 165619, 942361, 165015, 369500, 304410, 883587, 165904, 735034, 455540, 480606, 385542, 451242, 746948, 145702, 374907, 882696, 851447, 823074, 431857, 389019, 411852, 103954, 856623, 892358, 724498, 944794, 764776, 168505, 125434, 966142, 345226, 212471, 598271, 850330, 588367, 914068, 505290, 928164, 363241, 550822, 954379, 617444, 239153, 620660, 291825, 109128, 941553, 874360, 418048, 962721, 825729, 910349, 258665, 736752, 347613, 443723, 435071, 583164, 479436, 921908, 920247, 724654, 182853, 636750, 306896, 510711, 889457, 267706, 359320, 527563, 167877, 781098, 135508, 605088, 679437, 671071, 441582, 268498, 547274, 210332, 175670, 377758, 754942, 188166, 318461, 201106, 541513, 622689, 844249, 568674, 281604, 345572, 239388, 537089, 583313, 750439, 806854, 346345, 884310, 664725, 988130, 911465, 796700, 896463, 227050, 917627, 981717, 408201, 408052, 392968, 694421, 380668, 491088, 366397, 873919, 372981, 308865, 560741, 359448, 294758, 357257, 346943, 260769, 395021, 706371, 297394, 442190, 167952, 515309, 363878, 357896, 631968, 651874, 342620, 781197, 947713, 205426, 785062, 586450, 138821, 207303, 104710, 597824, 958891, 342340, 981387, 570073, 492037, 142322, 407943, 344205, 225007, 152838, 298781, 729662, 968142, 711522, 303593, 178765, 490318, 637572, 286393, 570930, 732335, 372575, 912644, 915557, 797046, 106647, 210918, 768422, 725105, 844180, 750062, 466686, 328217, 139273, 486618, 456533, 248236, 146311, 313884, 367296, 140093, 728540, 867797, 783297, 313324, 954320, 111932, 958608, 443145, 528862, 811269, 489870, 294138, 751180, 427360, 181720",
+    "criteria": "131138218 exactly."
+  },
+  {
+    "category": "stress test",
+    "id": "reverse-300",
+    "prompt": "Reverse this 300-character string. Only the result.\nnc594e0gz9j8fkzr0st0dtw00bxmzzna1k1hfzx3kiad9jzfx6kjwsk7kegy5mtic4udyfkozm4lncz7kywhjpmc9cuhy39t0tp1yx262lba53p23l4zgeiw1xf266ccifu6fd6yibehmi5skoewqkur3jq64nq6puxcmlzkruykqh7dx297gq8zxqyxjxvf2olds7qtuacojs106xdi5ocbdawtg7w8o0tinx4kiapj2gejrzqad9w275pkacd8bzlpkdga9mj0m760l6tetd48ay13f2logqochvqdr917",
+    "criteria": "719rdqvhcoqgol2f31ya84dtet6l067m0jm9agdkplzb8dcakp572w9daqzrjeg2jpaik4xnit0o8w7gtwadbco5idx601sjocautq7sdlo2fvxjxyqxz8qg792xd7hqkyurkzlmcxup6qn46qj3rukqweoks5imhebiy6df6uficc662fx1wiegz4l32p35abl262xy1pt0t93yhuc9cmpjhwyk7zcnl4mzokfydu4citm5ygek7kswjk6xfzj9daik3xzfh1k1anzzmxb00wtd0ts0rzkf8j9zg0e495cn exactly, every character."
+  },
+  {
+    "category": "stress test",
+    "id": "word-position",
+    "prompt": "In this list of 120 words, at what position (counting from 1) does the word 'xosabo' first appear? Just the number.\nlijava hikehi jonuko wotuba rexijo zuduhe cafaze pebace cacaxi judofe jefaca mofefe minola pimapi zutiza rarufi tawuja xihobu jicapo fohoxi vixeme kohado wanifo qarape miruve qesewu zapunu gowiho sixegi seveli zegenu vihene lahajo gemiri jafijo sabore visagi zoberu xokuke forila reqelo toburu hibota ciwehe vifusu jovapu noseho vazici loqaba ropula kiquko sehede tukepo siweti kiqire taliki notoza pemoca xigupu bajami zaxeke sigequ huzawi jojudo fufire gotuco setete wubeno xomopo rahiba zanavo tecere napitu wemono lucimi tonulu petane niguda ququxa qiface tucuwu qugude cohaha rabigi wimera naruxa tuvafo xosabo zugoru fatega rabade fetalu kohape diwosi cababu domize tucipu sohefi hotosi ximicu zizagu mureqo qukoma nilohu cigugi wopudu woqeki zaqoji xaqowa widequ vivitu xejeja hipuxi qugeco papode nubilu zafaju tuxeli rasuze laneho",
+    "criteria": "88."
+  },
+  {
+    "category": "stress test",
+    "id": "hardest-sudoku",
+    "prompt": "Solve this Sudoku. Reply with the 9 rows of digits only, one row per line.\n8 . . . . . . . .\n. . 3 6 . . . . .\n. 7 . . 9 . 2 . .\n. 5 . . . 7 . . .\n. . . . 4 5 7 . .\n. . . 1 . . . 3 .\n. . 1 . . . . 6 8\n. . 8 5 . . . 1 .\n. 9 . . . . 4 . .",
+    "criteria": "Rows:\n812753649\n943682175\n675491283\n154237896\n369845721\n287169534\n521974368\n438526917\n796318452\nEvery digit must match."
   }
 ]

@@ -21,7 +21,7 @@ Cheap First costs far less than sending everything to the frontier model, while 
 
 ## The benchmark
 
-`data/questions.json` holds 104 questions, from everyday ones to hard maths, logic and code traps, across facts, maths, code, writing, reasoning,
+`data/questions.json` holds 143 questions, from everyday ones to hard maths, logic and code traps plus 39 "stress tests", across facts, maths, code, writing, reasoning,
 honesty ("don't make things up") and instruction-following. `npm run benchmark` runs each one two ways:
 
 - **Cheap First**, as above.
@@ -54,7 +54,7 @@ console.log(result.answer, result.answeredBy, result.costUsd);
 | Command | What it does |
 |---|---|
 | `npm run ask -- "question"` | Answer one question the Cheap First way |
-| `npm run benchmark` | Run the 104-question benchmark and save `data/results.json` |
+| `npm run benchmark` | Run the benchmark (pass question ids to run just those) and save `data/results.json` |
 | `npx tsx scripts/check-sanity.ts` | Feed the checker deliberately wrong answers to show it catches them |
 | `npm run build` | Build the results page into `out/` (no keys needed) |
 
@@ -62,3 +62,10 @@ console.log(result.answer, result.answeredBy, result.costUsd);
 
 `.github/workflows/pages.yml` rebuilds the results page on GitHub Pages every time `main` changes.
 The page is plain HTML built from `data/results.json`, so no keys are ever used or exposed there.
+
+## Helper scripts
+
+| Command | What it does |
+|---|---|
+| `npx tsx scripts/probe.ts file.json [out.json]` | Try questions on Dolphin + the checker only, in parallel, to find ones Dolphin gets wrong |
+| `npx tsx scripts/check-sanity.ts` | Grade deliberately wrong answers and save `data/checker-test.json` for the site |
