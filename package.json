@@ -1,0 +1,18 @@
+{
+  "name": "cheap-first",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Answer with Dolphin's cheap model first, check the answer with SERV Reasoning, and only pay for a frontier model when the check fails.",
+  "type": "module",
+  "scripts": {
+    "ask": "NODE_USE_ENV_PROXY=1 tsx scripts/ask.ts",
+    "benchmark": "NODE_USE_ENV_PROXY=1 tsx scripts/benchmark.ts",
+    "build": "tsx scripts/build-site.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0"
+  }
+}
