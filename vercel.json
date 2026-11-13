@@ -2,5 +2,12 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "npm run build",
   "outputDirectory": "out",
-  "functions": { "api/ask.ts": { "maxDuration": 300 } }
+  "functions": {
+    "api/ask.ts": {
+      "maxDuration": 300
+    },
+    "api/pay.ts": {
+      "maxDuration": 300
+    }
+  }
 }

@@ -267,7 +267,7 @@ footer a{color:var(--soft)}
 <div class="bg"></div>
 <header class="nav">
   <a class="logo" href="#top"><span class="logo-mark">C</span>Cheap First</a>
-  <nav><a href="#try">Try it</a><a href="#how">How it works</a><a href="#escalated">Escalations</a><a href="#results">All results</a><a class="gh" href="${REPO}">GitHub</a></nav>
+  <nav><a href="#try">Try it</a><a href="#how">How it works</a><a href="#api">API</a><a href="#escalated">Escalations</a><a href="#results">All results</a><a class="gh" href="${REPO}">GitHub</a></nav>
 </header>
 <main class="wrap" id="top">
 <section class="hero">
@@ -320,6 +320,26 @@ o.innerHTML='<div class="ahead"><span class="pill '+(prem?"prem":"cheap")+'">'+(
     <div class="step"><span class="n">02</span><b>SERV checks</b><span>A small SERV Reasoning model scores the answer from 0 to 100 for correctness, instructions and anything made up.</span></div>
     <div class="step"><span class="n">03</span><b>Escalate only if needed</b><span>Below ${r?.passMark ?? 75}, the question goes to a frontier model on SERV instead.</span></div>
   </div>
+</section>
+<section id="api">
+  <p class="eyebrow">Use it in your app</p>
+  <h2>$0.005 per answer. No sign-up.</h2>
+  <p class="sub">Send questions to the Cheap First API and pay per answer in USDC on Base with <a href="https://www.x402.org">x402</a>. Any x402 client or agent wallet pays automatically, and you're only charged when an answer comes back. That's about half the cost of sending every question to a premium model.</p>
+  <div class="flow">
+    <div class="step"><span class="n">01</span><b>Call the API</b><span>POST <code>{"question": "..."}</code> to <code>/api/pay</code>. Without payment it replies 402 with the price and where to pay.</span></div>
+    <div class="step"><span class="n">02</span><b>Your client pays</b><span>An x402 client signs $0.005 in USDC on Base and retries. No account or API key.</span></div>
+    <div class="step"><span class="n">03</span><b>Get the answer</b><span>You get the answer, who answered and the check score. If anything fails, the payment isn't taken.</span></div>
+  </div>
+  <pre style="margin-top:16px">import { wrapFetchWithPayment } from "x402-fetch";
+import { privateKeyToAccount } from "viem/accounts";
+
+const pay = wrapFetchWithPayment(fetch, privateKeyToAccount(process.env.PRIVATE_KEY));
+const res = await pay("https://cheap-first.vercel.app/api/pay", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ question: "What is 17% of 2,450?" }),
+});
+console.log(await res.json()); // { answer, answeredBy, model, check, paid }</pre>
 </section>
 <section id="calc">
   <p class="eyebrow">Savings calculator</p>
