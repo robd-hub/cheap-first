@@ -46,7 +46,7 @@ export async function POST(request: Request): Promise<Response> {
         canEscalate: () => premiumBudget.hasRoom(),
         passMark: MODES[mode],
       });
-      if (result.premium) premiumBudget.add(result.premium.costUsd);
+      if (result.premium) await premiumBudget.add(result.premium.costUsd);
       const { savedUsd } = savings(result, m);
       return {
         respond: (paid, headers) =>

@@ -107,7 +107,7 @@ export async function POST(request: Request): Promise<Response> {
         canEscalate: () => premiumBudget.hasRoom(),
         passMark: MODES[mode],
       });
-      if (r.premium) premiumBudget.add(r.premium.costUsd);
+      if (r.premium) await premiumBudget.add(r.premium.costUsd);
       const used = r.premium ?? r.cheap;
       const { premiumOnlyUsd, savedUsd } = savings(r, m);
       const id = `chatcmpl-cf-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;

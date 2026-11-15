@@ -78,7 +78,7 @@ export interface CheapFirstOptions {
    */
   fallbackOnCheapError?: boolean;
   /** Asked before escalating; return false to refuse (for example, a spend limit was hit). */
-  canEscalate?: () => boolean;
+  canEscalate?: () => boolean | Promise<boolean>;
   /** Escalate answers scoring below this. Defaults to PASS_MARK. */
   passMark?: number;
 }
@@ -139,7 +139,7 @@ export async function cheapFirst(input: string | ChatMessage[], models: Models, 
     }
   }
 
-  if (!canEscalate()) throw new EscalationBlocked();
+  if (!(await canEscalate())) throw new EscalationBlocked();
   const premium = await chatMessages(models.premium, messages, premiumMaxTokens);
   return {
     prompt,
