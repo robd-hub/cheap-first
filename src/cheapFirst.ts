@@ -41,10 +41,18 @@ export interface Models {
   premium: ModelSpec;
 }
 
+/**
+ * The checker is SERV's GPT-6 Luna unless CF_CHECKER=dolphin, which has the
+ * cheap model check its own answers: about 8 times cheaper per check, and in
+ * scripts/compare-checkers.ts it caught every planted wrong answer and agreed
+ * with the benchmark on 142 of 143 questions. The risk is shared blind spots,
+ * so it's opt-in.
+ */
 export async function defaultModels(): Promise<Models> {
+  const dolphinChecks = (process.env.CF_CHECKER ?? "").toLowerCase() === "dolphin";
   return {
     cheap: CHEAP,
-    checker: await servModel("SERV · GPT-6 Luna (checker)", "gpt-6-luna"),
+    checker: dolphinChecks ? { ...CHEAP, label: "Dolphin · DeepSeek V4.1 Flash (checker)" } : await servModel("SERV · GPT-6 Luna (checker)", "gpt-6-luna"),
     premium: await servModel("SERV · Claude Opus 5.5", "claude-opus-5.5"),
   };
 }

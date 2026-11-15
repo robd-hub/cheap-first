@@ -8,7 +8,8 @@
     "ask": "NODE_USE_ENV_PROXY=1 tsx scripts/ask.ts",
     "benchmark": "NODE_USE_ENV_PROXY=1 tsx scripts/benchmark.ts",
     "build": "tsx scripts/build-site.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "compare-checkers": "NODE_USE_ENV_PROXY=1 tsx scripts/compare-checkers.ts"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
