@@ -61,13 +61,53 @@ export async function checkAnswer(checker: ModelSpec, prompt: string, answer: st
   }
 }
 
-export async function cheapFirst(prompt: string, models: Models, criteria?: string): Promise<CheapFirstResult> {
-  const cheap = await chat(models.cheap, SYSTEM_PROMPT, prompt);
-  const check = await checkAnswer(models.checker, prompt, cheap.text, criteria);
-  if (check.score >= PASS_MARK) {
-    return { prompt, answer: cheap.text, answeredBy: "cheap", cheap, check, costUsd: cheap.costUsd + check.call.costUsd };
+export interface CheapFirstOptions {
+  /** Cap on the premium answer's length, to bound what one escalation can cost. */
+  premiumMaxTokens?: number;
+  /**
+   * If the cheap model errors out, answer with the premium model instead of
+   * failing. On by default; the benchmark turns it off so outages aren't hidden.
+   */
+  fallbackOnCheapError?: boolean;
+  /** Asked before escalating; return false to refuse (for example, a spend limit was hit). */
+  canEscalate?: () => boolean;
+}
+
+/** Thrown when an answer needs the premium model but `canEscalate` said no. */
+export class EscalationBlocked extends Error {
+  constructor() {
+    super("The premium model isn't available right now.");
+    this.name = "EscalationBlocked";
   }
-  const premium = await chat(models.premium, SYSTEM_PROMPT, prompt);
+}
+
+const NO_CALL: CallResult = { text: "", inputTokens: 0, outputTokens: 0, costUsd: 0, ms: 0 };
+
+export async function cheapFirst(prompt: string, models: Models, criteria?: string, options: CheapFirstOptions = {}): Promise<CheapFirstResult> {
+  const { premiumMaxTokens, fallbackOnCheapError = true, canEscalate = () => true } = options;
+
+  let cheap: CallResult;
+  let check: Check;
+  try {
+    cheap = await chat(models.cheap, SYSTEM_PROMPT, prompt);
+  } catch (e) {
+    if (!fallbackOnCheapError) throw e;
+    console.error(`Cheap model failed, escalating: ${(e as Error).message}`);
+    cheap = { ...NO_CALL };
+  }
+
+  if (!cheap.text.trim()) {
+    // A blank answer (or a cheap-model outage) can't pass, so don't pay to check it.
+    check = { score: 0, reason: "The cheap model gave no answer, so it went straight to the premium model.", call: { ...NO_CALL } };
+  } else {
+    check = await checkAnswer(models.checker, prompt, cheap.text, criteria);
+    if (check.score >= PASS_MARK) {
+      return { prompt, answer: cheap.text, answeredBy: "cheap", cheap, check, costUsd: cheap.costUsd + check.call.costUsd };
+    }
+  }
+
+  if (!canEscalate()) throw new EscalationBlocked();
+  const premium = await chat(models.premium, SYSTEM_PROMPT, prompt, premiumMaxTokens);
   return {
     prompt,
     answer: premium.text,
