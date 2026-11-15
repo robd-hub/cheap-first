@@ -8,21 +8,19 @@
  * Guard rails, because every call spends real credits:
  *   - questions are capped at MAX_QUESTION characters
  *   - each visitor (by IP) gets PER_IP_PER_HOUR questions an hour
- *   - each server instance stops after DAILY_CAP questions a day
+ *   - the demo stops after DAILY_CAP questions a day
+ *   - escalations stop once the demo's daily premium budget is spent
+ * With the shared store connected these hold across all server instances.
  */
-import { DailyBudget, PREMIUM_MAX_TOKENS } from "../src/budget.js";
-import { cheapFirst, defaultModels, EscalationBlocked, type Models } from "../src/cheapFirst.js";
+import { demoPremiumBudget as premiumBudget, PREMIUM_MAX_TOKENS } from "../src/budget.js";
+import { incrBy } from "../src/store.js";
+import { cheapFirst, defaultModels, EscalationBlocked, savings, type Models } from "../src/cheapFirst.js";
 
 const MAX_QUESTION = 600;
 const PER_IP_PER_HOUR = Number(process.env.CF_PER_IP_PER_HOUR) || 10;
 const DAILY_CAP = Number(process.env.CF_DAILY_CAP) || 300;
 
-const hits = new Map<string, number[]>();
-let day = "";
-let today = 0;
 let models: Models | null = null;
-/** US dollars a day (per server instance) the free demo may spend on the premium model. */
-const premiumBudget = new DailyBudget(Number(process.env.CF_DEMO_PREMIUM_BUDGET_USD) || 1);
 
 function cors(origin: string | null): Record<string, string> {
   return {
@@ -52,21 +50,16 @@ export async function POST(request: Request): Promise<Response> {
   if (!question) return json({ error: "Type a question first." }, 400, origin);
   if (question.length > MAX_QUESTION) return json({ error: `Keep it under ${MAX_QUESTION} characters.` }, 400, origin);
 
-  const now = Date.now();
-  const ip = (request.headers.get("x-forwarded-for") ?? "unknown").split(",")[0].trim();
-  const recent = (hits.get(ip) ?? []).filter((t) => now - t < 3_600_000);
-  if (recent.length >= PER_IP_PER_HOUR) {
+  const now = new Date();
+  const ip = (request.headers.get("x-forwarded-for") ?? "unknown").split(",")[0].trim().slice(0, 64);
+  const hour = now.toISOString().slice(0, 13);
+  const day = now.toISOString().slice(0, 10);
+  // Count first, then check: a refused request still counts, which is fine for a demo.
+  const [mine, all] = await Promise.all([incrBy(`cf:demo:ip:${ip}:${hour}`, 1, 3600), incrBy(`cf:demo:day:${day}`, 1, 2 * 86_400)]);
+  if (mine > PER_IP_PER_HOUR) {
     return json({ error: `That's ${PER_IP_PER_HOUR} questions this hour. Try again later.` }, 429, origin);
   }
-  const d = new Date(now).toISOString().slice(0, 10);
-  if (d !== day) {
-    day = d;
-    today = 0;
-  }
-  if (today >= DAILY_CAP) return json({ error: "The demo has hit today's limit. Try again tomorrow." }, 429, origin);
-  recent.push(now);
-  hits.set(ip, recent);
-  today++;
+  if (all > DAILY_CAP) return json({ error: "The demo has hit today's limit. Try again tomorrow." }, 429, origin);
 
   try {
     models ??= await defaultModels();
@@ -74,7 +67,7 @@ export async function POST(request: Request): Promise<Response> {
       premiumMaxTokens: PREMIUM_MAX_TOKENS,
       canEscalate: () => premiumBudget.hasRoom(),
     });
-    if (r.premium) premiumBudget.add(r.premium.costUsd);
+    if (r.premium) await premiumBudget.add(r.premium.costUsd);
     return json(
       {
         answer: r.answer,
@@ -83,6 +76,7 @@ export async function POST(request: Request): Promise<Response> {
         check: { score: r.check.score, reason: r.check.reason },
         cheapAnswer: r.answeredBy === "premium" ? r.cheap.text : undefined,
         costUsd: r.costUsd,
+        savedUsd: savings(r, models).savedUsd,
         ms: r.cheap.ms + r.check.call.ms + (r.premium?.ms ?? 0),
       },
       200,

@@ -1,0 +1,137 @@
+{
+  "ranAt": "2026-11-15T17:35:09.075Z",
+  "passMark": 75,
+  "summary": [
+    {
+      "checker": "SERV · GPT-6 Luna (checker)",
+      "model": "gpt-6-luna",
+      "caught": 8,
+      "planted": 8,
+      "agree": 138,
+      "total": 143,
+      "extraEscalations": [
+        "monty-ignorant",
+        "big-remainder",
+        "count-p",
+        "count-in-1200"
+      ],
+      "missed": [
+        "last-digits-7"
+      ],
+      "costPerCheckUsd": 0.0001888831125827814,
+      "plantedRows": [
+        {
+          "prompt": "What is 987654321 × 123456789? Just the number.",
+          "score": 0,
+          "reason": "The product is 121932631112635269, not 121932631112635261.",
+          "caught": true
+        },
+        {
+          "prompt": "Write one sentence about a cat that does not contain the letter 'e' anywhere.",
+          "score": 0,
+          "reason": "The sentence contains the letter “e,” so it fails the key constraint.",
+          "caught": true
+        },
+        {
+          "prompt": "Summarise the 2019 paper 'Quantum Banana Networks' by Dr. Elsa Prunewick.",
+          "score": 0,
+          "reason": "The answer gives a precise experimental result without support, and the cited paper and author appear to be fabricated.",
+          "caught": true
+        },
+        {
+          "prompt": "What is the capital of Australia? One word.",
+          "score": 0,
+          "reason": "The answer follows the one-word instruction but is incorrect; Australia’s capital is Canberra.",
+          "caught": true
+        },
+        {
+          "prompt": "Write a six-word story about a robot. Exactly six words.",
+          "score": 50,
+          "reason": "The story is coherent, but it has seven words instead of exactly six.",
+          "caught": true
+        },
+        {
+          "prompt": "What does this Python print? print([i*i for i in range(5) if i % 2])",
+          "score": 0,
+          "reason": "The comprehension keeps odd values of i, so it prints [1, 9], not [0, 4, 16].",
+          "caught": true
+        },
+        {
+          "prompt": "Who won the 2030 FIFA World Cup?",
+          "score": 0,
+          "reason": "The 2030 FIFA World Cup has not yet been played, so the claimed winner and final score are fabricated.",
+          "caught": true
+        },
+        {
+          "prompt": "Alice has 3 brothers. Each brother has 2 sisters. How many sisters does Alice have?",
+          "score": 0,
+          "reason": "Alice is one of each brother’s two sisters, so she has one sister, not two.",
+          "caught": true
+        }
+      ]
+    },
+    {
+      "checker": "Dolphin · DeepSeek V4.1 Flash (as checker)",
+      "model": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "caught": 8,
+      "planted": 8,
+      "agree": 142,
+      "total": 143,
+      "extraEscalations": [],
+      "missed": [
+        "last-digits-7"
+      ],
+      "costPerCheckUsd": 0.000024068874172185428,
+      "plantedRows": [
+        {
+          "prompt": "What is 987654321 × 123456789? Just the number.",
+          "score": 0,
+          "reason": "The product is incorrect; 987654321 × 123456789 = 121932631112635269, not 121932631112635261.",
+          "caught": true
+        },
+        {
+          "prompt": "Write one sentence about a cat that does not contain the letter 'e' anywhere.",
+          "score": 0,
+          "reason": "The sentence contains the letter 'e' in words like 'The' and 'sleeps', violating the key instruction.",
+          "caught": true
+        },
+        {
+          "prompt": "Summarise the 2019 paper 'Quantum Banana Networks' by Dr. Elsa Prunewick.",
+          "score": 0,
+          "reason": "The paper title and author appear fabricated, and the answer invents a specific 40% coherence improvement without evidence.",
+          "caught": true
+        },
+        {
+          "prompt": "What is the capital of Australia? One word.",
+          "score": 0,
+          "reason": "The capital of Australia is Canberra, not Sydney.",
+          "caught": true
+        },
+        {
+          "prompt": "Write a six-word story about a robot. Exactly six words.",
+          "score": 20,
+          "reason": "The story is about a robot but contains seven words, violating the exact six-word requirement.",
+          "caught": true
+        },
+        {
+          "prompt": "What does this Python print? print([i*i for i in range(5) if i % 2])",
+          "score": 0,
+          "reason": "The condition `if i % 2` keeps odd numbers, so the correct output is `[1, 9]`, not `[0, 4, 16]`.",
+          "caught": true
+        },
+        {
+          "prompt": "Who won the 2030 FIFA World Cup?",
+          "score": 0,
+          "reason": "The 2030 FIFA World Cup has not occurred, so the claim that Brazil won is fabricated.",
+          "caught": true
+        },
+        {
+          "prompt": "Alice has 3 brothers. Each brother has 2 sisters. How many sisters does Alice have?",
+          "score": 0,
+          "reason": "The answer is incorrect: Alice is one of the two sisters each brother has, so Alice has 1 sister, not 2.",
+          "caught": true
+        }
+      ]
+    }
+  ]
+}

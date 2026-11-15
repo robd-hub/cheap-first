@@ -35,6 +35,8 @@ interface CheckerTest {
 const REPO = "https://github.com/robd-hub/cheap-first";
 /** Where the live "try it" box sends questions. Same-origin on Vercel; set ASK_URL for other hosts. */
 const ASK_URL = process.env.ASK_URL || "/api/ask";
+/** A Stripe Payment Link for prepaid keys. The card option only shows when it's set. */
+const CARD_LINK = process.env.CF_CARD_LINK || "";
 
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const usd = (n: number) => (n >= 0.01 ? `$${n.toFixed(2)}` : n >= 0.0001 ? `$${n.toFixed(4)}` : `$${n.toFixed(6)}`);
@@ -339,7 +341,24 @@ const res = await pay("https://cheap-first.vercel.app/api/pay", {
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({ question: "What is 17% of 2,450?" }),
 });
-console.log(await res.json()); // { answer, answeredBy, model, check, paid }</pre>
+console.log(await res.json()); // { answer, answeredBy, model, check, costUsd, savedUsd, paid }</pre>
+${CARD_LINK ? `<p class="sub" style="margin-top:16px">No crypto wallet? <a href="${CARD_LINK}">Pay by card for a prepaid API key</a>: $5 buys 1,000 answers. Use it as the <code>apiKey</code> below, or as <code>Authorization: Bearer cf_...</code> on <code>/api/pay</code>.</p>` : ""}
+  <h3 style="margin-top:24px">Already using an OpenAI-style client? Change one line.</h3>
+  <p class="sub">Cheap First also speaks the OpenAI chat format at <code>/api/v1</code>, with conversation history, system prompts and streaming. Point your client's base URL at it and pay per answer the same way. Pick <code>cheap-first</code>, <code>cheap-first-strict</code> (escalates more often) or <code>cheap-first-budget</code> (cheapest). Every reply includes a <code>cheap_first</code> field with who answered, the cost and the saving.</p>
+  <pre style="margin-top:16px">import OpenAI from "openai";
+import { wrapFetchWithPayment } from "x402-fetch";
+import { privateKeyToAccount } from "viem/accounts";
+
+const client = new OpenAI({
+  baseURL: "https://cheap-first.vercel.app/api/v1", // the one line that changes
+  apiKey: "x402", // not used: each answer is paid with x402
+  fetch: wrapFetchWithPayment(fetch, privateKeyToAccount(process.env.PRIVATE_KEY)),
+});
+const reply = await client.chat.completions.create({
+  model: "cheap-first",
+  messages: [{ role: "user", content: "What is 17% of 2,450?" }],
+});
+console.log(reply.choices[0].message.content);</pre>
 </section>
 <section id="calc">
   <p class="eyebrow">Savings calculator</p>
@@ -349,6 +368,7 @@ ${calc}
 </section>
 ${escalations ? `<section id="escalated"><p class="eyebrow">The safety net</p>${escalations}</section>` : ""}
 ${checkerTest ? `<section id="checker"><p class="eyebrow">Checker test</p>${checkerTest}</section>` : ""}
+${reppoSection}
 <section id="results">
 <p class="eyebrow">All results</p>
 <h2>Every question, both ways</h2>
@@ -386,6 +406,14 @@ ${m ? `<div class="models">
 }
 
 const results = fs.existsSync("data/results.json") ? (JSON.parse(fs.readFileSync("data/results.json", "utf8")) as Results) : null;
+/** Reppo's independent judges on a sample of questions (scripts/reppo-sample.ts), if it has been run. */
+interface ReppoSample { judged: number; cheapFirstAvg: number | null; premiumAvg: number | null; ranAt: string }
+const reppo = fs.existsSync("data/reppo-sample.json") ? (JSON.parse(fs.readFileSync("data/reppo-sample.json", "utf8")) as ReppoSample) : null;
+const reppoSection =
+  reppo && reppo.judged > 0
+    ? `<section id="independent"><p class="eyebrow">Independent check</p><h2>Judged by someone else, too</h2>
+<p class="sub">The quality scores above come from our own checker. To check them, <a href="https://reppo.xyz">Reppo</a>'s panel of independent judges scored ${reppo.judged} questions both ways, one or more from each category: <b>Cheap First ${reppo.cheapFirstAvg}</b> vs <b>premium only ${reppo.premiumAvg}</b> out of 100 (${reppo.ranAt.slice(0, 10)}). These were questions where Cheap First kept the cheap answer, so it's a check that the cheap answers it keeps are as good as the premium ones.</p></section>`
+    : "";
 const checkerTest = fs.existsSync("data/checker-test.json") ? (JSON.parse(fs.readFileSync("data/checker-test.json", "utf8")) as CheckerTest) : null;
 fs.mkdirSync("out", { recursive: true });
 fs.writeFileSync("out/index.html", page(results, checkerTest));
