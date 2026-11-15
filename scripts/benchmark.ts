@@ -37,7 +37,7 @@ async function main() {
 
   for (const q of questions) {
     try {
-      const cf = await cheapFirst(q.prompt, models, q.criteria);
+      const cf = await cheapFirst(q.prompt, models, q.criteria, { fallbackOnCheapError: false });
       // The final answer's quality: the cheap check if it passed, otherwise a check of the premium answer.
       const finalCheck = cf.answeredBy === "cheap" ? cf.check : await checkAnswer(models.checker, q.prompt, cf.answer, q.criteria);
       // Baseline: the premium model on every question (reuse the answer if Cheap First already escalated).

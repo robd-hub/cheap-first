@@ -9,10 +9,14 @@
  * The payment is only settled after the answer is ready, so a failed request
  * is never charged.
  */
-import { cheapFirst, defaultModels, type Models } from "../src/cheapFirst.js";
+import { DailyBudget, PREMIUM_MAX_TOKENS } from "../src/budget.js";
+import { cheapFirst, defaultModels, EscalationBlocked, type Models } from "../src/cheapFirst.js";
 import { decodePayment, encodeHeader, paymentRequired, requirements, settlePayment, verifyPayment } from "../src/x402.js";
 
-const MAX_QUESTION = 4000;
+/** Long questions cost more to send to the premium model, so keep them reasonable. */
+const MAX_QUESTION = 2000;
+/** US dollars a day (per server instance) that paid escalations may spend on the premium model. */
+const premiumBudget = new DailyBudget(Number(process.env.CF_PAID_PREMIUM_BUDGET_USD) || 2);
 let models: Models | null = null;
 
 const CORS: Record<string, string> = {
@@ -59,8 +63,15 @@ export async function POST(request: Request): Promise<Response> {
   let result: Awaited<ReturnType<typeof cheapFirst>>;
   try {
     models ??= await defaultModels();
-    result = await cheapFirst(question, models);
+    result = await cheapFirst(question, models, undefined, {
+      premiumMaxTokens: PREMIUM_MAX_TOKENS,
+      canEscalate: () => premiumBudget.hasRoom(),
+    });
+    if (result.premium) premiumBudget.add(result.premium.costUsd);
   } catch (e) {
+    if (e instanceof EscalationBlocked) {
+      return json({ error: "This question needs the premium model, which has hit today's limit. You haven't been charged. Please try again tomorrow." }, 503);
+    }
     console.error(e);
     return json({ error: "Something went wrong reaching the models. You haven't been charged. Please try again." }, 502);
   }

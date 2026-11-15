@@ -10,7 +10,8 @@
  *   - each visitor (by IP) gets PER_IP_PER_HOUR questions an hour
  *   - each server instance stops after DAILY_CAP questions a day
  */
-import { cheapFirst, defaultModels, type Models } from "../src/cheapFirst.js";
+import { DailyBudget, PREMIUM_MAX_TOKENS } from "../src/budget.js";
+import { cheapFirst, defaultModels, EscalationBlocked, type Models } from "../src/cheapFirst.js";
 
 const MAX_QUESTION = 600;
 const PER_IP_PER_HOUR = Number(process.env.CF_PER_IP_PER_HOUR) || 10;
@@ -20,6 +21,8 @@ const hits = new Map<string, number[]>();
 let day = "";
 let today = 0;
 let models: Models | null = null;
+/** US dollars a day (per server instance) the free demo may spend on the premium model. */
+const premiumBudget = new DailyBudget(Number(process.env.CF_DEMO_PREMIUM_BUDGET_USD) || 1);
 
 function cors(origin: string | null): Record<string, string> {
   return {
@@ -67,7 +70,11 @@ export async function POST(request: Request): Promise<Response> {
 
   try {
     models ??= await defaultModels();
-    const r = await cheapFirst(question, models);
+    const r = await cheapFirst(question, models, undefined, {
+      premiumMaxTokens: PREMIUM_MAX_TOKENS,
+      canEscalate: () => premiumBudget.hasRoom(),
+    });
+    if (r.premium) premiumBudget.add(r.premium.costUsd);
     return json(
       {
         answer: r.answer,
@@ -82,6 +89,9 @@ export async function POST(request: Request): Promise<Response> {
       origin,
     );
   } catch (e) {
+    if (e instanceof EscalationBlocked) {
+      return json({ error: "That question needs the premium model, and the free demo has used today's premium budget. Try an easier one, or come back tomorrow." }, 429, origin);
+    }
     console.error(e);
     return json({ error: "Something went wrong reaching the models. Please try again." }, 502, origin);
   }

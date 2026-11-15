@@ -101,12 +101,28 @@ console.log(result.answer, result.answeredBy, result.costUsd);
 it limits questions to 600 characters, 10 an hour per visitor and 300 a day per server
 (`CF_PER_IP_PER_HOUR`, `CF_DAILY_CAP`), and `CF_MAX_TOKENS` caps each model reply.
 
+### Spend guards (free demo and paid `api/pay.ts`)
+
+An escalation to the premium model can cost far more than the $0.005 a paid answer earns (one benchmark
+escalation cost $0.19), so both endpoints:
+
+- cap each premium answer at `CF_PREMIUM_MAX_TOKENS` tokens (default 2000, so at most about $0.05),
+- stop escalating once a server instance has spent its daily premium budget
+  (`CF_PAID_PREMIUM_BUDGET_USD`, default $2; `CF_DEMO_PREMIUM_BUDGET_USD`, default $1). A paid
+  request that would need the premium model after that gets a 503 and is never charged,
+- go straight to the premium model when Dolphin errors out or returns a blank answer, instead of failing
+  or paying to check an empty reply. The benchmark keeps outages visible and does not fall back.
+
+The paid endpoint accepts questions of up to 2,000 characters.
+
 ## Project layout
 
 ```
 src/models.ts          Dolphin and SERV API calls, with real per-call costs
 src/cheapFirst.ts      answer → check → escalate
+src/budget.ts          daily premium spend limit for the live endpoints
 api/ask.ts             the live "try it" endpoint
+api/pay.ts             the paid x402 endpoint ($0.005 per answer)
 data/questions.json    143 questions with written criteria
 data/results.json      the latest benchmark run
 scripts/build-site.ts  builds the public results page
