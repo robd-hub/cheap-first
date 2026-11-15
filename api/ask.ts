@@ -11,7 +11,7 @@
  *   - each server instance stops after DAILY_CAP questions a day
  */
 import { DailyBudget, PREMIUM_MAX_TOKENS } from "../src/budget.js";
-import { cheapFirst, defaultModels, EscalationBlocked, type Models } from "../src/cheapFirst.js";
+import { cheapFirst, defaultModels, EscalationBlocked, savings, type Models } from "../src/cheapFirst.js";
 
 const MAX_QUESTION = 600;
 const PER_IP_PER_HOUR = Number(process.env.CF_PER_IP_PER_HOUR) || 10;
@@ -83,6 +83,7 @@ export async function POST(request: Request): Promise<Response> {
         check: { score: r.check.score, reason: r.check.reason },
         cheapAnswer: r.answeredBy === "premium" ? r.cheap.text : undefined,
         costUsd: r.costUsd,
+        savedUsd: savings(r, models).savedUsd,
         ms: r.cheap.ms + r.check.call.ms + (r.premium?.ms ?? 0),
       },
       200,

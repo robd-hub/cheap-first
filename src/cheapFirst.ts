@@ -2,12 +2,20 @@
  * Cheap First: answer with the cheap model, check the answer, and escalate
  * to the premium model only when the check fails.
  */
-import { CHEAP, chat, servModel, type CallResult, type ModelSpec } from "./models.js";
+import { CHEAP, chat, chatMessages, costOf, servModel, type CallResult, type ChatMessage, type ModelSpec } from "./models.js";
 
 export const SYSTEM_PROMPT = "You are a helpful, accurate assistant. Follow the user's instructions exactly, including any length limits. If you don't know or can't verify something, say so instead of guessing.";
 
 /** Answers scoring below this are escalated to the premium model. */
 export const PASS_MARK = 75;
+
+/** Pass marks a caller can pick: stricter escalates more often, budget less often. */
+export const MODES = { strict: 85, balanced: PASS_MARK, budget: 60 } as const;
+export type Mode = keyof typeof MODES;
+
+export function modeFrom(value: unknown): Mode {
+  return typeof value === "string" && value in MODES ? (value as Mode) : "balanced";
+}
 
 export interface Check {
   score: number;
@@ -71,6 +79,25 @@ export interface CheapFirstOptions {
   fallbackOnCheapError?: boolean;
   /** Asked before escalating; return false to refuse (for example, a spend limit was hit). */
   canEscalate?: () => boolean;
+  /** Escalate answers scoring below this. Defaults to PASS_MARK. */
+  passMark?: number;
+}
+
+/** The conversation as plain text, for the checker to read. */
+export function transcript(messages: ChatMessage[]): string {
+  if (messages.length === 1 && messages[0].role === "user") return messages[0].content;
+  const label = { system: "Instructions", user: "User", assistant: "Assistant" } as const;
+  return (
+    messages.map((m) => `${label[m.role]}: ${m.content}`).join("\n\n") +
+    "\n\n(Grade the reply to the last user message, following the instructions and the conversation above.)"
+  );
+}
+
+/** Our system prompt first, then the caller's own system messages, then the conversation. */
+function withSystem(messages: ChatMessage[]): ChatMessage[] {
+  const theirs = messages.filter((m) => m.role === "system").map((m) => m.content);
+  const system = [SYSTEM_PROMPT, ...theirs].join("\n\n");
+  return [{ role: "system", content: system }, ...messages.filter((m) => m.role !== "system")];
 }
 
 /** Thrown when an answer needs the premium model but `canEscalate` said no. */
@@ -83,13 +110,19 @@ export class EscalationBlocked extends Error {
 
 const NO_CALL: CallResult = { text: "", inputTokens: 0, outputTokens: 0, costUsd: 0, ms: 0 };
 
-export async function cheapFirst(prompt: string, models: Models, criteria?: string, options: CheapFirstOptions = {}): Promise<CheapFirstResult> {
-  const { premiumMaxTokens, fallbackOnCheapError = true, canEscalate = () => true } = options;
+/**
+ * `input` is a single question, or a whole conversation (OpenAI-style
+ * messages); the answer replies to its last user message.
+ */
+export async function cheapFirst(input: string | ChatMessage[], models: Models, criteria?: string, options: CheapFirstOptions = {}): Promise<CheapFirstResult> {
+  const { premiumMaxTokens, fallbackOnCheapError = true, canEscalate = () => true, passMark = PASS_MARK } = options;
+  const messages = withSystem(typeof input === "string" ? [{ role: "user", content: input }] : input);
+  const prompt = typeof input === "string" ? input : transcript(input);
 
   let cheap: CallResult;
   let check: Check;
   try {
-    cheap = await chat(models.cheap, SYSTEM_PROMPT, prompt);
+    cheap = await chatMessages(models.cheap, messages);
   } catch (e) {
     if (!fallbackOnCheapError) throw e;
     console.error(`Cheap model failed, escalating: ${(e as Error).message}`);
@@ -101,13 +134,13 @@ export async function cheapFirst(prompt: string, models: Models, criteria?: stri
     check = { score: 0, reason: "The cheap model gave no answer, so it went straight to the premium model.", call: { ...NO_CALL } };
   } else {
     check = await checkAnswer(models.checker, prompt, cheap.text, criteria);
-    if (check.score >= PASS_MARK) {
+    if (check.score >= passMark) {
       return { prompt, answer: cheap.text, answeredBy: "cheap", cheap, check, costUsd: cheap.costUsd + check.call.costUsd };
     }
   }
 
   if (!canEscalate()) throw new EscalationBlocked();
-  const premium = await chat(models.premium, SYSTEM_PROMPT, prompt, premiumMaxTokens);
+  const premium = await chatMessages(models.premium, messages, premiumMaxTokens);
   return {
     prompt,
     answer: premium.text,
@@ -117,4 +150,15 @@ export async function cheapFirst(prompt: string, models: Models, criteria?: stri
     premium,
     costUsd: cheap.costUsd + check.call.costUsd + premium.costUsd,
   };
+}
+
+/**
+ * What the same answer would have cost from the premium model alone, and so
+ * what Cheap First saved. For a cheap answer it's an estimate: the premium
+ * price applied to the cheap call's token counts. Can be negative when an
+ * escalation paid for the cheap try and the check on top.
+ */
+export function savings(r: CheapFirstResult, models: Models): { premiumOnlyUsd: number; savedUsd: number } {
+  const premiumOnlyUsd = r.premium ? r.premium.costUsd : costOf(models.premium, r.cheap.inputTokens, r.cheap.outputTokens);
+  return { premiumOnlyUsd, savedUsd: premiumOnlyUsd - r.costUsd };
 }

@@ -40,28 +40,39 @@ export interface PaymentRequirements {
   extra: { name: string; version: string };
 }
 
-export function requirements(resource: string): PaymentRequirements {
+export interface Offer {
+  description: string;
+  outputSchema: unknown;
+}
+
+/** What /api/pay sells: one answer to one question. */
+export const QUESTION_OFFER: Offer = {
+  description: "One answer from Cheap First: Dolphin answers, SERV checks, and a premium model steps in only if the check fails.",
+  outputSchema: {
+    input: { type: "http", method: "POST", bodyType: "json", bodyFields: { question: { type: "string", required: true, description: "Your question, up to 2,000 characters" }, mode: { type: "string", required: false, description: "strict, balanced (default) or budget" } } },
+    output: { answer: "string", answeredBy: "cheap | premium", model: "string", check: { score: "number", reason: "string" }, costUsd: "number", savedUsd: "number" },
+  },
+};
+
+export function requirements(resource: string, offer: Offer = QUESTION_OFFER): PaymentRequirements {
   return {
     scheme: "exact",
     network: "base",
     maxAmountRequired: PRICE_MICRO,
     resource,
-    description: "One answer from Cheap First: Dolphin answers, SERV checks, and a premium model steps in only if the check fails.",
+    description: offer.description,
     mimeType: "application/json",
     payTo: PAY_TO,
     maxTimeoutSeconds: 300,
     asset: USDC_BASE,
-    outputSchema: {
-      input: { type: "http", method: "POST", bodyType: "json", bodyFields: { question: { type: "string", required: true, description: "Your question, up to 4,000 characters" } } },
-      output: { answer: "string", answeredBy: "cheap | premium", model: "string", check: { score: "number", reason: "string" } },
-    },
+    outputSchema: offer.outputSchema,
     extra: { name: "USD Coin", version: "2" },
   };
 }
 
 /** The body of a 402 response. */
-export function paymentRequired(resource: string, error: string) {
-  return { x402Version: 1, error, accepts: [requirements(resource)] };
+export function paymentRequired(resource: string, error: string, offer: Offer = QUESTION_OFFER) {
+  return { x402Version: 1, error, accepts: [requirements(resource, offer)] };
 }
 
 /** Decodes the X-PAYMENT header (base64 JSON). Returns null if it isn't valid. */

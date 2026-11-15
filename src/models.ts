@@ -67,8 +67,25 @@ export function costOf(spec: ModelSpec, inputTokens: number, outputTokens: numbe
   return (inputTokens * spec.inputPerM + outputTokens * spec.outputPerM) / 1_000_000;
 }
 
+export interface ChatMessage {
+  role: "system" | "user" | "assistant";
+  content: string;
+}
+
 /** `maxTokens` caps the answer length (and so its cost) for this one call. */
 export async function chat(spec: ModelSpec, system: string, user: string, maxTokens = MAX_TOKENS): Promise<CallResult> {
+  return chatMessages(
+    spec,
+    [
+      { role: "system", content: system },
+      { role: "user", content: user },
+    ],
+    maxTokens,
+  );
+}
+
+/** Like `chat`, but with a whole conversation (system, user and assistant turns). */
+export async function chatMessages(spec: ModelSpec, messages: ChatMessage[], maxTokens = MAX_TOKENS): Promise<CallResult> {
   const key = spec.provider === "dolphin" ? dolphinKey() : process.env.SERV_API_KEY;
   if (!key) throw new Error(spec.provider === "dolphin" ? "DOLPHIN_API_KEY is not set" : "SERV_API_KEY is not set");
   const url = spec.provider === "dolphin" ? DOLPHIN_URL : SERV_URL;
@@ -83,10 +100,7 @@ export async function chat(spec: ModelSpec, system: string, user: string, maxTok
         // Set explicitly: SERV's own default can exceed the model's limit and fail with a 400.
         // SERV's OpenAI models want the newer parameter name.
         ...(spec.provider === "serv" ? { max_completion_tokens: maxTokens } : { max_tokens: maxTokens }),
-        messages: [
-          { role: "system", content: system },
-          { role: "user", content: user },
-        ],
+        messages,
       }),
     });
   const started = Date.now();

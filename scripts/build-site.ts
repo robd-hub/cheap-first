@@ -339,7 +339,23 @@ const res = await pay("https://cheap-first.vercel.app/api/pay", {
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({ question: "What is 17% of 2,450?" }),
 });
-console.log(await res.json()); // { answer, answeredBy, model, check, paid }</pre>
+console.log(await res.json()); // { answer, answeredBy, model, check, costUsd, savedUsd, paid }</pre>
+  <h3 style="margin-top:24px">Already using an OpenAI-style client? Change one line.</h3>
+  <p class="sub">Cheap First also speaks the OpenAI chat format at <code>/api/v1</code>, with conversation history, system prompts and streaming. Point your client's base URL at it and pay per answer the same way. Pick <code>cheap-first</code>, <code>cheap-first-strict</code> (escalates more often) or <code>cheap-first-budget</code> (cheapest). Every reply includes a <code>cheap_first</code> field with who answered, the cost and the saving.</p>
+  <pre style="margin-top:16px">import OpenAI from "openai";
+import { wrapFetchWithPayment } from "x402-fetch";
+import { privateKeyToAccount } from "viem/accounts";
+
+const client = new OpenAI({
+  baseURL: "https://cheap-first.vercel.app/api/v1", // the one line that changes
+  apiKey: "x402", // not used: each answer is paid with x402
+  fetch: wrapFetchWithPayment(fetch, privateKeyToAccount(process.env.PRIVATE_KEY)),
+});
+const reply = await client.chat.completions.create({
+  model: "cheap-first",
+  messages: [{ role: "user", content: "What is 17% of 2,450?" }],
+});
+console.log(reply.choices[0].message.content);</pre>
 </section>
 <section id="calc">
   <p class="eyebrow">Savings calculator</p>

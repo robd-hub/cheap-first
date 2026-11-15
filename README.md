@@ -113,7 +113,20 @@ escalation cost $0.19), so both endpoints:
 - go straight to the premium model when Dolphin errors out or returns a blank answer, instead of failing
   or paying to check an empty reply. The benchmark keeps outages visible and does not fall back.
 
-The paid endpoint accepts questions of up to 2,000 characters.
+The paid endpoint accepts questions of up to 2,000 characters, and an optional `mode`:
+`strict` (pass mark 85, escalates more often), `balanced` (75, the default) or `budget` (60).
+Each answer includes `costUsd` and `savedUsd` (the saving against the premium model alone; an
+estimate for cheap answers, and it can be negative for an escalation).
+
+## OpenAI-compatible API
+
+`api/v1/chat/completions.ts` serves Cheap First in the OpenAI chat completions format, paid per answer
+with x402 like `/api/pay`. An app using an OpenAI-style client changes its base URL to
+`https://cheap-first.vercel.app/api/v1` and wraps `fetch` with an x402 client. It supports `messages`
+(system, user, assistant, up to 6,000 characters in total), `model` (`cheap-first`, `cheap-first-strict`,
+`cheap-first-budget`) and `stream` (the answer arrives as a single chunk, since it is only released after
+the check). Each reply has a `cheap_first` field with who answered, the check score, the cost and the
+saving. `GET /api/v1/models` lists the model names.
 
 ## Project layout
 
@@ -123,6 +136,8 @@ src/cheapFirst.ts      answer → check → escalate
 src/budget.ts          daily premium spend limit for the live endpoints
 api/ask.ts             the live "try it" endpoint
 api/pay.ts             the paid x402 endpoint ($0.005 per answer)
+api/v1/                the same, in the OpenAI chat completions format
+src/paid.ts            the shared x402 verify → answer → settle flow
 data/questions.json    143 questions with written criteria
 data/results.json      the latest benchmark run
 scripts/build-site.ts  builds the public results page

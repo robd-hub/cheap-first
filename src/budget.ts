@@ -42,3 +42,6 @@ export class DailyBudget {
     return this.spent;
   }
 }
+
+/** Shared by every paid endpoint, so together they stay within one daily budget. */
+export const paidPremiumBudget = new DailyBudget(Number(process.env.CF_PAID_PREMIUM_BUDGET_USD) || 2);

@@ -8,6 +8,9 @@
     },
     "api/pay.ts": {
       "maxDuration": 300
+    },
+    "api/v1/chat/completions.ts": {
+      "maxDuration": 300
     }
   }
 }
