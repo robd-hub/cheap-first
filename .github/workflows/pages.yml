@@ -31,6 +31,8 @@ jobs:
         env:
           # The live "Try it" box calls the Vercel function (api/ask.ts).
           ASK_URL: https://cheap-first-designimp-projects.vercel.app/api/ask
+          # Stripe Payment Link for prepaid keys; the card option only shows when it's set.
+          CF_CARD_LINK: ${{ vars.CF_CARD_LINK }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: out

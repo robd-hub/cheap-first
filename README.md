@@ -128,6 +128,23 @@ with x402 like `/api/pay`. An app using an OpenAI-style client changes its base 
 the check). Each reply has a `cheap_first` field with who answered, the check score, the cost and the
 saving. `GET /api/v1/models` lists the model names.
 
+## Pay by card: prepaid keys (needs Stripe and Upstash)
+
+For developers without a crypto wallet, a card payment can buy a prepaid key: one answer per $0.005 paid
+($5 = 1,000 answers). The key works as `Authorization: Bearer cf_...` on `/api/pay` and `/api/v1/chat/completions`
+(so it's simply the `apiKey` in an OpenAI client). A failed answer gives its credit back. `GET /api/key` with the
+key returns how many answers are left. Only a hash of each key is stored.
+
+To switch it on:
+1. Connect Upstash Redis to the Vercel project (Vercel → Storage / Marketplace → Upstash, free plan). This also
+   makes the demo limits and premium budgets shared across server instances. Keys refuse to work without it.
+2. In Stripe, create a Payment Link (for example $5, "1,000 Cheap First answers"). Under "After payment", choose
+   "Don't show confirmation page" and redirect to `https://cheap-first.vercel.app/api/key?session={CHECKOUT_SESSION_ID}`.
+3. Add `STRIPE_SECRET_KEY` in Vercel (a restricted key with "Checkout Sessions: read" is enough), and
+   `CF_CARD_LINK` (the Payment Link URL) in Vercel and as a repository variable for the Pages build, so the site shows the card option.
+
+After paying, the buyer lands on a page that shows their key once. Refreshing can't mint a second key.
+
 ## Project layout
 
 ```
@@ -137,7 +154,9 @@ src/budget.ts          daily premium spend limit for the live endpoints
 api/ask.ts             the live "try it" endpoint
 api/pay.ts             the paid x402 endpoint ($0.005 per answer)
 api/v1/                the same, in the OpenAI chat completions format
-src/paid.ts            the shared x402 verify → answer → settle flow
+src/paid.ts            the shared x402 verify → answer → settle flow (or a prepaid key)
+src/keys.ts, api/key.ts  prepaid keys bought by card (src/stripe.ts)
+src/store.ts           shared counters on Upstash, with an in-memory fallback
 data/questions.json    143 questions with written criteria
 data/results.json      the latest benchmark run
 scripts/build-site.ts  builds the public results page

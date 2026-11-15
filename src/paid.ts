@@ -4,6 +4,7 @@
  * then settle. If producing the answer fails, the payment is never settled,
  * so the caller isn't charged.
  */
+import { creditsLeft, keyFrom, keysAvailable, refundCredit, spendCredit } from "./keys.js";
 import { decodePayment, encodeHeader, paymentRequired, requirements, settlePayment, verifyPayment, type Offer } from "./x402.js";
 
 export const PAID_CORS: Record<string, string> = {
@@ -19,7 +20,7 @@ export function json(body: unknown, status: number, extra: Record<string, string
 
 export interface Produced {
   /** Builds the response once the payment has settled. */
-  respond: (paid: { amountUsd: number; transaction?: string }, paymentHeader: Record<string, string>) => Response;
+  respond: (paid: { amountUsd: number; transaction?: string; creditsLeft?: number }, paymentHeader: Record<string, string>) => Response;
 }
 
 /**
@@ -29,6 +30,26 @@ export interface Produced {
 export async function paidCall(request: Request, offer: Offer, produce: () => Promise<Produced | Response>): Promise<Response> {
   const resource = new URL(request.url).toString();
   const req = requirements(resource, offer);
+
+  // A prepaid key (bought by card) instead of an x402 payment.
+  const apiKey = keyFrom(request);
+  if (apiKey) {
+    if (!keysAvailable()) return json({ error: "Prepaid keys aren't available right now. Please try again later." }, 503);
+    if (!(await spendCredit(apiKey))) return json({ error: "This key has no answers left, or isn't a key we issued. Buy more on the Cheap First site." }, 402);
+    let produced: Produced | Response;
+    try {
+      produced = await produce();
+    } catch (e) {
+      await refundCredit(apiKey);
+      throw e;
+    }
+    if (produced instanceof Response) {
+      await refundCredit(apiKey);
+      return produced;
+    }
+    return produced.respond({ amountUsd: Number(req.maxAmountRequired) / 1e6, creditsLeft: await creditsLeft(apiKey) }, {});
+  }
+
   const header = request.headers.get("x-payment");
   if (!header) return json(paymentRequired(resource, "Payment required: $0.005 in USDC on Base per answer.", offer), 402);
   const payload = decodePayment(header);

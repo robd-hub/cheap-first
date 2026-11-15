@@ -35,6 +35,8 @@ interface CheckerTest {
 const REPO = "https://github.com/robd-hub/cheap-first";
 /** Where the live "try it" box sends questions. Same-origin on Vercel; set ASK_URL for other hosts. */
 const ASK_URL = process.env.ASK_URL || "/api/ask";
+/** A Stripe Payment Link for prepaid keys. The card option only shows when it's set. */
+const CARD_LINK = process.env.CF_CARD_LINK || "";
 
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const usd = (n: number) => (n >= 0.01 ? `$${n.toFixed(2)}` : n >= 0.0001 ? `$${n.toFixed(4)}` : `$${n.toFixed(6)}`);
@@ -340,6 +342,7 @@ const res = await pay("https://cheap-first.vercel.app/api/pay", {
   body: JSON.stringify({ question: "What is 17% of 2,450?" }),
 });
 console.log(await res.json()); // { answer, answeredBy, model, check, costUsd, savedUsd, paid }</pre>
+${CARD_LINK ? `<p class="sub" style="margin-top:16px">No crypto wallet? <a href="${CARD_LINK}">Pay by card for a prepaid API key</a>: $5 buys 1,000 answers. Use it as the <code>apiKey</code> below, or as <code>Authorization: Bearer cf_...</code> on <code>/api/pay</code>.</p>` : ""}
   <h3 style="margin-top:24px">Already using an OpenAI-style client? Change one line.</h3>
   <p class="sub">Cheap First also speaks the OpenAI chat format at <code>/api/v1</code>, with conversation history, system prompts and streaming. Point your client's base URL at it and pay per answer the same way. Pick <code>cheap-first</code>, <code>cheap-first-strict</code> (escalates more often) or <code>cheap-first-budget</code> (cheapest). Every reply includes a <code>cheap_first</code> field with who answered, the cost and the saving.</p>
   <pre style="margin-top:16px">import OpenAI from "openai";
