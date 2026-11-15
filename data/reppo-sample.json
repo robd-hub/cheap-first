@@ -1,0 +1,178 @@
+{
+  "ranAt": "2026-11-15T18:06:04.448Z",
+  "judged": 10,
+  "cheapFirstAvg": 100,
+  "premiumAvg": 100,
+  "questions": [
+    {
+      "id": "fizzbuzz",
+      "category": "code",
+      "prompt": "Write a Python function fizzbuzz(n) that returns a list of strings for 1..n using Fizz, Buzz and FizzBuzz.",
+      "cheapFirst": {
+        "score": 100,
+        "decision": "accept",
+        "reason": "The response scored 100 because it fully adheres to the instructions, correctly implementing the FizzBuzz function and returning the expected list of strings. All evaluators agreed with a high confidence level, leading to the decision to ship the response.",
+        "checkerScore": 100
+      },
+      "premium": {
+        "score": 100,
+        "decision": "accept",
+        "reason": "This response was accepted and shipped because it achieved a perfect score of 100 across all rubric dimensions, with high confidence. There was full consensus among evaluators, resulting in no score spread or stake contention.",
+        "checkerScore": 100
+      }
+    },
+    {
+      "id": "capital-australia",
+      "category": "facts",
+      "prompt": "What is the capital of Australia? One word.",
+      "cheapFirst": {
+        "score": 100,
+        "decision": "accept",
+        "reason": "The response earned perfect scores across all rubric dimensions with unanimous evaluator consensus. This drove the accept decision and automatic shipping due to high confidence and zero score contention.",
+        "checkerScore": 100
+      },
+      "premium": {
+        "score": 100,
+        "decision": "accept",
+        "reason": "The submission received a perfect score of 100 with unanimous consensus from all four evaluators and maximum ratings across all rubric dimensions, meeting the thresholds for high-confidence automatic shipping.",
+        "checkerScore": 100
+      }
+    },
+    {
+      "id": "unknown-revenue",
+      "category": "honesty",
+      "prompt": "What was OpenServ's exact revenue in March 2026?",
+      "cheapFirst": {
+        "score": 100,
+        "decision": "accept",
+        "reason": "The response scored perfectly because it adhered to instructions, admitting it couldn’t verify the revenue figure instead of inventing one. All evaluators agreed with a high confidence score.",
+        "checkerScore": 100
+      },
+      "premium": {
+        "score": 100,
+        "decision": "accept",
+        "reason": "The main driver for the decision is the perfect rubric scores across all dimensions, leading to a high confidence acceptance and shipping route.",
+        "checkerScore": 95
+      }
+    },
+    {
+      "id": "json",
+      "category": "instructions",
+      "prompt": "Return a JSON object with keys name and age for a 30-year-old called Maria. JSON only, no other text.",
+      "cheapFirst": {
+        "score": 100,
+        "decision": "accept",
+        "reason": "The AI response perfectly matches the expected format, achieving a perfect score of 100 across all rubric dimensions with unanimous evaluator agreement. This submission was automatically accepted and routed to \"ship\" because it delivered valid JSON with the exact keys and values requested, with no extraneous text.",
+        "checkerScore": 100
+      },
+      "premium": {
+        "score": 100,
+        "decision": "accept",
+        "reason": "The evaluation result is a perfect score of 100, with all rubric dimensions met, including factual accuracy and instruction adherence. The key driver for this outcome is the complete adherence to instructions and the lack of any safety or content issues.",
+        "checkerScore": 100
+      }
+    },
+    {
+      "id": "percent",
+      "category": "math",
+      "prompt": "What is 15% of 240? Just the number.",
+      "cheapFirst": {
+        "score": 100,
+        "decision": "accept",
+        "reason": "The response \"36\" exactly matches the correct answer and follows the \"just the number\" instruction, so all four evaluators scored it a perfect 100 with zero disagreement. No gates failed and the score cleared both the accept and ship thresholds, sending it straight to ship with high confidence.",
+        "checkerScore": 100
+      },
+      "premium": {
+        "score": 100,
+        "decision": "accept",
+        "reason": "score 100 >= passAt 70 -> decision accept; score >= acceptAt 85 and confidence high >= high -> ship",
+        "checkerScore": 100
+      }
+    },
+    {
+      "id": "logic",
+      "category": "reasoning",
+      "prompt": "Alice is taller than Bob. Bob is taller than Carol. Who is the shortest?",
+      "cheapFirst": {
+        "score": 100,
+        "decision": "accept",
+        "reason": "The response earned a perfect score of 100 across all rubric dimensions with unanimous agreement from all four evaluators, automatically triggering the acceptance and shipping route.",
+        "checkerScore": 100
+      },
+      "premium": {
+        "score": 100,
+        "decision": "accept",
+        "reason": "The submission was accepted with a high confidence score of 100, driven by perfect scores across all rubric dimensions from all evaluators. This indicates a strong consensus that the AI response is accurate, complete, and adheres to instructions.",
+        "checkerScore": 100
+      }
+    },
+    {
+      "id": "huge-multiply",
+      "category": "stress test",
+      "prompt": "What is 73829104857362918475 × 9182736450192837465? Just the number, no commas.",
+      "cheapFirst": {
+        "score": 100,
+        "decision": "accept",
+        "reason": "The response was accepted with a score of 100, meaning it perfectly met all requirements. The result was routed for review because the confidence was medium, not high.",
+        "checkerScore": 100
+      },
+      "premium": {
+        "score": 100,
+        "decision": "accept",
+        "reason": "The AI response scored 100 because it provided the exact correct number, adhering perfectly to the user's instructions and demonstrating complete factual accuracy.",
+        "checkerScore": 100
+      }
+    },
+    {
+      "id": "tagline",
+      "category": "writing",
+      "prompt": "Write 3 tagline options for a small coffee roaster in Manila. Under 8 words each.",
+      "cheapFirst": {
+        "score": 100,
+        "decision": "accept",
+        "reason": "The evaluation result is 100 with high confidence, and the response was accepted and shipped because it fully adhered to instructions and met all rubric dimensions. The main driver is perfect compliance with factual accuracy, instruction adherence, completeness, and safety.",
+        "checkerScore": 100
+      },
+      "premium": {
+        "score": 100,
+        "decision": "accept",
+        "reason": "The submission received a perfect score of 100 with high confidence because all four evaluators unanimously agreed it fully meets the requirements: exactly three creative taglines, each under 8 words, culturally relevant to Manila (using local terms like \"barkada\"), and appropriate for a small coffee roaster. No gates failed and all rubric dimensions scored perfectly.",
+        "checkerScore": 100
+      }
+    },
+    {
+      "id": "reverse-words",
+      "category": "code",
+      "prompt": "Write a JavaScript function that reverses the order of words in a sentence. Code only.",
+      "cheapFirst": {
+        "score": 100,
+        "decision": "accept",
+        "reason": "The AI response scored perfectly because it correctly implemented the JavaScript function to reverse words in a sentence and fully adhered to the prompt. All evaluators agreed with a high confidence score, leading to an immediate acceptance and shipment.",
+        "checkerScore": 95
+      },
+      "premium": {
+        "score": 100,
+        "decision": "accept",
+        "reason": "The response achieved a perfect score of 100 with unanimous agreement from all four evaluators, meeting the requirements for correct JavaScript code that reverses word order using split, reverse, and join methods. The high confidence and consensus across all rubric dimensions (factual accuracy, instruction adherence, completeness, and safety all at 100) resulted in the \"ship\" route decision.",
+        "checkerScore": 98
+      }
+    },
+    {
+      "id": "boiling-point",
+      "category": "facts",
+      "prompt": "At sea level, what is the boiling point of water in Fahrenheit? Just the number.",
+      "cheapFirst": {
+        "score": 100,
+        "decision": "accept",
+        "reason": "The response was accepted with a score of 100, driven by perfect scores across all rubric dimensions including factual accuracy and instruction adherence. All evaluators agreed on this high score.",
+        "checkerScore": 100
+      },
+      "premium": {
+        "score": 100,
+        "decision": "accept",
+        "reason": "All four evaluators independently gave the response a perfect 100 with zero disagreement, and every rubric dimension (factual accuracy, instruction adherence, completeness, safety) passed at full marks. Since the score of 100 cleared both the accept threshold (70) and ship threshold (85) with high confidence, the response was routed to ship — the answer \"212\" exactly matched the expected output.",
+        "checkerScore": 100
+      }
+    }
+  ]
+}

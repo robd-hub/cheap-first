@@ -368,6 +368,7 @@ ${calc}
 </section>
 ${escalations ? `<section id="escalated"><p class="eyebrow">The safety net</p>${escalations}</section>` : ""}
 ${checkerTest ? `<section id="checker"><p class="eyebrow">Checker test</p>${checkerTest}</section>` : ""}
+${reppoSection}
 <section id="results">
 <p class="eyebrow">All results</p>
 <h2>Every question, both ways</h2>
@@ -405,6 +406,14 @@ ${m ? `<div class="models">
 }
 
 const results = fs.existsSync("data/results.json") ? (JSON.parse(fs.readFileSync("data/results.json", "utf8")) as Results) : null;
+/** Reppo's independent judges on a sample of questions (scripts/reppo-sample.ts), if it has been run. */
+interface ReppoSample { judged: number; cheapFirstAvg: number | null; premiumAvg: number | null; ranAt: string }
+const reppo = fs.existsSync("data/reppo-sample.json") ? (JSON.parse(fs.readFileSync("data/reppo-sample.json", "utf8")) as ReppoSample) : null;
+const reppoSection =
+  reppo && reppo.judged > 0
+    ? `<section id="independent"><p class="eyebrow">Independent check</p><h2>Judged by someone else, too</h2>
+<p class="sub">The quality scores above come from our own checker. To check them, <a href="https://reppo.xyz">Reppo</a>'s panel of independent judges scored ${reppo.judged} questions both ways, one or more from each category: <b>Cheap First ${reppo.cheapFirstAvg}</b> vs <b>premium only ${reppo.premiumAvg}</b> out of 100 (${reppo.ranAt.slice(0, 10)}). These were questions where Cheap First kept the cheap answer, so it's a check that the cheap answers it keeps are as good as the premium ones.</p></section>`
+    : "";
 const checkerTest = fs.existsSync("data/checker-test.json") ? (JSON.parse(fs.readFileSync("data/checker-test.json", "utf8")) as CheckerTest) : null;
 fs.mkdirSync("out", { recursive: true });
 fs.writeFileSync("out/index.html", page(results, checkerTest));
