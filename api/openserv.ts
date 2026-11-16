@@ -1,8 +1,9 @@
 /**
  * Cheap First as an agent on the OpenServ marketplace.
  *
- * The agent's endpoint is https://<this site>/openserv (vercel.json rewrites
- * /openserv, /openserv/health and /openserv/tools/<name> here). See
+ * The agent's endpoint is https://<this site>/api/openserv (OpenServ adds a
+ * trailing slash; vercel.json rewrites /api/openserv/health and
+ * /api/openserv/tools/<name> here too, and the older /openserv paths). See
  * src/openserv.ts for how OpenServ calls it and docs/openserv.md for setup.
  *
  * Marketplace users don't pay us per answer, so this has its own daily caps:
@@ -67,6 +68,9 @@ export const AGENT: AgentSpec = {
     },
   ],
 };
+
+// Answer every task and chat ourselves, so each one really goes through Cheap First.
+AGENT.direct = (request) => AGENT.capabilities[0].run({ question: request }, null);
 
 async function handle(request: Request): Promise<Response> {
   return handleOpenServ(request, subPath(request.url), AGENT, waitUntil);
