@@ -2,6 +2,7 @@
   "name": "cheap-first",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
   "description": "Answer with Dolphin's cheap model first, check the answer with SERV Reasoning, and only pay for a frontier model when the check fails.",
   "type": "module",
   "scripts": {
