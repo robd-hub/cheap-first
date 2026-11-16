@@ -43,10 +43,10 @@ export interface AgentSpec {
 interface Action {
   type?: string;
   me?: { id?: number };
-  workspace?: { id?: number };
+  workspace?: { id?: number | string };
   explicitInput?: unknown;
   triggerEvents?: { payload?: unknown }[];
-  task?: { id?: number | string; description?: string; body?: string | null; input?: string | null; triggerEvent?: { payload?: unknown } | null };
+  task?: { id?: number | string; description?: string; body?: string | null; input?: string | null; triggerEvent?: { payload?: unknown } | null; outputOptions?: Record<string, unknown> | null };
   messages?: { author?: string; message?: string }[];
 }
 
@@ -106,7 +106,9 @@ async function answerDirectly(spec: AgentSpec, action: Action): Promise<void> {
     const taskId = action.task?.id;
     try {
       const output = await spec.direct!(taskRequest(action));
-      await platform("PUT", `/workspaces/${ws}/tasks/${taskId}/complete`, { output });
+      // OpenServ wants the output as {type, value} under one of the task's output options.
+      const outputOptionId = Object.keys(action.task?.outputOptions ?? {})[0] ?? "default";
+      await platform("PUT", `/workspaces/${ws}/tasks/${taskId}/complete`, { outputOptionId, output: { type: "text", value: output } });
     } catch (e) {
       console.error(e);
       await platform("POST", `/workspaces/${ws}/tasks/${taskId}/error`, { error: (e as Error).message || "Cheap First couldn't answer" });
