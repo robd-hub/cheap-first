@@ -97,9 +97,10 @@ export async function handleOpenServ(request: Request, sub: string, spec: AgentS
   sub = sub.replace(/^\/+|\/+$/g, "");
   if (request.method === "GET") {
     if (sub === "" || sub === "health") return json({ status: "ok", agent: true, capabilities: spec.capabilities.map((c) => c.name) });
-    return json({ error: "Not found" }, 404);
+    return json({ error: "Not found", path: sub }, 404);
   }
   if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
+  console.log(`OpenServ POST "${sub}"`);
   if (!(await authorised(request))) return json({ error: "Unauthorized" }, 401);
 
   let body: Record<string, unknown>;
@@ -126,7 +127,10 @@ export async function handleOpenServ(request: Request, sub: string, spec: AgentS
     }
   }
 
-  if (sub !== "") return json({ error: "Not found" }, 404);
+  if (sub !== "") {
+    console.error(`OpenServ POST to unknown path "${sub}" (${request.url})`);
+    return json({ error: "Not found", path: sub }, 404);
+  }
   const call = runtimeRequest(spec, body as Action);
   if (!call) return json({ error: "Invalid action type" }, 400);
   background(callRuntime(call.path, call.body).catch((e) => console.error(e)));

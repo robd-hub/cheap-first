@@ -69,8 +69,19 @@ export const AGENT: AgentSpec = {
 };
 
 async function handle(request: Request): Promise<Response> {
-  const sub = new URL(request.url).searchParams.get("path") ?? "";
-  return handleOpenServ(request, sub, AGENT, waitUntil);
+  return handleOpenServ(request, subPath(request.url), AGENT, waitUntil);
+}
+
+/**
+ * The part of the path after the agent's endpoint ("", "health" or
+ * "tools/<name>"). vercel.json passes it as ?path=, but read it from the
+ * address too, in case the rewrite hands over the original URL.
+ */
+export function subPath(url: string): string {
+  const u = new URL(url);
+  const fromQuery = u.searchParams.get("path");
+  if (fromQuery !== null) return fromQuery;
+  return u.pathname.replace(/^\/(api\/)?openserv\/?/, "");
 }
 
 export const GET = handle;
