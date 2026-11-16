@@ -100,6 +100,7 @@ export async function handleOpenServ(request: Request, sub: string, spec: AgentS
     return json({ error: "Not found", path: sub }, 404);
   }
   if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
+  console.log(`OpenServ POST "${sub}"`);
   if (!(await authorised(request))) return json({ error: "Unauthorized" }, 401);
 
   let body: Record<string, unknown>;
