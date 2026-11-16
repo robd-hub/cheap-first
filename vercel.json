@@ -14,6 +14,23 @@
     },
     "api/key.ts": {
       "maxDuration": 30
+    },
+    "api/openserv.ts": {
+      "maxDuration": 300
     }
-  }
+  },
+  "rewrites": [
+    {
+      "source": "/.well-known/x402",
+      "destination": "/api/discovery"
+    },
+    {
+      "source": "/openserv",
+      "destination": "/api/openserv"
+    },
+    {
+      "source": "/openserv/:path*",
+      "destination": "/api/openserv?path=:path*"
+    }
+  ]
 }

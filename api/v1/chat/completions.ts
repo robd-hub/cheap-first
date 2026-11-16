@@ -20,7 +20,7 @@
 import { paidPremiumBudget as premiumBudget, PREMIUM_MAX_TOKENS } from "../../../src/budget.js";
 import { cheapFirst, defaultModels, EscalationBlocked, MODES, savings, type Mode, type Models } from "../../../src/cheapFirst.js";
 import type { ChatMessage } from "../../../src/models.js";
-import { json, paidCall, PAID_CORS } from "../../../src/paid.js";
+import { json, paidCall, PAID_CORS, unpaidChallenge } from "../../../src/paid.js";
 import type { Offer } from "../../../src/x402.js";
 
 /** Total characters across all messages. Long conversations are pricey on the premium model. */
@@ -36,6 +36,10 @@ export const MODEL_MODES: Record<string, Mode> = {
 
 const OFFER: Offer = {
   description: "One OpenAI-style chat completion from Cheap First: Dolphin answers, SERV checks, and a premium model steps in only if the check fails.",
+  example: {
+    body: { model: "cheap-first", messages: [{ role: "user", content: "What is the capital of Australia?" }] },
+    output: { object: "chat.completion", model: "cheap-first", choices: [{ index: 0, message: { role: "assistant", content: "Canberra." }, finish_reason: "stop" }] },
+  },
   outputSchema: {
     input: {
       type: "http",
@@ -86,6 +90,8 @@ export function OPTIONS(): Response {
 }
 
 export async function POST(request: Request): Promise<Response> {
+  const unpaid = unpaidChallenge(request, OFFER);
+  if (unpaid) return unpaid;
   let body: { messages?: unknown; model?: unknown; stream?: unknown };
   try {
     body = (await request.json()) as typeof body;

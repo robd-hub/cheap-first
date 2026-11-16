@@ -13,7 +13,7 @@
  */
 import { paidPremiumBudget as premiumBudget, PREMIUM_MAX_TOKENS } from "../src/budget.js";
 import { cheapFirst, defaultModels, EscalationBlocked, MODES, modeFrom, savings, type Models } from "../src/cheapFirst.js";
-import { json, paidCall, PAID_CORS } from "../src/paid.js";
+import { json, paidCall, PAID_CORS, unpaidChallenge } from "../src/paid.js";
 import { QUESTION_OFFER } from "../src/x402.js";
 
 /** Long questions cost more to send to the premium model, so keep them reasonable. */
@@ -25,6 +25,8 @@ export function OPTIONS(): Response {
 }
 
 export async function POST(request: Request): Promise<Response> {
+  const unpaid = unpaidChallenge(request, QUESTION_OFFER);
+  if (unpaid) return unpaid;
   let question = "";
   let mode = modeFrom(undefined);
   try {
