@@ -43,8 +43,9 @@ example). Payment is accepted in `X-PAYMENT` (v1) or `PAYMENT-SIGNATURE` (v2),
 and the receipt comes back in `X-PAYMENT-RESPONSE` or `PAYMENT-RESPONSE` to
 match. `/.well-known/x402` lists both endpoints.
 
-- **x402scan** (x402scan.com): lists only v2 endpoints. Add
-  `https://cheap-first.vercel.app` and it reads `/.well-known/x402`.
+- **x402scan** (x402scan.com): lists only v2 endpoints, and now finds them
+  through `/openapi.json` (an OpenAPI document with each price in
+  `x-payment-info`), not `/.well-known/x402`. Add `cheap-first.vercel.app`.
 - **PayAI's catalogue**: built from the bazaar extension when a payment
   settles through PayAI (our facilitator), so the endpoints appear after the
   first paid answer.

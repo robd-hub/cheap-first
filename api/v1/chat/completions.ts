@@ -34,7 +34,7 @@ export const MODEL_MODES: Record<string, Mode> = {
   "cheap-first-budget": "budget",
 };
 
-const OFFER: Offer = {
+export const OFFER: Offer = {
   description: "One OpenAI-style chat completion from Cheap First: Dolphin answers, SERV checks, and a premium model steps in only if the check fails.",
   example: {
     body: { model: "cheap-first", messages: [{ role: "user", content: "What is the capital of Australia?" }] },

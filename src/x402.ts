@@ -219,3 +219,29 @@ export async function settlePayment(payload: unknown, req: PaymentRequirements):
 export function encodeHeader(value: unknown): string {
   return Buffer.from(JSON.stringify(value)).toString("base64");
 }
+
+// ---- OpenAPI discovery (x402scan and other directories read /openapi.json) ----
+
+/** One paid POST operation in OpenAPI form, with its x402 price. */
+export function openApiOperation(offer: Offer, summary: string, priceMicro: string = PRICE_MICRO): Record<string, unknown> {
+  const v1 = (offer.outputSchema ?? {}) as { input?: { bodyFields?: Record<string, FieldDef> } };
+  const fields = v1.input?.bodyFields ?? {};
+  const properties: Record<string, { type: string; description?: string }> = {};
+  for (const [name, f] of Object.entries(fields)) properties[name] = { type: f.type || "string", ...(f.description ? { description: f.description } : {}) };
+  const required = Object.entries(fields).filter(([, f]) => f.required).map(([name]) => name);
+  const amount = (Number(priceMicro) / 1_000_000).toString();
+  return {
+    summary,
+    description: offer.description,
+    security: [],
+    "x-payment-info": { price: { mode: "fixed", currency: "USD", amount }, protocols: [{ x402: {} }] },
+    requestBody: {
+      required: true,
+      content: { "application/json": { schema: { type: "object", properties, ...(required.length ? { required } : {}) }, ...(offer.example?.body ? { example: offer.example.body } : {}) } },
+    },
+    responses: {
+      "200": { description: "The answer", content: { "application/json": { schema: { type: "object" }, ...(offer.example?.output ? { example: offer.example.output } : {}) } } },
+      "402": { description: "Payment Required: pay in USDC on Base with x402" },
+    },
+  };
+}
