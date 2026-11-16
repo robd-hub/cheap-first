@@ -12,6 +12,14 @@
  *
  * No money moves unless the answer was produced: if the models fail, we never
  * settle, so the client isn't charged.
+ *
+ * x402 version 2 is supported alongside version 1: the 402 also carries a
+ * PAYMENT-REQUIRED header (base64 JSON, network "eip155:8453", the "bazaar"
+ * discovery extension describing the request body), and a payment can arrive
+ * in the v2 PAYMENT-SIGNATURE header instead of X-PAYMENT; its receipt then
+ * goes back in PAYMENT-RESPONSE. The JSON body of the 402 stays version 1, so
+ * older clients keep working. Directories such as x402scan list only v2
+ * endpoints, and facilitators catalogue them from the bazaar extension.
  */
 
 /** Circle's native USDC on Base. Its EIP-712 domain is name "USD Coin", version "2". */
@@ -43,11 +51,20 @@ export interface PaymentRequirements {
 export interface Offer {
   description: string;
   outputSchema: unknown;
+  /** Example request and response, shown by x402 directories (the v2 "bazaar" extension). */
+  example?: { body: Record<string, unknown>; output: unknown };
 }
+
+/** The name x402 directories show for this service. */
+export const SERVICE_NAME = "Cheap First";
 
 /** What /api/pay sells: one answer to one question. */
 export const QUESTION_OFFER: Offer = {
   description: "One answer from Cheap First: Dolphin answers, SERV checks, and a premium model steps in only if the check fails.",
+  example: {
+    body: { question: "What is the capital of Australia?", mode: "balanced" },
+    output: { answer: "Canberra.", answeredBy: "cheap", model: "Dolphin", check: { score: 98, reason: "Correct and concise." }, costUsd: 0.00004, savedUsd: 0.0021 },
+  },
   outputSchema: {
     input: { type: "http", method: "POST", bodyType: "json", bodyFields: { question: { type: "string", required: true, description: "Your question, up to 2,000 characters" }, mode: { type: "string", required: false, description: "strict, balanced (default) or budget" } } },
     output: { answer: "string", answeredBy: "cheap | premium", model: "string", check: { score: "number", reason: "string" }, costUsd: "number", savedUsd: "number" },
@@ -85,11 +102,100 @@ export function decodePayment(header: string): Record<string, unknown> | null {
   }
 }
 
-async function facilitator<T>(path: "verify" | "settle", paymentPayload: unknown, paymentRequirements: PaymentRequirements): Promise<T> {
+// ---- x402 version 2 ----
+
+/** Base mainnet, as x402 v2 names networks (CAIP-2). */
+export const NETWORK_V2 = "eip155:8453";
+
+export interface RequirementsV2 {
+  scheme: "exact";
+  network: string;
+  amount: string;
+  asset: string;
+  payTo: string;
+  maxTimeoutSeconds: number;
+  extra: { name: string; version: string };
+}
+
+export function requirementsV2(req: PaymentRequirements): RequirementsV2 {
+  return { scheme: "exact", network: NETWORK_V2, amount: req.maxAmountRequired, asset: req.asset, payTo: req.payTo, maxTimeoutSeconds: req.maxTimeoutSeconds, extra: req.extra };
+}
+
+interface FieldDef {
+  type?: string;
+  required?: boolean;
+  description?: string;
+}
+
+/**
+ * The v2 "bazaar" discovery extension: the request body as a JSON Schema plus
+ * an example, built from the v1 outputSchema's bodyFields.
+ */
+export function bazaar(offer: Offer): unknown {
+  const v1 = (offer.outputSchema ?? {}) as { input?: { bodyFields?: Record<string, FieldDef> }; output?: unknown };
+  const fields = v1.input?.bodyFields ?? {};
+  const properties: Record<string, { type: string; description?: string }> = {};
+  for (const [name, f] of Object.entries(fields)) properties[name] = { type: f.type || "string", ...(f.description ? { description: f.description } : {}) };
+  const required = Object.entries(fields).filter(([, f]) => f.required).map(([name]) => name);
+  return {
+    info: {
+      input: { type: "http", method: "POST", bodyType: "json", body: offer.example?.body ?? {} },
+      output: { type: "json", example: offer.example?.output ?? v1.output ?? {} },
+    },
+    schema: {
+      $schema: "https://json-schema.org/draft/2020-12/schema",
+      type: "object",
+      properties: {
+        input: {
+          type: "object",
+          properties: {
+            type: { type: "string", const: "http" },
+            method: { type: "string", enum: ["POST"] },
+            bodyType: { type: "string", enum: ["json"] },
+            body: { type: "object", properties, required },
+          },
+          required: ["type", "method", "bodyType", "body"],
+          additionalProperties: false,
+        },
+        output: { type: "object", properties: { type: { type: "string" }, example: { type: "object" } }, required: ["type"] },
+      },
+      required: ["input"],
+    },
+  };
+}
+
+/** The v2 PaymentRequired object, sent base64-encoded in the PAYMENT-REQUIRED header. */
+export function paymentRequiredV2(resource: string, error: string, offer: Offer = QUESTION_OFFER, req: PaymentRequirements = requirements(resource, offer)) {
+  return {
+    x402Version: 2,
+    error,
+    resource: { url: resource, description: offer.description, mimeType: "application/json", serviceName: SERVICE_NAME },
+    accepts: [requirementsV2(req)],
+    extensions: { bazaar: bazaar(offer) },
+  };
+}
+
+/** A payment from either version: v2's PAYMENT-SIGNATURE header, or v1's X-PAYMENT. */
+export function paymentFrom(request: Request): { version: 1 | 2; header: string } | null {
+  const v2 = request.headers.get("payment-signature");
+  if (v2) return { version: 2, header: v2 };
+  const v1 = request.headers.get("x-payment");
+  return v1 ? { version: 1, header: v1 } : null;
+}
+
+export async function verifyPaymentV2(payload: unknown, req: PaymentRequirements): Promise<{ isValid: boolean; invalidReason?: string; payer?: string }> {
+  return facilitator("verify", payload, requirementsV2(req), 2);
+}
+
+export async function settlePaymentV2(payload: unknown, req: PaymentRequirements): Promise<{ success: boolean; errorReason?: string; transaction?: string; network?: string; payer?: string }> {
+  return facilitator("settle", payload, requirementsV2(req), 2);
+}
+
+async function facilitator<T>(path: "verify" | "settle", paymentPayload: unknown, paymentRequirements: PaymentRequirements | RequirementsV2, x402Version: 1 | 2 = 1): Promise<T> {
   const res = await fetch(`${FACILITATOR}/${path}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ x402Version: 1, paymentPayload, paymentRequirements }),
+    body: JSON.stringify({ x402Version, paymentPayload, paymentRequirements }),
   });
   const text = await res.text();
   let body: unknown;
