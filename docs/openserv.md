@@ -2,11 +2,13 @@
 
 ## 1. OpenServ marketplace agent
 
-Cheap First answers as an OpenServ agent at `https://cheap-first.vercel.app/openserv`
-(`api/openserv.ts`, protocol in `src/openserv.ts`; `vercel.json` rewrites
-`/openserv`, `/openserv/health` and `/openserv/tools/<name>` there). It has
-one tool, `answer_cheaply`: the usual Cheap First answer, plus who answered,
-the check score and what it saved.
+Cheap First answers as an OpenServ agent at `https://cheap-first.vercel.app/api/openserv`
+(`api/openserv.ts`, protocol in `src/openserv.ts`). Use that address, not
+`/openserv`: OpenServ adds a trailing slash, and `/openserv/` isn't rewritten.
+Every task and chat message is answered by Cheap First itself (the usual
+answer, plus who answered, the check score and what it saved) and handed back
+to OpenServ, rather than left to OpenServ's runtime model, which sometimes
+answered on its own without calling the `answer_cheaply` tool.
 
 Marketplace users don't pay us per answer, so it has its own daily caps:
 

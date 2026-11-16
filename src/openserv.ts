@@ -32,12 +32,96 @@ export interface Capability {
 export interface AgentSpec {
   systemPrompt: string;
   capabilities: Capability[];
+  /**
+   * Optional: answer every task and chat message ourselves instead of letting
+   * OpenServ's runtime model decide whether to call our tools (it sometimes
+   * answers on its own and skips them). Gets the request text, returns the reply.
+   */
+  direct?: (request: string) => Promise<string>;
 }
 
 interface Action {
   type?: string;
-  task?: { description?: string };
+  me?: { id?: number };
+  workspace?: { id?: number };
+  explicitInput?: unknown;
+  triggerEvents?: { payload?: unknown }[];
+  task?: { id?: number | string; description?: string; body?: string | null; input?: string | null; triggerEvent?: { payload?: unknown } | null };
   messages?: { author?: string; message?: string }[];
+}
+
+const PLATFORM_URL = (process.env.OPENSERV_API_URL || "https://api.openserv.ai").replace(/\/$/, "");
+const REQUEST_FIELDS = ["question", "prompt", "query", "message", "input", "text"];
+
+/** The first request-like string field in a trigger payload or task input. */
+function fieldIn(value: unknown, depth = 0): string | null {
+  if (depth > 3 || value === null || value === undefined) return null;
+  if (typeof value === "string") {
+    const t = value.trim();
+    if (t.startsWith("{")) {
+      try {
+        return fieldIn(JSON.parse(t), depth + 1);
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  }
+  if (typeof value !== "object") return null;
+  const obj = value as Record<string, unknown>;
+  for (const k of REQUEST_FIELDS) if (typeof obj[k] === "string" && (obj[k] as string).trim()) return (obj[k] as string).trim();
+  for (const v of Object.values(obj)) {
+    const found = fieldIn(v, depth + 1);
+    if (found) return found;
+  }
+  return null;
+}
+
+/** What a task asks for: the caller's own input if there is one, else the task text. */
+export function taskRequest(action: Action): string {
+  const t = action.task ?? {};
+  const fromInput =
+    fieldIn(action.explicitInput) ?? fieldIn(t.triggerEvent?.payload) ?? fieldIn(action.triggerEvents?.map((e) => e.payload)) ?? fieldIn(t.input);
+  if (fromInput) return fromInput;
+  return [t.description, t.body, t.input].filter((x) => x && String(x).trim()).filter((x, i, a) => a.indexOf(x) === i).join("\n\n");
+}
+
+async function platform(method: "PUT" | "POST", path: string, body: unknown): Promise<void> {
+  const res = await fetch(`${PLATFORM_URL}${path}`, {
+    method,
+    headers: { "Content-Type": "application/json", "x-openserv-key": process.env.OPENSERV_API_KEY ?? "" },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) console.error(`OpenServ ${method} ${path} returned ${res.status}: ${(await res.text()).slice(0, 300)}`);
+}
+
+/** Answers a task or chat message with spec.direct and hands the reply back to OpenServ. */
+async function answerDirectly(spec: AgentSpec, action: Action): Promise<void> {
+  const ws = action.workspace?.id;
+  if (!ws || !process.env.OPENSERV_API_KEY) {
+    console.error("OpenServ action without a workspace, or OPENSERV_API_KEY isn't set.");
+    return;
+  }
+  if (action.type === "do-task") {
+    const taskId = action.task?.id;
+    try {
+      const output = await spec.direct!(taskRequest(action));
+      await platform("PUT", `/workspaces/${ws}/tasks/${taskId}/complete`, { output });
+    } catch (e) {
+      console.error(e);
+      await platform("POST", `/workspaces/${ws}/tasks/${taskId}/error`, { error: (e as Error).message || "Cheap First couldn't answer" });
+    }
+    return;
+  }
+  const last = [...(action.messages ?? [])].reverse().find((m) => m.author === "user")?.message ?? "";
+  let reply: string;
+  try {
+    reply = last.trim() ? await spec.direct!(last) : "Ask me a question and I'll answer it.";
+  } catch (e) {
+    console.error(e);
+    reply = "Sorry, I couldn't answer that just now. Please try again.";
+  }
+  await platform("POST", `/workspaces/${ws}/agent-chat/${action.me?.id}/message`, { message: reply });
 }
 
 function json(body: unknown, status = 200): Response {
@@ -133,6 +217,7 @@ export async function handleOpenServ(request: Request, sub: string, spec: AgentS
   }
   const call = runtimeRequest(spec, body as Action);
   if (!call) return json({ error: "Invalid action type" }, 400);
-  background(callRuntime(call.path, call.body).catch((e) => console.error(e)));
+  if (spec.direct) background(answerDirectly(spec, body as Action).catch((e) => console.error(e)));
+  else background(callRuntime(call.path, call.body).catch((e) => console.error(e)));
   return json({ accepted: true });
 }
