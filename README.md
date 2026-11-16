@@ -166,3 +166,7 @@ The site rebuilds on GitHub Pages whenever `main` changes. It is plain HTML buil
 `data/results.json`, so no keys are ever used or exposed there.
 
 <p align="center"><sub>Built for SERV Hackathon 02 · Dolphin + SERV Reasoning</sub></p>
+
+## License
+
+MIT, see [LICENSE](LICENSE).
