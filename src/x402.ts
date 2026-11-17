@@ -21,6 +21,7 @@
  * older clients keep working. Directories such as x402scan list only v2
  * endpoints, and facilitators catalogue them from the bazaar extension.
  */
+import { CDP_FACILITATOR, cdpAuthHeader, cdpConfigured } from "./cdpAuth.js";
 
 /** Circle's native USDC on Base. Its EIP-712 domain is name "USD Coin", version "2". */
 export const USDC_BASE = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
@@ -31,8 +32,13 @@ export const PAY_TO = process.env.PAY_TO_ADDRESS || "0x57dE743368Ef3cf200ea6295A
 /** Price per question in USDC (6 decimals): 5000 = $0.005. Override with PRICE_USDC_MICRO. */
 export const PRICE_MICRO = process.env.PRICE_USDC_MICRO || "5000";
 
-/** The facilitator that verifies and settles payments. Override with X402_FACILITATOR_URL. */
-export const FACILITATOR = (process.env.X402_FACILITATOR_URL || "https://facilitator.payai.network").replace(/\/$/, "");
+/**
+ * The facilitator that verifies and settles payments. Coinbase's (CDP) when
+ * CDP_API_KEY_ID and CDP_API_KEY_SECRET are set, since settling through it is
+ * what lists the endpoints on Agentic.market; PayAI's (no account) otherwise.
+ * X402_FACILITATOR_URL overrides both.
+ */
+export const FACILITATOR = (process.env.X402_FACILITATOR_URL || (cdpConfigured() ? CDP_FACILITATOR : "https://facilitator.payai.network")).replace(/\/$/, "");
 
 export interface PaymentRequirements {
   scheme: "exact";
@@ -194,9 +200,13 @@ export async function settlePaymentV2(payload: unknown, req: PaymentRequirements
 }
 
 async function facilitator<T>(path: "verify" | "settle", paymentPayload: unknown, paymentRequirements: PaymentRequirements | RequirementsV2, x402Version: 1 | 2 = 1): Promise<T> {
-  const res = await fetch(`${FACILITATOR}/${path}`, {
+  const url = `${FACILITATOR}/${path}`;
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  // Coinbase's facilitator needs a signed token per call; others take none.
+  if (FACILITATOR.startsWith(CDP_FACILITATOR) && cdpConfigured()) headers.Authorization = cdpAuthHeader("POST", url);
+  const res = await fetch(url, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers,
     body: JSON.stringify({ x402Version, paymentPayload, paymentRequirements }),
   });
   const text = await res.text();
