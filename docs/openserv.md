@@ -41,11 +41,24 @@ a version 1 JSON body, plus a version 2 `PAYMENT-REQUIRED` header carrying the
 "bazaar" discovery extension (the request body as a JSON Schema plus an
 example). Payment is accepted in `X-PAYMENT` (v1) or `PAYMENT-SIGNATURE` (v2),
 and the receipt comes back in `X-PAYMENT-RESPONSE` or `PAYMENT-RESPONSE` to
-match. `/.well-known/x402` lists both endpoints.
+match. `/.well-known/x402` lists all four paid endpoints, and `/api/verify`
+and `/api/verify/quick` behave the same way.
 
 - **x402scan** (x402scan.com): lists only v2 endpoints, and now finds them
   through `/openapi.json` (an OpenAPI document with each price in
   `x-payment-info`), not `/.well-known/x402`. Add `cheap-first.vercel.app`.
 - **PayAI's catalogue**: built from the bazaar extension when a payment
-  settles through PayAI (our facilitator), so the endpoints appear after the
-  first paid answer.
+  settles through PayAI (the default facilitator), so the endpoints appear
+  after the first paid answer.
+- **Agentic.market (Coinbase)**: reads Coinbase's Bazaar, which lists an
+  endpoint when a payment carrying the bazaar extension settles through
+  Coinbase's facilitator. There is no form. To switch to it:
+  1. Make a free API key at portal.cdp.coinbase.com (Secret API key, the
+     default Ed25519 type is fine).
+  2. In Vercel (cheap-first, Production) add `CDP_API_KEY_ID` and
+     `CDP_API_KEY_SECRET`, then redeploy. Payments now verify and settle
+     through `https://api.cdp.coinbase.com/platform/v2/x402`; without the two
+     keys everything stays on PayAI.
+  3. Make one paid call to each endpoint (about $0.035 for all four). The
+     listing shows within about 30 minutes; check at agentic.market or
+     `GET https://api.cdp.coinbase.com/platform/v2/x402/discovery/resources`.
