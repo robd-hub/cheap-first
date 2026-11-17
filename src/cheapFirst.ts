@@ -57,11 +57,24 @@ export async function defaultModels(): Promise<Models> {
   };
 }
 
-/** Asks the checker to grade an answer. `criteria` is optional extra guidance. */
+/** Score cap for an answer that breaks an explicit instruction in the question. Below every pass mark. */
+export const BROKEN_RULE_CAP = 50;
+
+/**
+ * Asks the checker to grade an answer. `criteria` is optional extra guidance.
+ * The checker also says whether the answer broke an explicit, checkable instruction in the question
+ * (counts, "only", language, format, words to avoid, length limits). If it did, the score is capped at
+ * BROKEN_RULE_CAP, so a correct-sounding answer that ignores an instruction is escalated.
+ */
 export async function checkAnswer(checker: ModelSpec, prompt: string, answer: string, criteria?: string): Promise<Check> {
   const system =
-    "You are a strict, fair grader of AI answers. Judge correctness, whether the instructions (including length limits) were followed, and whether anything was made up. " +
-    'Reply with JSON only: {"score": <integer 0-100>, "reason": "<one sentence>"}.';
+    "You are a strict, fair grader of AI answers. Judge correctness, whether the instructions were followed, and whether anything was made up.\n" +
+    "Check every explicit, checkable instruction stated in the question itself: exact counts (sentences, words, items, syllables), " +
+    'words like "only" or "just", the language to answer in, a required format (JSON, list, order), words or letters to avoid, and length limits. ' +
+    'Count exactly. "Only" means nothing else at all: no preamble, no notes, no alternatives. A Markdown code fence around code is fine when only code is asked for. ' +
+    "Do not invent rules the question does not state, and never treat the good-answer guide as an instruction for this flag.\n" +
+    "If the answer breaks any such instruction, set broke_instruction to true and give a score of 50 or lower, even if the content is correct.\n" +
+    'Reply with JSON only: {"broke_instruction": true|false, "score": <integer 0-100>, "reason": "<one sentence>"}.';
   const user =
     `Question:\n${prompt}\n\n` +
     (criteria ? `What a good answer looks like:\n${criteria}\n\n` : "") +
@@ -70,8 +83,12 @@ export async function checkAnswer(checker: ModelSpec, prompt: string, answer: st
   const match = call.text.match(/\{[\s\S]*\}/);
   if (!match) return { score: 0, reason: "The checker did not return a score.", call };
   try {
-    const parsed = JSON.parse(match[0]) as { score: number; reason: string };
-    return { score: Math.max(0, Math.min(100, Math.round(parsed.score))), reason: String(parsed.reason ?? ""), call };
+    const parsed = JSON.parse(match[0]) as { score: number; reason?: string; reasoning?: string; broke_instruction?: boolean };
+    let score = Math.max(0, Math.min(100, Math.round(parsed.score)));
+    const reason = String(parsed.reason ?? parsed.reasoning ?? "");
+    // Enforced here too, in case the checker flags a broken instruction but still scores it high.
+    if (parsed.broke_instruction === true) score = Math.min(score, BROKEN_RULE_CAP);
+    return { score, reason, call };
   } catch {
     return { score: 0, reason: "The checker's reply could not be read.", call };
   }
