@@ -181,6 +181,7 @@ a{color:var(--cyan)}
 .nav{position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px max(16px,calc((100vw - 1040px)/2));backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);background:rgba(6,8,13,.6);border-bottom:1px solid var(--line)}
 .logo{display:flex;align-items:center;gap:10px;font-weight:600;text-decoration:none;color:var(--text)}
 .logo-mark{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;font-weight:700;color:#06080d;background:linear-gradient(135deg,var(--cyan),var(--green));box-shadow:0 0 18px rgba(79,227,255,.4)}
+.reportcard{display:inline-flex;align-items:center;gap:10px;margin:18px 0 4px;color:var(--muted);font-size:.9rem;text-decoration:none}.reportcard:hover span{color:var(--text)}
 .nav nav{display:flex;gap:20px;font-size:.9rem}.nav nav a{text-decoration:none;color:var(--muted);transition:color .2s}.nav nav a:hover{color:var(--text)}
 .wrap{max-width:1040px;margin:0 auto;padding:24px 16px 64px}
 section{margin:64px 0}
@@ -277,6 +278,7 @@ footer a{color:var(--soft)}
   <h1>Frontier quality,<br><span class="grad">cheap-model prices.</span></h1>
   <p class="lede">Most questions don't need a frontier model. Cheap First answers with Dolphin's very cheap model, has SERV Reasoning check the answer, and only pays for a premium model when the check fails.</p>
   <div class="ctas"><a class="btn primary" href="#try">Try it live</a><a class="btn ghost" href="#calc">Work out your savings</a><a class="btn ghost" href="#escalated">See the safety net</a></div>
+  <a class="reportcard" href="https://robd-hub.github.io/agent-report-card/agents/cheap-first/" title="Graded every Monday by Agent Report Card, with independent judges on Reppo"><img src="https://robd-hub.github.io/agent-report-card/badge/cheap-first.svg" alt="Agent Report Card grade for Cheap First" height="22"><span>Graded every Monday by Agent Report Card →</span></a>
   ${tiles}
 </section>
 <section id="try">

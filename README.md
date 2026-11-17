@@ -18,6 +18,7 @@
 <p align="center">
   <img alt="80% cheaper" src="https://img.shields.io/badge/cost-80%25_cheaper-2ef2a4?style=flat-square&labelColor=11151f">
   <img alt="143 questions" src="https://img.shields.io/badge/benchmark-143_questions-4fe3ff?style=flat-square&labelColor=11151f">
+  <a href="https://robd-hub.github.io/agent-report-card/agents/cheap-first/"><img alt="Agent Report Card grade" src="https://robd-hub.github.io/agent-report-card/badge/cheap-first.svg"></a>
   <img alt="SERV Hackathon 02" src="https://img.shields.io/badge/SERV_Hackathon_02-Dolphin_track-9b7bff?style=flat-square&labelColor=11151f">
 </p>
 
