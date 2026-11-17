@@ -423,6 +423,8 @@ ${m ? `<div class="models">
 
 const ARC_REPORT = "https://robd-hub.github.io/agent-report-card/agents/cheap-first/";
 const ARC_DATA = "https://raw.githubusercontent.com/robd-hub/agent-report-card/main/data/results/cheap-first.json";
+/** Agent Report Card's Trust Check for this agent (grade plus advice); the page asks it first, like any agent would before hiring us. */
+const ARC_TRUST = "https://robd-hub.github.io/agent-report-card/trust/cheap-first.json";
 interface ArcRun { date: string; score: number; grade: string; provisional?: boolean }
 /** Latest Agent Report Card grade, read at build time; the page refreshes it in the browser so a new Monday grade shows without a redeploy. */
 let arc: ArcRun | null = null;
@@ -440,10 +442,15 @@ function gradeCard(): string {
   <div class="gk">Independently graded</div>
   <div class="gl"><div class="letter" id="gc-letter">${esc(arc!.grade)}</div><div><div class="score"><span id="gc-score">${arc!.score}</span><small>/100</small></div><div class="by">Agent Report Card</div></div></div>
   <p class="gm">Judged by Reppo's independent panel. Regraded every Monday, last on <span id="gc-date">${esc(day)}</span>.</p>
+  <p class="gm" id="gc-trust" hidden>Live Trust Check: <b id="gc-advice"></b></p>
   <span class="go">See the full report card →</span>
 </a>
 <script>
-fetch(${JSON.stringify(ARC_DATA)}).then(r=>r.ok?r.json():null).then(d=>{if(!d||!d.runs||!d.runs.length)return;const r=d.runs.slice().sort((a,b)=>b.date.localeCompare(a.date))[0];
+const advice={rely:"safe to rely on",check:"use it, but check answers that matter",avoid:"don't rely on it"};
+fetch(${JSON.stringify(ARC_TRUST)}).then(r=>r.ok?r.json():null).then(t=>{if(!t||!t.graded)return null;
+document.getElementById("gc-advice").textContent=advice[t.advice]||t.advice;document.getElementById("gc-trust").hidden=false;
+return {runs:[{date:t.testedAt,score:t.score,grade:t.grade}]};}).catch(()=>null)
+.then(d=>d||fetch(${JSON.stringify(ARC_DATA)}).then(r=>r.ok?r.json():null)).then(d=>{if(!d||!d.runs||!d.runs.length)return;const r=d.runs.slice().sort((a,b)=>b.date.localeCompare(a.date))[0];
 document.getElementById("gc-letter").textContent=r.grade;document.getElementById("gc-score").textContent=r.score;
 document.getElementById("gc-date").textContent=new Date(r.date).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric",timeZone:"UTC"});
 const c={A:"linear-gradient(135deg,#2ef2a4,#4fe3ff)",B:"linear-gradient(135deg,#a3e635,#2ef2a4)",C:"#ffb547",D:"#fb923c",F:"#ff4d6d"}[r.grade];if(c)document.getElementById("gc-letter").style.background=c;}).catch(()=>{});
