@@ -181,7 +181,17 @@ a{color:var(--cyan)}
 .nav{position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px max(16px,calc((100vw - 1040px)/2));backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);background:rgba(6,8,13,.6);border-bottom:1px solid var(--line)}
 .logo{display:flex;align-items:center;gap:10px;font-weight:600;text-decoration:none;color:var(--text)}
 .logo-mark{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;font-weight:700;color:#06080d;background:linear-gradient(135deg,var(--cyan),var(--green));box-shadow:0 0 18px rgba(79,227,255,.4)}
-.reportcard{display:inline-flex;align-items:center;gap:10px;margin:18px 0 4px;color:var(--muted);font-size:.9rem;text-decoration:none}.reportcard:hover span{color:var(--text)}
+.herogrid{display:grid;grid-template-columns:1fr 290px;gap:36px;align-items:start}
+.gradecard{display:block;position:relative;margin-top:8px;padding:22px 22px 18px;border-radius:20px;text-decoration:none;color:var(--text);background:linear-gradient(160deg,rgba(46,242,164,.16),rgba(79,227,255,.06) 60%,var(--card));border:1px solid rgba(46,242,164,.45);box-shadow:0 0 0 1px rgba(46,242,164,.08),0 18px 60px rgba(46,242,164,.18);transition:transform .2s,box-shadow .2s}
+.gradecard:hover{transform:translateY(-2px);box-shadow:0 0 0 1px rgba(46,242,164,.2),0 22px 70px rgba(46,242,164,.28)}
+.gradecard .gk{font:600 .7rem var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--green)}
+.gradecard .gl{display:flex;align-items:center;gap:16px;margin:12px 0 10px}
+.gradecard .letter{width:84px;height:84px;flex:none;border-radius:18px;display:grid;place-items:center;font-size:3.4rem;font-weight:700;line-height:1;color:#06080d;background:var(--gc,linear-gradient(135deg,var(--green),var(--cyan)))}
+.gradecard .score{font-size:1.9rem;font-weight:700;line-height:1}.gradecard .score small{font-size:.95rem;color:var(--muted);font-weight:500}
+.gradecard .by{font-size:.85rem;color:var(--soft);margin-top:6px}
+.gradecard .gm{font-size:.82rem;color:var(--muted);margin:0 0 12px}
+.gradecard .go{font-weight:600;font-size:.9rem;color:var(--cyan)}
+@media (max-width:820px){.herogrid{grid-template-columns:1fr;gap:24px}.gradecard{max-width:360px}}
 .nav nav{display:flex;gap:20px;font-size:.9rem}.nav nav a{text-decoration:none;color:var(--muted);transition:color .2s}.nav nav a:hover{color:var(--text)}
 .wrap{max-width:1040px;margin:0 auto;padding:24px 16px 64px}
 section{margin:64px 0}
@@ -274,11 +284,14 @@ footer a{color:var(--soft)}
 </header>
 <main class="wrap" id="top">
 <section class="hero">
+<div class="herogrid"><div>
   <span class="kicker"><span class="pulse"></span>Live · SERV Hackathon 02 · Dolphin track</span>
   <h1>Frontier quality,<br><span class="grad">cheap-model prices.</span></h1>
   <p class="lede">Most questions don't need a frontier model. Cheap First answers with Dolphin's very cheap model, has SERV Reasoning check the answer, and only pays for a premium model when the check fails.</p>
   <div class="ctas"><a class="btn primary" href="#try">Try it live</a><a class="btn ghost" href="#calc">Work out your savings</a><a class="btn ghost" href="#escalated">See the safety net</a></div>
-  <a class="reportcard" href="https://robd-hub.github.io/agent-report-card/agents/cheap-first/" title="Graded every Monday by Agent Report Card, with independent judges on Reppo"><img src="https://robd-hub.github.io/agent-report-card/badge/cheap-first.svg" alt="Agent Report Card grade for Cheap First" height="22"><span>Graded every Monday by Agent Report Card →</span></a>
+</div>
+${gradeCard()}
+</div>
   ${tiles}
 </section>
 <section id="try">
@@ -405,6 +418,35 @@ ${m ? `<div class="models">
 <footer><span>Cheap First</span><span>Built for SERV Hackathon 02 · Dolphin + SERV Reasoning · <a href="${REPO}">GitHub</a></span></footer>
 </body></html>
 `;
+}
+
+const ARC_REPORT = "https://robd-hub.github.io/agent-report-card/agents/cheap-first/";
+const ARC_DATA = "https://raw.githubusercontent.com/robd-hub/agent-report-card/main/data/results/cheap-first.json";
+interface ArcRun { date: string; score: number; grade: string; provisional?: boolean }
+/** Latest Agent Report Card grade, read at build time; the page refreshes it in the browser so a new Monday grade shows without a redeploy. */
+let arc: ArcRun | null = null;
+try {
+  const res = await fetch(ARC_DATA, { signal: AbortSignal.timeout(8000) });
+  if (res.ok) arc = latest((await res.json()).runs);
+} catch {}
+arc ??= { date: "2026-11-16T16:06:31.288Z", score: 98, grade: "A" };
+function latest(runs: ArcRun[] | undefined): ArcRun | null {
+  return runs?.length ? [...runs].sort((a, b) => b.date.localeCompare(a.date))[0] : null;
+}
+function gradeCard(): string {
+  const day = new Date(arc!.date).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+  return `<a class="gradecard" id="gradecard" href="${ARC_REPORT}" title="See the full report card">
+  <div class="gk">Independently graded</div>
+  <div class="gl"><div class="letter" id="gc-letter">${esc(arc!.grade)}</div><div><div class="score"><span id="gc-score">${arc!.score}</span><small>/100</small></div><div class="by">Agent Report Card</div></div></div>
+  <p class="gm">Judged by Reppo's independent panel. Regraded every Monday, last on <span id="gc-date">${esc(day)}</span>.</p>
+  <span class="go">See the full report card →</span>
+</a>
+<script>
+fetch(${JSON.stringify(ARC_DATA)}).then(r=>r.ok?r.json():null).then(d=>{if(!d||!d.runs||!d.runs.length)return;const r=d.runs.slice().sort((a,b)=>b.date.localeCompare(a.date))[0];
+document.getElementById("gc-letter").textContent=r.grade;document.getElementById("gc-score").textContent=r.score;
+document.getElementById("gc-date").textContent=new Date(r.date).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric",timeZone:"UTC"});
+const c={A:"linear-gradient(135deg,#2ef2a4,#4fe3ff)",B:"linear-gradient(135deg,#a3e635,#2ef2a4)",C:"#ffb547",D:"#fb923c",F:"#ff4d6d"}[r.grade];if(c)document.getElementById("gc-letter").style.background=c;}).catch(()=>{});
+</script>`;
 }
 
 const results = fs.existsSync("data/results.json") ? (JSON.parse(fs.readFileSync("data/results.json", "utf8")) as Results) : null;
