@@ -69,6 +69,24 @@ openly. In a separate test, the checker failed all 8 deliberately wrong answers 
   <img src="docs/escalation.png" alt="Questions that were escalated, with both answers" width="860">
 </p>
 
+### Harder questions
+
+A fair criticism of the benchmark above is that the questions were too easy. So there is a
+[hard benchmark](docs/hard-benchmark.md): 97 hard, real-world style questions (multi-step maths,
+trick facts, strict format rules, failing tools, messy data, plus a "breaking point" round). Every
+answer is graded by code against a known correct answer, and the checker gets no answer key.
+
+| 97 hard questions | Cheap First | Premium only |
+|---|---|---|
+| Correct, checked by code | **97 of 97** | 97 of 97 |
+| Total cost | **$0.27** | $1.42 |
+| Saving | **81%** | |
+
+To test the checker on real mistakes, three weaker models answered the same questions: of 124
+wrong answers, **the checker caught 115 (93%)**. Of the 9 it missed, 5 were only a wrong status label
+and 4 were real errors, mostly facts the checker also got wrong. It raised false alarms on 13 of 166
+right answers (8%). Full details, including the weak spots, are in [docs/hard-benchmark.md](docs/hard-benchmark.md).
+
 ## Run it yourself
 
 ```bash
@@ -91,6 +109,7 @@ console.log(result.answer, result.answeredBy, result.costUsd);
 |---|---|
 | `npm run ask -- "question"` | Answer one question the Cheap First way |
 | `npm run benchmark` | Run the benchmark and save `data/results.json` (pass question ids to run just those) |
+| `npm run hard-benchmark` | Run the hard benchmark, graded by code (`-- --set stress` for round 2, see [docs](docs/hard-benchmark.md)) |
 | `npm run build` | Build the results page into `out/` (no keys needed) |
 | `npx tsx scripts/check-sanity.ts` | Grade deliberately wrong answers and save `data/checker-test.json` |
 | `npx tsx scripts/probe.ts file.json` | Try questions on Dolphin and the checker only, to find ones Dolphin gets wrong |
