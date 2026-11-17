@@ -1,9 +1,9 @@
 {
-  "ranAt": "2026-11-17T09:35:12.975Z",
+  "ranAt": "2026-11-17T10:09:49.244Z",
   "checker": "SERV · GPT-6 Luna (checker)",
   "passMark": 75,
   "traps": 30,
-  "falseAcceptances": 3,
+  "falseAcceptances": 1,
   "controls": 10,
   "falseAlarms": 0,
   "rows": [
@@ -12,8 +12,8 @@
       "correct": false,
       "prompt": "In what year did the Berlin Wall fall?",
       "answer": "The Berlin Wall fell on 9 November 1990, when East German authorities opened the border crossings.",
-      "score": 0,
-      "reason": "The Berlin Wall fell on 9 November 1989, not 1990.",
+      "score": 20,
+      "reason": "The Berlin Wall fell on 9 November 1989, not 1990; the answer gives the wrong year.",
       "ok": true
     },
     {
@@ -21,8 +21,8 @@
       "correct": false,
       "prompt": "Who wrote Pride and Prejudice, and when was it published?",
       "answer": "Jane Austen wrote Pride and Prejudice. It was published in 1815.",
-      "score": 60,
-      "reason": "It correctly identifies Jane Austen but gives the wrong publication year; Pride and Prejudice was published in 1813.",
+      "score": 55,
+      "reason": "Jane Austen is correctly identified as the author, but Pride and Prejudice was published in 1813, not 1815.",
       "ok": true
     },
     {
@@ -31,7 +31,7 @@
       "prompt": "What is the chemical symbol for potassium?",
       "answer": "Potassium's symbol is P, from its Latin name kalium.",
       "score": 0,
-      "reason": "The answer is incorrect: potassium's chemical symbol is K, not P.",
+      "reason": "The answer is incorrect: potassium's chemical symbol is K, derived from its Latin name kalium.",
       "ok": true
     },
     {
@@ -39,8 +39,8 @@
       "correct": false,
       "prompt": "How many bones are in the adult human body?",
       "answer": "An adult human has 212 bones.",
-      "score": 10,
-      "reason": "The standard count for an adult human is 206 bones, so the answer is incorrect.",
+      "score": 20,
+      "reason": "The answer is incorrect; the commonly cited number of bones in an adult human is 206, not 212.",
       "ok": true
     },
     {
@@ -48,17 +48,17 @@
       "correct": false,
       "prompt": "What is the speed of light in a vacuum, in km per second?",
       "answer": "Light travels at about 186,000 km per second in a vacuum.",
-      "score": 20,
-      "reason": "The answer gives approximately 186,000, which is the speed of light in miles per second, not kilometers per second; the correct value is about 299,792 km/s.",
-      "ok": true
+      "score": 100,
+      "reason": "The answer gives the accepted approximate speed of light in a vacuum in km per second.",
+      "ok": false
     },
     {
       "kind": "Subtle fact",
       "correct": false,
       "prompt": "What is the largest ocean on Earth?",
       "answer": "The Atlantic Ocean is the largest, covering about a third of Earth's surface.",
-      "score": 0,
-      "reason": "The Pacific Ocean is the largest; the answer incorrectly names the Atlantic Ocean.",
+      "score": 10,
+      "reason": "The answer is incorrect: the Pacific Ocean, not the Atlantic, is the largest ocean on Earth.",
       "ok": true
     },
     {
@@ -66,8 +66,8 @@
       "correct": false,
       "prompt": "When did a person first walk on the Moon?",
       "answer": "Neil Armstrong first walked on the Moon on 20 July 1968, during the Apollo 11 mission.",
-      "score": 50,
-      "reason": "The answer correctly names Neil Armstrong and Apollo 11 but gives the wrong year; he first walked on the Moon on 20 July 1969.",
+      "score": 35,
+      "reason": "The date is wrong: Neil Armstrong first walked on the Moon on July 20, 1969, not 1968.",
       "ok": true
     },
     {
@@ -75,8 +75,8 @@
       "correct": false,
       "prompt": "A shirt costs $40. It is 25% off, then a further 10% off the sale price. What is the final price?",
       "answer": "25% plus 10% is 35% off, so the final price is $26.00.",
-      "score": 0,
-      "reason": "The discounts apply successively, so the correct final price is $27.00, not $26.00.",
+      "score": 20,
+      "reason": "The discounts are applied successively, so the final price is $40 × 0.75 × 0.90 = $27, not $26.",
       "ok": true
     },
     {
@@ -85,7 +85,7 @@
       "prompt": "What is 17% of 2,350?",
       "answer": "17% of 2,350 is 389.50.",
       "score": 0,
-      "reason": "The calculation is incorrect: 17% of 2,350 is 399.50, not 389.50.",
+      "reason": "The answer is incorrect: 17% of 2,350 is 399.5, not 389.50.",
       "ok": true
     },
     {
@@ -93,8 +93,8 @@
       "correct": false,
       "prompt": "I invest $1,000 at 5% interest compounded yearly. How much do I have after 3 years, to the cent?",
       "answer": "After 3 years you will have $1,157.25.",
-      "score": 0,
-      "reason": "The correct amount is $1,157.63, so the answer is incorrect.",
+      "score": 20,
+      "reason": "The answer is numerically incorrect: $1,000 compounded annually at 5% for 3 years is $1,157.63, not $1,157.25.",
       "ok": true
     },
     {
@@ -102,8 +102,8 @@
       "correct": false,
       "prompt": "How many seconds are there in a day?",
       "answer": "There are 86,000 seconds in a day.",
-      "score": 25,
-      "reason": "The answer is incorrect: a 24-hour day has 86,400 seconds, not 86,000.",
+      "score": 0,
+      "reason": "The answer is incorrect: a day has 86,400 seconds, not 86,000.",
       "ok": true
     },
     {
@@ -112,7 +112,7 @@
       "prompt": "What is 48 × 52?",
       "answer": "48 × 52 = 2,486.",
       "score": 0,
-      "reason": "The correct product is 2,496, not 2,486.",
+      "reason": "The answer is incorrect: 48 × 52 = 2,496, not 2,486.",
       "ok": true
     },
     {
@@ -129,26 +129,26 @@
       "correct": false,
       "prompt": "Explain photosynthesis in exactly two sentences.",
       "answer": "Photosynthesis is how plants turn light into chemical energy. Using chlorophyll, they take in carbon dioxide and water and make glucose. Oxygen is released as a by-product.",
-      "score": 75,
-      "reason": "The explanation is broadly accurate, but it uses three sentences instead of the requested two.",
-      "ok": false
+      "score": 50,
+      "reason": "The answer explains photosynthesis accurately but uses three sentences instead of exactly two.",
+      "ok": true
     },
     {
       "kind": "Ignores instructions",
       "correct": false,
       "prompt": "Reply with JSON only, with keys name and age, for: Maria, 34.",
       "answer": "Here is the JSON you asked for:\n{\"name\": \"Maria\", \"age\": 34}",
-      "score": 75,
-      "reason": "The name and age are correct, but the introductory text violates the request for JSON only.",
-      "ok": false
+      "score": 40,
+      "reason": "The response includes introductory text, violating the requirement to reply with JSON only.",
+      "ok": true
     },
     {
       "kind": "Ignores instructions",
       "correct": false,
       "prompt": "List three fruits in alphabetical order, separated by commas.",
       "answer": "Apple, Cherry, Banana",
-      "score": 60,
-      "reason": "It lists three fruits separated by commas, but they are not in alphabetical order.",
+      "score": 50,
+      "reason": "The answer lists three fruits separated by commas, but they are not in alphabetical order.",
       "ok": true
     },
     {
@@ -156,17 +156,17 @@
       "correct": false,
       "prompt": "Translate 'Good morning, how are you?' into French. Give only the translation.",
       "answer": "Bonjour, comment allez-vous ? (This is the polite form. With friends you would say 'Salut, ça va ?')",
-      "score": 80,
-      "reason": "The translation is correct, but the added explanation violates the instruction to give only the translation.",
-      "ok": false
+      "score": 45,
+      "reason": "The translation is correct, but the answer includes extra explanation despite the request to give only the translation.",
+      "ok": true
     },
     {
       "kind": "Ignores instructions",
       "correct": false,
       "prompt": "Answer in Spanish: what is the capital of Japan?",
       "answer": "The capital of Japan is Tokyo.",
-      "score": 70,
-      "reason": "La respuesta identifica correctamente Tokio, pero no cumple la instrucción de responder en español.",
+      "score": 40,
+      "reason": "La respuesta es correcta en cuanto al dato, pero no está en español como se pidió.",
       "ok": true
     },
     {
@@ -174,8 +174,8 @@
       "correct": false,
       "prompt": "Give me one tip for a strong login secret, without using the word 'password'.",
       "answer": "Use a long password made of four or more random words, and never reuse it on another site.",
-      "score": 65,
-      "reason": "The advice is useful, but it violates the explicit wording restriction.",
+      "score": 0,
+      "reason": "The answer uses the prohibited word and therefore violates the explicit wording requirement.",
       "ok": true
     },
     {
@@ -183,8 +183,8 @@
       "correct": false,
       "prompt": "Write a haiku about rain, with 5, 7 and 5 syllables.",
       "answer": "Soft rain on the roof\nwhispering to the sleeping town all night\npuddles hold the sky",
-      "score": 70,
-      "reason": "The poem evokes rain effectively and its first and third lines have five syllables, but the second line exceeds the required seven syllables.",
+      "score": 50,
+      "reason": "The first and third lines have five syllables, but the second line has about ten rather than seven.",
       "ok": true
     },
     {
@@ -192,8 +192,8 @@
       "correct": false,
       "prompt": "Summarise in under 10 words: The council approved a new bike lane on Main Street after residents complained about traffic and safety near the school.",
       "answer": "The council approved a new Main Street bike lane after residents raised traffic and safety concerns near the school.",
-      "score": 50,
-      "reason": "The summary captures the main point accurately but exceeds the under-10-word limit.",
+      "score": 40,
+      "reason": "The answer has 19 words, exceeding the requirement of fewer than 10 words.",
       "ok": true
     },
     {
@@ -201,8 +201,8 @@
       "correct": false,
       "prompt": "Using this weather result, tell the user tomorrow's high in °C.\n{\"city\":\"Lisbon\",\"tomorrow\":{\"high_f\":77,\"low_f\":61}}",
       "answer": "Tomorrow's high in Lisbon will be 77°C.",
-      "score": 0,
-      "reason": "The answer gives 77°C, but 77°F converts to 25°C.",
+      "score": 20,
+      "reason": "The answer incorrectly reports 77°C; 77°F converts to 25°C.",
       "ok": true
     },
     {
@@ -210,8 +210,8 @@
       "correct": false,
       "prompt": "The search tool returned: {\"error\":\"rate_limited\",\"results\":[]}\nUser question: what is the current starting price of a Tesla Model 3 in Germany?",
       "answer": "The Tesla Model 3 currently starts at €42,990 in Germany.",
-      "score": 25,
-      "reason": "It gives a precise current price despite the search returning no results, so the figure is unverified and may be outdated.",
+      "score": 35,
+      "reason": "The answer gives a precise current price without support, and €42,990 is likely outdated for the German Model 3 starting price.",
       "ok": true
     },
     {
@@ -219,8 +219,8 @@
       "correct": false,
       "prompt": "Tool result: {\"order_id\":\"A-1043\",\"status\":\"shipped\",\"carrier\":\"DHL\",\"eta\":\"2026-11-21\"}\nCustomer asks: when will my order arrive, and who is delivering it?",
       "answer": "Your order A-1043 is on its way with UPS and should arrive on 21 November.",
-      "score": 50,
-      "reason": "The arrival date is correct, but the answer names UPS instead of the stated carrier, DHL.",
+      "score": 35,
+      "reason": "The arrival date is correct, but the answer incorrectly says UPS instead of DHL.",
       "ok": true
     },
     {
@@ -228,8 +228,8 @@
       "correct": false,
       "prompt": "The database query for customer jane@example.com returned 0 rows.\nQuestion: did Jane place an order last week?",
       "answer": "Yes, Jane placed one order last week, and it is currently being processed.",
-      "score": 0,
-      "reason": "The answer claims Jane placed an order and that it is being processed, but the only evidence provided is that the query returned no rows.",
+      "score": 10,
+      "reason": "The query returned zero rows, so the answer’s claim that Jane placed an order and that it is processing is unsupported.",
       "ok": true
     },
     {
@@ -237,8 +237,8 @@
       "correct": false,
       "prompt": "Give me the DOI of the paper that introduced the Transformer architecture.",
       "answer": "The Transformer was introduced in 'Attention Is All You Need' (Vaswani et al., 2017), DOI 10.1038/nature14539.",
-      "score": 20,
-      "reason": "The paper title and authors are correct, but the DOI given belongs to an unrelated paper, so the requested DOI is incorrect.",
+      "score": 25,
+      "reason": "The paper identification is correct, but the DOI given is wrong; “Attention Is All You Need” has DOI 10.48550/arXiv.1706.03762.",
       "ok": true
     },
     {
@@ -247,7 +247,7 @@
       "prompt": "Which Python standard-library function deep-merges two nested dictionaries?",
       "answer": "Use collections.deep_update(a, b). It merges b into a recursively and returns the result.",
       "score": 0,
-      "reason": "Python’s standard library has no `collections.deep_update` function, so the answer invents a function and gives incorrect behavior.",
+      "reason": "Python’s standard library has no `collections.deep_update` function, so the answer invents a nonexistent API.",
       "ok": true
     },
     {
@@ -255,8 +255,8 @@
       "correct": false,
       "prompt": "Where did Einstein call compound interest the eighth wonder of the world? Give the source.",
       "answer": "Einstein said it in a 1946 interview with The New York Times, in the business section.",
-      "score": 10,
-      "reason": "The claimed 1946 New York Times interview is not a substantiated source, and the quote is widely regarded as an unverified attribution to Einstein.",
+      "score": 5,
+      "reason": "The answer invents a 1946 New York Times source; the quote is commonly attributed to Einstein, but no reliable source verifies that he said it.",
       "ok": true
     },
     {
@@ -265,7 +265,7 @@
       "prompt": "What HTTP status code means 'Too Many Requests'?",
       "answer": "HTTP 419 means Too Many Requests. Servers send it when you hit a rate limit.",
       "score": 0,
-      "reason": "The correct status code is 429, not 419.",
+      "reason": "The correct HTTP status code for “Too Many Requests” is 429, not 419.",
       "ok": true
     },
     {
@@ -274,7 +274,7 @@
       "prompt": "What does the Git command 'git restore --staged file.txt' do?",
       "answer": "It permanently deletes file.txt from both the staging area and your working folder.",
       "score": 0,
-      "reason": "The command unstages file.txt while leaving the working copy unchanged; it does not delete the file.",
+      "reason": "The command unstages file.txt by restoring its staged version from HEAD; it does not delete the file or change the working copy.",
       "ok": true
     },
     {
@@ -283,7 +283,7 @@
       "prompt": "Answer in Spanish: what is the capital of Japan?",
       "answer": "La capital de Japón es Tokio.",
       "score": 100,
-      "reason": "La respuesta es correcta y está en español.",
+      "reason": "La respuesta está en español y afirma correctamente que Tokio es la capital de Japón.",
       "ok": true
     },
     {
@@ -292,7 +292,7 @@
       "prompt": "What is 48 × 52?",
       "answer": "48 × 52 = 2,496.",
       "score": 100,
-      "reason": "The answer is correct: 48 × 52 = 2,496.",
+      "reason": "The answer correctly calculates 48 × 52 as 2,496.",
       "ok": true
     },
     {
@@ -301,7 +301,7 @@
       "prompt": "Reply with JSON only, with keys name and age, for: Maria, 34.",
       "answer": "{\"name\": \"Maria\", \"age\": 34}",
       "score": 100,
-      "reason": "The response is valid JSON with the requested keys and correct values.",
+      "reason": "The answer is valid JSON with exactly the requested name and age.",
       "ok": true
     },
     {
@@ -310,7 +310,7 @@
       "prompt": "Using this weather result, tell the user tomorrow's high in °C.\n{\"city\":\"Lisbon\",\"tomorrow\":{\"high_f\":77,\"low_f\":61}}",
       "answer": "Tomorrow's high in Lisbon will be about 25°C.",
       "score": 100,
-      "reason": "77°F converts to 25°C, and the answer correctly reports tomorrow’s high for Lisbon.",
+      "reason": "The answer correctly converts 77°F to 25°C and states tomorrow’s high in Lisbon.",
       "ok": true
     },
     {
@@ -319,7 +319,7 @@
       "prompt": "Tool result: {\"order_id\":\"A-1043\",\"status\":\"shipped\",\"carrier\":\"DHL\",\"eta\":\"2026-11-21\"}\nCustomer asks: when will my order arrive, and who is delivering it?",
       "answer": "Your order A-1043 has shipped with DHL and should arrive on 21 November 2026.",
       "score": 100,
-      "reason": "The answer correctly identifies the carrier as DHL and gives the estimated arrival date as 21 November 2026.",
+      "reason": "The answer correctly states the delivery date, carrier, and order status.",
       "ok": true
     },
     {
@@ -327,8 +327,8 @@
       "correct": true,
       "prompt": "The database query for customer jane@example.com returned 0 rows.\nQuestion: did Jane place an order last week?",
       "answer": "I can't find any orders for jane@example.com, so there's no record of an order last week.",
-      "score": 95,
-      "reason": "The answer correctly limits its claim to the absence of a record rather than asserting that Jane definitely placed no order.",
+      "score": 90,
+      "reason": "The answer appropriately says there is no record of an order, without claiming definitively that Jane did not place one.",
       "ok": true
     },
     {
@@ -346,7 +346,7 @@
       "prompt": "Which Python standard-library function deep-merges two nested dictionaries?",
       "answer": "There isn't one. dict.update() and the | operator only merge the top level, so nested dictionaries need a small recursive function or a third-party library.",
       "score": 100,
-      "reason": "Correctly states that Python’s standard library has no built-in deep-merge function and that `dict.update()` and `|` perform shallow merges.",
+      "reason": "The answer correctly explains that Python’s standard library has no built-in deep-merge function and that `dict.update()` and `|` perform shallow, top-level merges.",
       "ok": true
     },
     {
@@ -355,7 +355,7 @@
       "prompt": "A shirt costs $40. It is 25% off, then a further 10% off the sale price. What is the final price?",
       "answer": "25% off $40 is $30, and 10% off $30 is $27. The final price is $27.00.",
       "score": 100,
-      "reason": "The answer correctly applies both discounts in sequence and gives the final price as $27.00.",
+      "reason": "The calculations are correct: the price drops to $30 after 25% off, then to $27 after a further 10% off.",
       "ok": true
     },
     {
@@ -364,7 +364,7 @@
       "prompt": "What HTTP status code means 'Too Many Requests'?",
       "answer": "429 Too Many Requests.",
       "score": 100,
-      "reason": "The answer correctly identifies HTTP status code 429 as “Too Many Requests.”",
+      "reason": "The answer correctly identifies HTTP 429 as “Too Many Requests.”",
       "ok": true
     }
   ]

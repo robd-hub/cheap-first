@@ -1,0 +1,18 @@
+{
+  "ranAt": "2026-11-17T10:07:23.340Z",
+  "checker": "SERV · GPT-6 Luna (checker)",
+  "passMark": 75,
+  "checked": 141,
+  "escalatedBefore": 2,
+  "escalatedNow": 1,
+  "newlyEscalated": [],
+  "noLongerEscalated": [
+    {
+      "id": "last-digits-7",
+      "category": "stress test",
+      "oldScore": 0,
+      "newScore": 100,
+      "reason": "The answer gives the correct last four digits, 5649, and follows the instruction to provide only those digits."
+    }
+  ]
+}
