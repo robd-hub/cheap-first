@@ -280,7 +280,7 @@ footer a{color:var(--soft)}
 <div class="bg"></div>
 <header class="nav">
   <a class="logo" href="#top"><span class="logo-mark">C</span>Cheap First</a>
-  <nav><a href="#try">Try it</a><a href="#how">How it works</a><a href="#api">API</a><a href="#escalated">Escalations</a><a href="#results">All results</a><a class="gh" href="${REPO}">GitHub</a></nav>
+  <nav><a href="#try">Try it</a><a href="#how">How it works</a><a href="#api">API</a><a href="#escalated">Escalations</a><a href="#hard">Hard test</a><a href="#results">All results</a><a class="gh" href="${REPO}">GitHub</a></nav>
 </header>
 <main class="wrap" id="top">
 <section class="hero">
@@ -382,6 +382,7 @@ console.log(reply.choices[0].message.content);</pre>
 ${calc}
 </section>
 ${escalations ? `<section id="escalated"><p class="eyebrow">The safety net</p>${escalations}</section>` : ""}
+${hardSection()}
 ${checkerTest ? `<section id="checker"><p class="eyebrow">Checker test</p>${checkerTest}</section>` : ""}
 ${reppoSection}
 <section id="results">
@@ -447,6 +448,37 @@ document.getElementById("gc-letter").textContent=r.grade;document.getElementById
 document.getElementById("gc-date").textContent=new Date(r.date).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric",timeZone:"UTC"});
 const c={A:"linear-gradient(135deg,#2ef2a4,#4fe3ff)",B:"linear-gradient(135deg,#a3e635,#2ef2a4)",C:"#ffb547",D:"#fb923c",F:"#ff4d6d"}[r.grade];if(c)document.getElementById("gc-letter").style.background=c;}).catch(()=>{});
 </script>`;
+}
+
+/** The hard benchmark (docs/hard-benchmark.md): answers graded by code, plus the checker on real weak-model mistakes. */
+function hardSection(): string {
+  const read = (f: string) => (fs.existsSync(f) ? JSON.parse(fs.readFileSync(f, "utf8")) : null);
+  const sets = [read("data/hard-results.json"), read("data/stress-results.json")].filter(Boolean) as {
+    summary: { questions: number; correct: { cheapAlone: number; cheapFirst: number; premium: number }; costUsd: { cheapFirst: number; premium: number }; escalated: number };
+  }[];
+  const real = read("data/real-mistakes.json") as { summary: { overall: { wrong: number; caught: number; falseAcceptances: number; right: number; falseAlarms: number } } } | null;
+  if (!sets.length) return "";
+  const sum = (f: (x: (typeof sets)[number]["summary"]) => number) => sets.reduce((a, x) => a + f(x.summary), 0);
+  const n = sum((x) => x.questions);
+  const cf = sum((x) => x.costUsd.cheapFirst);
+  const pr = sum((x) => x.costUsd.premium);
+  const o = real?.summary.overall;
+  return `<section id="hard">
+<p class="eyebrow">Harder questions</p>
+<h2>Too easy? So we made it harder.</h2>
+<p class="sub">${n} hard, real-world style questions: multi-step maths, trick facts, strict format rules, tools that fail, messy data and a "breaking point" round. Every answer is marked right or wrong by code against a known correct answer, and the checker never sees that answer.</p>
+<div class="tiles">
+  <div class="tile accent"><div class="big">${((1 - cf / pr) * 100).toFixed(0)}%</div><div class="lbl">cheaper on ${n} hard questions (${usd(cf)} vs ${usd(pr)})</div></div>
+  <div class="tile"><div class="big">${sum((x) => x.correct.cheapFirst)}/${n}</div><div class="lbl">correct for Cheap First, and ${sum((x) => x.correct.premium)}/${n} for premium only, checked by code</div></div>
+  ${o ? `<div class="tile"><div class="big">${o.caught}/${o.wrong}</div><div class="lbl">real wrong answers from 3 weaker models caught by the checker (${((o.caught / o.wrong) * 100).toFixed(0)}%)</div></div>
+  <div class="tile"><div class="big">${o.falseAlarms}/${o.right}</div><div class="lbl">right answers flagged by mistake, which costs money but never quality</div></div>` : ""}
+</div>
+<ul class="notes">
+  <li>Dolphin got ${sum((x) => x.correct.cheapAlone)} of ${n} right by itself. Its one miss was a blank answer, which goes straight to the premium model.</li>
+  ${o ? `<li>Of the ${o.falseAcceptances} wrong answers the checker let through, 5 only used the wrong status label and made nothing up. 4 were really wrong, mostly facts the checker also had wrong.</li>` : ""}
+  <li>Full method, every question and the weak spots: <a href="${REPO}/blob/main/docs/hard-benchmark.md">the hard benchmark write-up</a>.</li>
+</ul>
+</section>`;
 }
 
 const results = fs.existsSync("data/results.json") ? (JSON.parse(fs.readFileSync("data/results.json", "utf8")) as Results) : null;
