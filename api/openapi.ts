@@ -7,6 +7,7 @@
  */
 import { openApiOperation, QUESTION_OFFER } from "../src/x402.js";
 import { OFFER as CHAT_OFFER } from "./v1/chat/completions.js";
+import { VERIFY_OFFERS } from "./verify.js";
 
 export function GET(request: Request): Response {
   const origin = new URL(request.url).origin;
@@ -16,12 +17,14 @@ export function GET(request: Request): Response {
       title: "Cheap First",
       version: "1.0.0",
       description: "Answers with a cheap model, checks the answer with SERV Reasoning, and only pays for a premium model when the check fails. Pay per answer in USDC on Base with x402.",
-      "x-guidance": "POST {\"question\": \"...\"} to /api/pay for one answer, or use /api/v1/chat/completions as an OpenAI-compatible endpoint. Call once without payment to get the 402 with the price.",
+      "x-guidance": "POST {\"question\": \"...\"} to /api/pay for one answer, or use /api/v1/chat/completions as an OpenAI-compatible endpoint. To check another agent's work before paying it, POST {\"task\": \"...\", \"answer\": \"...\"} to /api/verify ($0.02) or /api/verify/quick ($0.005); /api/verify/free gives a few free quick checks a day. Call once without payment to get the 402 with the price.",
     },
     servers: [{ url: origin }],
     paths: {
       "/api/pay": { post: openApiOperation(QUESTION_OFFER, "Answer a question cheaply") },
       "/api/v1/chat/completions": { post: openApiOperation(CHAT_OFFER, "OpenAI-compatible chat completion") },
+      "/api/verify": { post: openApiOperation(VERIFY_OFFERS.standard, "Check an AI agent's work before paying for it") },
+      "/api/verify/quick": { post: openApiOperation(VERIFY_OFFERS.quick, "Quick check of an AI agent's work before paying for it") },
     },
   };
   return new Response(JSON.stringify(doc), {

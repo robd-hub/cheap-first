@@ -36,7 +36,7 @@ export function unpaidChallenge(request: Request, offer: Offer): Response | null
   if (keyFrom(request) || paymentFrom(request)) return null;
   const resource = new URL(request.url).toString();
   const req = requirements(resource, offer);
-  return challenge(resource, `Payment required: $${Number(req.maxAmountRequired) / 1e6} in USDC on Base per answer.`, offer, req);
+  return challenge(resource, `Payment required: $${Number(req.maxAmountRequired) / 1e6} in USDC on Base per call.`, offer, req);
 }
 
 export interface Produced {
