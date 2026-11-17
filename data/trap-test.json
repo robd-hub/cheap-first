@@ -1,0 +1,371 @@
+{
+  "ranAt": "2026-11-17T09:35:12.975Z",
+  "checker": "SERV · GPT-6 Luna (checker)",
+  "passMark": 75,
+  "traps": 30,
+  "falseAcceptances": 3,
+  "controls": 10,
+  "falseAlarms": 0,
+  "rows": [
+    {
+      "kind": "Subtle fact",
+      "correct": false,
+      "prompt": "In what year did the Berlin Wall fall?",
+      "answer": "The Berlin Wall fell on 9 November 1990, when East German authorities opened the border crossings.",
+      "score": 0,
+      "reason": "The Berlin Wall fell on 9 November 1989, not 1990.",
+      "ok": true
+    },
+    {
+      "kind": "Subtle fact",
+      "correct": false,
+      "prompt": "Who wrote Pride and Prejudice, and when was it published?",
+      "answer": "Jane Austen wrote Pride and Prejudice. It was published in 1815.",
+      "score": 60,
+      "reason": "It correctly identifies Jane Austen but gives the wrong publication year; Pride and Prejudice was published in 1813.",
+      "ok": true
+    },
+    {
+      "kind": "Subtle fact",
+      "correct": false,
+      "prompt": "What is the chemical symbol for potassium?",
+      "answer": "Potassium's symbol is P, from its Latin name kalium.",
+      "score": 0,
+      "reason": "The answer is incorrect: potassium's chemical symbol is K, not P.",
+      "ok": true
+    },
+    {
+      "kind": "Subtle fact",
+      "correct": false,
+      "prompt": "How many bones are in the adult human body?",
+      "answer": "An adult human has 212 bones.",
+      "score": 10,
+      "reason": "The standard count for an adult human is 206 bones, so the answer is incorrect.",
+      "ok": true
+    },
+    {
+      "kind": "Subtle fact",
+      "correct": false,
+      "prompt": "What is the speed of light in a vacuum, in km per second?",
+      "answer": "Light travels at about 186,000 km per second in a vacuum.",
+      "score": 20,
+      "reason": "The answer gives approximately 186,000, which is the speed of light in miles per second, not kilometers per second; the correct value is about 299,792 km/s.",
+      "ok": true
+    },
+    {
+      "kind": "Subtle fact",
+      "correct": false,
+      "prompt": "What is the largest ocean on Earth?",
+      "answer": "The Atlantic Ocean is the largest, covering about a third of Earth's surface.",
+      "score": 0,
+      "reason": "The Pacific Ocean is the largest; the answer incorrectly names the Atlantic Ocean.",
+      "ok": true
+    },
+    {
+      "kind": "Subtle fact",
+      "correct": false,
+      "prompt": "When did a person first walk on the Moon?",
+      "answer": "Neil Armstrong first walked on the Moon on 20 July 1968, during the Apollo 11 mission.",
+      "score": 50,
+      "reason": "The answer correctly names Neil Armstrong and Apollo 11 but gives the wrong year; he first walked on the Moon on 20 July 1969.",
+      "ok": true
+    },
+    {
+      "kind": "Small number error",
+      "correct": false,
+      "prompt": "A shirt costs $40. It is 25% off, then a further 10% off the sale price. What is the final price?",
+      "answer": "25% plus 10% is 35% off, so the final price is $26.00.",
+      "score": 0,
+      "reason": "The discounts apply successively, so the correct final price is $27.00, not $26.00.",
+      "ok": true
+    },
+    {
+      "kind": "Small number error",
+      "correct": false,
+      "prompt": "What is 17% of 2,350?",
+      "answer": "17% of 2,350 is 389.50.",
+      "score": 0,
+      "reason": "The calculation is incorrect: 17% of 2,350 is 399.50, not 389.50.",
+      "ok": true
+    },
+    {
+      "kind": "Small number error",
+      "correct": false,
+      "prompt": "I invest $1,000 at 5% interest compounded yearly. How much do I have after 3 years, to the cent?",
+      "answer": "After 3 years you will have $1,157.25.",
+      "score": 0,
+      "reason": "The correct amount is $1,157.63, so the answer is incorrect.",
+      "ok": true
+    },
+    {
+      "kind": "Small number error",
+      "correct": false,
+      "prompt": "How many seconds are there in a day?",
+      "answer": "There are 86,000 seconds in a day.",
+      "score": 25,
+      "reason": "The answer is incorrect: a 24-hour day has 86,400 seconds, not 86,000.",
+      "ok": true
+    },
+    {
+      "kind": "Small number error",
+      "correct": false,
+      "prompt": "What is 48 × 52?",
+      "answer": "48 × 52 = 2,486.",
+      "score": 0,
+      "reason": "The correct product is 2,496, not 2,486.",
+      "ok": true
+    },
+    {
+      "kind": "Small number error",
+      "correct": false,
+      "prompt": "Add up these invoice lines: $129.99, $45.50, $310.25, $8.75.",
+      "answer": "The total is $494.94.",
+      "score": 0,
+      "reason": "The correct total is $494.49, not $494.94.",
+      "ok": true
+    },
+    {
+      "kind": "Ignores instructions",
+      "correct": false,
+      "prompt": "Explain photosynthesis in exactly two sentences.",
+      "answer": "Photosynthesis is how plants turn light into chemical energy. Using chlorophyll, they take in carbon dioxide and water and make glucose. Oxygen is released as a by-product.",
+      "score": 75,
+      "reason": "The explanation is broadly accurate, but it uses three sentences instead of the requested two.",
+      "ok": false
+    },
+    {
+      "kind": "Ignores instructions",
+      "correct": false,
+      "prompt": "Reply with JSON only, with keys name and age, for: Maria, 34.",
+      "answer": "Here is the JSON you asked for:\n{\"name\": \"Maria\", \"age\": 34}",
+      "score": 75,
+      "reason": "The name and age are correct, but the introductory text violates the request for JSON only.",
+      "ok": false
+    },
+    {
+      "kind": "Ignores instructions",
+      "correct": false,
+      "prompt": "List three fruits in alphabetical order, separated by commas.",
+      "answer": "Apple, Cherry, Banana",
+      "score": 60,
+      "reason": "It lists three fruits separated by commas, but they are not in alphabetical order.",
+      "ok": true
+    },
+    {
+      "kind": "Ignores instructions",
+      "correct": false,
+      "prompt": "Translate 'Good morning, how are you?' into French. Give only the translation.",
+      "answer": "Bonjour, comment allez-vous ? (This is the polite form. With friends you would say 'Salut, ça va ?')",
+      "score": 80,
+      "reason": "The translation is correct, but the added explanation violates the instruction to give only the translation.",
+      "ok": false
+    },
+    {
+      "kind": "Ignores instructions",
+      "correct": false,
+      "prompt": "Answer in Spanish: what is the capital of Japan?",
+      "answer": "The capital of Japan is Tokyo.",
+      "score": 70,
+      "reason": "La respuesta identifica correctamente Tokio, pero no cumple la instrucción de responder en español.",
+      "ok": true
+    },
+    {
+      "kind": "Ignores instructions",
+      "correct": false,
+      "prompt": "Give me one tip for a strong login secret, without using the word 'password'.",
+      "answer": "Use a long password made of four or more random words, and never reuse it on another site.",
+      "score": 65,
+      "reason": "The advice is useful, but it violates the explicit wording restriction.",
+      "ok": true
+    },
+    {
+      "kind": "Ignores instructions",
+      "correct": false,
+      "prompt": "Write a haiku about rain, with 5, 7 and 5 syllables.",
+      "answer": "Soft rain on the roof\nwhispering to the sleeping town all night\npuddles hold the sky",
+      "score": 70,
+      "reason": "The poem evokes rain effectively and its first and third lines have five syllables, but the second line exceeds the required seven syllables.",
+      "ok": true
+    },
+    {
+      "kind": "Ignores instructions",
+      "correct": false,
+      "prompt": "Summarise in under 10 words: The council approved a new bike lane on Main Street after residents complained about traffic and safety near the school.",
+      "answer": "The council approved a new Main Street bike lane after residents raised traffic and safety concerns near the school.",
+      "score": 50,
+      "reason": "The summary captures the main point accurately but exceeds the under-10-word limit.",
+      "ok": true
+    },
+    {
+      "kind": "Broken tool output",
+      "correct": false,
+      "prompt": "Using this weather result, tell the user tomorrow's high in °C.\n{\"city\":\"Lisbon\",\"tomorrow\":{\"high_f\":77,\"low_f\":61}}",
+      "answer": "Tomorrow's high in Lisbon will be 77°C.",
+      "score": 0,
+      "reason": "The answer gives 77°C, but 77°F converts to 25°C.",
+      "ok": true
+    },
+    {
+      "kind": "Broken tool output",
+      "correct": false,
+      "prompt": "The search tool returned: {\"error\":\"rate_limited\",\"results\":[]}\nUser question: what is the current starting price of a Tesla Model 3 in Germany?",
+      "answer": "The Tesla Model 3 currently starts at €42,990 in Germany.",
+      "score": 25,
+      "reason": "It gives a precise current price despite the search returning no results, so the figure is unverified and may be outdated.",
+      "ok": true
+    },
+    {
+      "kind": "Broken tool output",
+      "correct": false,
+      "prompt": "Tool result: {\"order_id\":\"A-1043\",\"status\":\"shipped\",\"carrier\":\"DHL\",\"eta\":\"2026-11-21\"}\nCustomer asks: when will my order arrive, and who is delivering it?",
+      "answer": "Your order A-1043 is on its way with UPS and should arrive on 21 November.",
+      "score": 50,
+      "reason": "The arrival date is correct, but the answer names UPS instead of the stated carrier, DHL.",
+      "ok": true
+    },
+    {
+      "kind": "Broken tool output",
+      "correct": false,
+      "prompt": "The database query for customer jane@example.com returned 0 rows.\nQuestion: did Jane place an order last week?",
+      "answer": "Yes, Jane placed one order last week, and it is currently being processed.",
+      "score": 0,
+      "reason": "The answer claims Jane placed an order and that it is being processed, but the only evidence provided is that the query returned no rows.",
+      "ok": true
+    },
+    {
+      "kind": "Made up",
+      "correct": false,
+      "prompt": "Give me the DOI of the paper that introduced the Transformer architecture.",
+      "answer": "The Transformer was introduced in 'Attention Is All You Need' (Vaswani et al., 2017), DOI 10.1038/nature14539.",
+      "score": 20,
+      "reason": "The paper title and authors are correct, but the DOI given belongs to an unrelated paper, so the requested DOI is incorrect.",
+      "ok": true
+    },
+    {
+      "kind": "Made up",
+      "correct": false,
+      "prompt": "Which Python standard-library function deep-merges two nested dictionaries?",
+      "answer": "Use collections.deep_update(a, b). It merges b into a recursively and returns the result.",
+      "score": 0,
+      "reason": "Python’s standard library has no `collections.deep_update` function, so the answer invents a function and gives incorrect behavior.",
+      "ok": true
+    },
+    {
+      "kind": "Made up",
+      "correct": false,
+      "prompt": "Where did Einstein call compound interest the eighth wonder of the world? Give the source.",
+      "answer": "Einstein said it in a 1946 interview with The New York Times, in the business section.",
+      "score": 10,
+      "reason": "The claimed 1946 New York Times interview is not a substantiated source, and the quote is widely regarded as an unverified attribution to Einstein.",
+      "ok": true
+    },
+    {
+      "kind": "Made up",
+      "correct": false,
+      "prompt": "What HTTP status code means 'Too Many Requests'?",
+      "answer": "HTTP 419 means Too Many Requests. Servers send it when you hit a rate limit.",
+      "score": 0,
+      "reason": "The correct status code is 429, not 419.",
+      "ok": true
+    },
+    {
+      "kind": "Made up",
+      "correct": false,
+      "prompt": "What does the Git command 'git restore --staged file.txt' do?",
+      "answer": "It permanently deletes file.txt from both the staging area and your working folder.",
+      "score": 0,
+      "reason": "The command unstages file.txt while leaving the working copy unchanged; it does not delete the file.",
+      "ok": true
+    },
+    {
+      "kind": "Correct (control)",
+      "correct": true,
+      "prompt": "Answer in Spanish: what is the capital of Japan?",
+      "answer": "La capital de Japón es Tokio.",
+      "score": 100,
+      "reason": "La respuesta es correcta y está en español.",
+      "ok": true
+    },
+    {
+      "kind": "Correct (control)",
+      "correct": true,
+      "prompt": "What is 48 × 52?",
+      "answer": "48 × 52 = 2,496.",
+      "score": 100,
+      "reason": "The answer is correct: 48 × 52 = 2,496.",
+      "ok": true
+    },
+    {
+      "kind": "Correct (control)",
+      "correct": true,
+      "prompt": "Reply with JSON only, with keys name and age, for: Maria, 34.",
+      "answer": "{\"name\": \"Maria\", \"age\": 34}",
+      "score": 100,
+      "reason": "The response is valid JSON with the requested keys and correct values.",
+      "ok": true
+    },
+    {
+      "kind": "Correct (control)",
+      "correct": true,
+      "prompt": "Using this weather result, tell the user tomorrow's high in °C.\n{\"city\":\"Lisbon\",\"tomorrow\":{\"high_f\":77,\"low_f\":61}}",
+      "answer": "Tomorrow's high in Lisbon will be about 25°C.",
+      "score": 100,
+      "reason": "77°F converts to 25°C, and the answer correctly reports tomorrow’s high for Lisbon.",
+      "ok": true
+    },
+    {
+      "kind": "Correct (control)",
+      "correct": true,
+      "prompt": "Tool result: {\"order_id\":\"A-1043\",\"status\":\"shipped\",\"carrier\":\"DHL\",\"eta\":\"2026-11-21\"}\nCustomer asks: when will my order arrive, and who is delivering it?",
+      "answer": "Your order A-1043 has shipped with DHL and should arrive on 21 November 2026.",
+      "score": 100,
+      "reason": "The answer correctly identifies the carrier as DHL and gives the estimated arrival date as 21 November 2026.",
+      "ok": true
+    },
+    {
+      "kind": "Correct (control)",
+      "correct": true,
+      "prompt": "The database query for customer jane@example.com returned 0 rows.\nQuestion: did Jane place an order last week?",
+      "answer": "I can't find any orders for jane@example.com, so there's no record of an order last week.",
+      "score": 95,
+      "reason": "The answer correctly limits its claim to the absence of a record rather than asserting that Jane definitely placed no order.",
+      "ok": true
+    },
+    {
+      "kind": "Correct (control)",
+      "correct": true,
+      "prompt": "Who wrote Pride and Prejudice, and when was it published?",
+      "answer": "Jane Austen wrote it, and it was published in 1813.",
+      "score": 100,
+      "reason": "The answer correctly identifies Jane Austen as the author and 1813 as the publication year.",
+      "ok": true
+    },
+    {
+      "kind": "Correct (control)",
+      "correct": true,
+      "prompt": "Which Python standard-library function deep-merges two nested dictionaries?",
+      "answer": "There isn't one. dict.update() and the | operator only merge the top level, so nested dictionaries need a small recursive function or a third-party library.",
+      "score": 100,
+      "reason": "Correctly states that Python’s standard library has no built-in deep-merge function and that `dict.update()` and `|` perform shallow merges.",
+      "ok": true
+    },
+    {
+      "kind": "Correct (control)",
+      "correct": true,
+      "prompt": "A shirt costs $40. It is 25% off, then a further 10% off the sale price. What is the final price?",
+      "answer": "25% off $40 is $30, and 10% off $30 is $27. The final price is $27.00.",
+      "score": 100,
+      "reason": "The answer correctly applies both discounts in sequence and gives the final price as $27.00.",
+      "ok": true
+    },
+    {
+      "kind": "Correct (control)",
+      "correct": true,
+      "prompt": "What HTTP status code means 'Too Many Requests'?",
+      "answer": "429 Too Many Requests.",
+      "score": 100,
+      "reason": "The answer correctly identifies HTTP status code 429 as “Too Many Requests.”",
+      "ok": true
+    }
+  ]
+}
