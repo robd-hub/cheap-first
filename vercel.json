@@ -17,9 +17,20 @@
     },
     "api/openserv.ts": {
       "maxDuration": 300
+    },
+    "api/verify.ts": {
+      "maxDuration": 60
     }
   },
   "rewrites": [
+    {
+      "source": "/api/verify/quick",
+      "destination": "/api/verify?level=quick"
+    },
+    {
+      "source": "/api/verify/free",
+      "destination": "/api/verify?level=free"
+    },
     {
       "source": "/.well-known/x402",
       "destination": "/api/discovery"

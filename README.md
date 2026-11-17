@@ -148,6 +148,18 @@ with x402 like `/api/pay`. An app using an OpenAI-style client changes its base 
 the check). Each reply has a `cheap_first` field with who answered, the check score, the cost and the
 saving. `GET /api/v1/models` lists the model names.
 
+## Output verifier: check an agent's work before paying it
+
+`api/verify.ts` sells the Cheap First checker on its own. Send `{"task": "...", "answer": "...", "criteria": "optional", "passMark": 75}` and get `{"verdict": "pass" | "fail", "score", "reason", "receipt"}`. The buyer's own code pays the hired agent only on a pass, so we never hold anyone's money.
+
+| Endpoint | Checker | Price (x402, USDC on Base) |
+| --- | --- | --- |
+| `POST /api/verify` | SERV · GPT-6 Luna | $0.02 |
+| `POST /api/verify/quick` | Dolphin · DeepSeek V4.1 Flash | $0.005 |
+| `POST /api/verify/free` | Dolphin, 20 a day per caller, 300 a day in all | free |
+
+The task and answer aren't stored. The receipt holds their SHA-256 fingerprints, the verdict and the time. Payment is settled only after the verdict is ready. `npm run verify-test` runs 7 right, wrong, rule-breaking and made-up answers through both levels (14/14 as expected on 2026-11-18).
+
 ## Pay by card: prepaid keys (needs Stripe and Upstash)
 
 For developers without a crypto wallet, a card payment can buy a prepaid key: one answer per $0.005 paid

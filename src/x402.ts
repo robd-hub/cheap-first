@@ -53,6 +53,8 @@ export interface Offer {
   outputSchema: unknown;
   /** Example request and response, shown by x402 directories (the v2 "bazaar" extension). */
   example?: { body: Record<string, unknown>; output: unknown };
+  /** Price in USDC micro-units (6 decimals), when it differs from PRICE_MICRO. */
+  priceMicro?: string;
 }
 
 /** The name x402 directories show for this service. */
@@ -75,7 +77,7 @@ export function requirements(resource: string, offer: Offer = QUESTION_OFFER): P
   return {
     scheme: "exact",
     network: "base",
-    maxAmountRequired: PRICE_MICRO,
+    maxAmountRequired: offer.priceMicro ?? PRICE_MICRO,
     resource,
     description: offer.description,
     mimeType: "application/json",
@@ -223,7 +225,7 @@ export function encodeHeader(value: unknown): string {
 // ---- OpenAPI discovery (x402scan and other directories read /openapi.json) ----
 
 /** One paid POST operation in OpenAPI form, with its x402 price. */
-export function openApiOperation(offer: Offer, summary: string, priceMicro: string = PRICE_MICRO): Record<string, unknown> {
+export function openApiOperation(offer: Offer, summary: string, priceMicro: string = offer.priceMicro ?? PRICE_MICRO): Record<string, unknown> {
   const v1 = (offer.outputSchema ?? {}) as { input?: { bodyFields?: Record<string, FieldDef> } };
   const fields = v1.input?.bodyFields ?? {};
   const properties: Record<string, { type: string; description?: string }> = {};

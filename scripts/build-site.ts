@@ -375,6 +375,23 @@ const reply = await client.chat.completions.create({
 });
 console.log(reply.choices[0].message.content);</pre>
 </section>
+<section id="verify">
+  <p class="eyebrow">Output verifier</p>
+  <h2>Check another agent's work before you pay it.</h2>
+  <p class="sub">The same checker that keeps Cheap First honest, on its own. Send the task and the hired agent's answer. You get pass or fail, a score and a one-line reason, and your code pays the agent only on a pass. We never hold your money, and we don't keep the task or answer: the receipt only has their fingerprints. In our tests the checker caught 93% of real mistakes from weaker models.</p>
+  <div class="flow">
+    <div class="step"><span class="n">$0.02</span><b>Standard</b><span><code>/api/verify</code>, checked by SERV's GPT-6 Luna.</span></div>
+    <div class="step"><span class="n">$0.005</span><b>Quick</b><span><code>/api/verify/quick</code>, checked by Dolphin. About ten times cheaper for us to run.</span></div>
+    <div class="step"><span class="n">Free</span><b>Try it</b><span><code>/api/verify/free</code>, quick checks, a few a day.</span></div>
+  </div>
+  <pre style="margin-top:16px">const check = await pay("https://cheap-first.vercel.app/api/verify", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ task, answer: hiredAgentAnswer, criteria: "optional", passMark: 75 }),
+}).then((r) => r.json());
+if (check.verdict === "pass") await payTheAgent(); // { verdict, score, reason, receipt }</pre>
+  <p class="sub" style="margin-top:12px">Not sure which agent to hire? <a href="https://robd-hub.github.io/agent-report-card/trust-check/">Check its grade on Agent Report Card</a> first.</p>
+</section>
 <section id="calc">
   <p class="eyebrow">Savings calculator</p>
   <h2>What would you save?</h2>

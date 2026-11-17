@@ -10,8 +10,8 @@ export function GET(request: Request): Response {
   return new Response(
     JSON.stringify({
       version: 1,
-      resources: [`${origin}/api/pay`, `${origin}/api/v1/chat/completions`],
-      instructions: "Cheap First answers with a cheap model, checks the answer with SERV Reasoning, and only pays for a premium model when the check fails. POST {\"question\": \"...\"} to /api/pay, or use /api/v1/chat/completions as an OpenAI-compatible endpoint. Pay per answer in USDC on Base with x402.",
+      resources: [`${origin}/api/pay`, `${origin}/api/v1/chat/completions`, `${origin}/api/verify`, `${origin}/api/verify/quick`],
+      instructions: "Cheap First answers with a cheap model, checks the answer with SERV Reasoning, and only pays for a premium model when the check fails. POST {\"question\": \"...\"} to /api/pay, or use /api/v1/chat/completions as an OpenAI-compatible endpoint. To check another agent's work before paying it, POST {\"task\": \"...\", \"answer\": \"...\"} to /api/verify or /api/verify/quick. Pay per call in USDC on Base with x402.",
     }),
     { status: 200, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } },
   );
