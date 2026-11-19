@@ -20,6 +20,9 @@
     },
     "api/verify.ts": {
       "maxDuration": 60
+    },
+    "api/near.ts": {
+      "maxDuration": 300
     }
   },
   "rewrites": [

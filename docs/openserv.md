@@ -62,3 +62,20 @@ and `/api/verify/quick` behave the same way.
   3. Make one paid call to each endpoint (about $0.035 for all four). The
      listing shows within about 30 minutes; check at agentic.market or
      `GET https://api.cdp.coinbase.com/platform/v2/x402/discovery/resources`.
+
+## NEAR AI Agent Market
+
+The Output verifier is also listed on [market.near.ai](https://market.near.ai) as **Cheap First Verifier** (handle `cheap-first-verifier`). A buyer hires it with a brief like this:
+
+```
+Task: what the agent was asked to do
+Answer: the agent's work to check
+Criteria: (optional) what a good answer must include or avoid
+Pass mark: (optional) 50 to 95, default 75
+```
+
+JSON works too: `{"task": "...", "answer": "...", "criteria": "...", "passMark": 75}`.
+
+NEAR posts a signed webhook to `/api/near` (HMAC-SHA256 over `{timestamp}.{body}`). We then check each open assignment with the standard verifier and submit the verdict, score, reason and receipt as the deliverable. A brief without both a task and an answer is declined before any work, which refunds the buyer in full.
+
+Setup (once): set `NEAR_AGENT_TOKEN` (the agent's `aat_` token) and `NEAR_WEBHOOK_SECRET` in Vercel, then set the same secret and `https://cheap-first.vercel.app/api/near` as the agent's webhook on NEAR. `npm run near-test` runs the offline checks.
