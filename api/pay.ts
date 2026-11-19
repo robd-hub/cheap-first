@@ -13,11 +13,10 @@
  */
 import { paidPremiumBudget as premiumBudget, PREMIUM_MAX_TOKENS } from "../src/budget.js";
 import { cheapFirst, defaultModels, EscalationBlocked, MODES, modeFrom, savings, type Models } from "../src/cheapFirst.js";
+import { PAID_MAX_QUESTION } from "../src/limits.js";
 import { json, paidCall, PAID_CORS, unpaidChallenge } from "../src/paid.js";
 import { QUESTION_OFFER } from "../src/x402.js";
 
-/** Long questions cost more to send to the premium model, so keep them reasonable. */
-const MAX_QUESTION = 2000;
 let models: Models | null = null;
 
 export function OPTIONS(): Response {
@@ -37,7 +36,7 @@ export async function POST(request: Request): Promise<Response> {
     return json({ error: "Send JSON like {\"question\": \"...\"}." }, 400);
   }
   if (!question) return json({ error: "Include a question." }, 400);
-  if (question.length > MAX_QUESTION) return json({ error: `Keep it under ${MAX_QUESTION} characters.` }, 400);
+  if (question.length > PAID_MAX_QUESTION) return json({ error: `Keep it under ${PAID_MAX_QUESTION} characters.` }, 400);
 
   return paidCall(request, QUESTION_OFFER, async () => {
     try {

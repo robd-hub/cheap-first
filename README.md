@@ -119,7 +119,8 @@ console.log(result.answer, result.answeredBy, result.costUsd);
 `api/ask.ts` is a small serverless function (deployed on Vercel, see `vercel.json`) that powers the
 "Try it live" box on the results page. The keys stay on the server. Every call spends real credits, so
 it limits questions to 600 characters, 10 an hour per visitor and 300 a day per server
-(`CF_PER_IP_PER_HOUR`, `CF_DAILY_CAP`), and `CF_MAX_TOKENS` caps each model reply.
+(`CF_PER_IP_PER_HOUR`, `CF_DAILY_CAP`), and `CF_MAX_TOKENS` caps each model reply. The GitHub Pages
+build points that box at `https://cheap-first.vercel.app/api/ask`.
 
 ### Spend guards (free demo and paid `api/pay.ts`)
 
@@ -147,6 +148,80 @@ with x402 like `/api/pay`. An app using an OpenAI-style client changes its base 
 `cheap-first-budget`) and `stream` (the answer arrives as a single chunk, since it is only released after
 the check). Each reply has a `cheap_first` field with who answered, the check score, the cost and the
 saving. `GET /api/v1/models` lists the model names.
+
+## MCP: Claude, Cursor, and other agents
+
+Cheap First speaks the [Model Context Protocol](https://modelcontextprotocol.io) over Streamable HTTP, on the same deployment as the rest of the API:
+
+```
+https://cheap-first.vercel.app/mcp
+```
+
+`https://cheap-first.vercel.app/api/mcp` is the same endpoint. It is stateless: one JSON-RPC message per POST, no session.
+
+| Tool | What you send | What you get back |
+|---|---|---|
+| `ask_cheap_first` | `question`, and an optional `mode` of `strict`, `balanced` (default) or `budget` | `answer`, `escalated`, `checkScore` (0 to 100), `costUsd`, and `savedUsd` (the estimated saving against the premium model alone; it can be negative when an escalation costs more) |
+| `cheap_first_stats` | nothing | The published benchmark: 143 questions, $0.27 against $1.33, how many Dolphin answered, the quality scores, and the harder 97-question run |
+
+Free calls use the demo limits above: 600 characters, 10 an hour from one IP, 300 a day, and the demo's premium budget. They share those counters with `/api/ask`, so using both does not double the free tier. A prepaid key sent as `Authorization: Bearer cf_...` is charged one credit through the same path as `/api/pay`. An x402 payment of $0.005 USDC on Base works too. Send the header `X-Cheap-First-Paid: 1` and the endpoint replies 402 with the usual challenge, then settles only after the answer is ready. The price is the same $0.005. Card payments stay off until Stripe is configured, which this server does not turn on.
+
+### Cursor
+
+In `~/.cursor/mcp.json` (everywhere) or `.cursor/mcp.json` in a project. Leave `headers` out for the free demo. `${env:CHEAP_FIRST_API_KEY}` is read from the environment Cursor was launched with.
+
+```json
+{
+  "mcpServers": {
+    "cheap-first": {
+      "url": "https://cheap-first.vercel.app/mcp",
+      "headers": {
+        "Authorization": "Bearer ${env:CHEAP_FIRST_API_KEY}"
+      }
+    }
+  }
+}
+```
+
+### Claude Desktop and Claude Code
+
+In Claude Desktop: Settings → Connectors → Add custom connector, and paste `https://cheap-first.vercel.app/mcp`. Add the bearer header there if you have a prepaid key.
+
+Claude Code, in `.mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "cheap-first": {
+      "type": "http",
+      "url": "https://cheap-first.vercel.app/mcp",
+      "headers": {
+        "Authorization": "Bearer ${CHEAP_FIRST_API_KEY}"
+      }
+    }
+  }
+}
+```
+
+### Clients that only launch a local process
+
+`src/mcpStdio.ts` reads MCP messages on stdin and posts them to the hosted endpoint, so the demo limits and payments still happen on the server. From a checkout of this repo (`npm install` first):
+
+```json
+{
+  "mcpServers": {
+    "cheap-first": {
+      "command": "npx",
+      "args": ["tsx", "src/mcpStdio.ts"],
+      "env": {
+        "CHEAP_FIRST_API_KEY": "cf_..."
+      }
+    }
+  }
+}
+```
+
+`npm run mcp` runs the same bridge. `CHEAP_FIRST_MCP_URL` overrides the endpoint. `CHEAP_FIRST_PAID=1` sends the x402 header. The package is not on npm yet, so `npx` only works inside a checkout, where `tsx` is installed.
 
 ## Output verifier: check an agent's work before paying it
 
@@ -185,7 +260,11 @@ src/cheapFirst.ts      answer → check → escalate
 src/budget.ts          daily premium spend limit for the live endpoints
 api/ask.ts             the live "try it" endpoint
 api/pay.ts             the paid x402 endpoint ($0.005 per answer)
-api/v1/                the same, in the OpenAI chat completions format
+api/mcp.ts             MCP endpoint (Streamable HTTP), also served at /mcp
+api/v1/                the same paid answer, in the OpenAI chat completions format
+src/mcp.ts             MCP protocol and the two tools
+src/mcpStdio.ts        stdio bridge for local MCP clients (npm run mcp)
+src/limits.ts          demo rate limits, shared by /api/ask and free MCP calls
 src/paid.ts            the shared x402 verify → answer → settle flow (or a prepaid key)
 src/keys.ts, api/key.ts  prepaid keys bought by card (src/stripe.ts)
 src/store.ts           shared counters on Upstash, with an in-memory fallback

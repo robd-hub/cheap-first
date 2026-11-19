@@ -29,8 +29,9 @@ jobs:
       - run: npm ci
       - run: npm run build
         env:
-          # The live "Try it" box calls the Vercel function (api/ask.ts).
-          ASK_URL: https://cheap-first-designimp-projects.vercel.app/api/ask
+          # The live "Try it" box calls the Vercel function (api/ask.ts) on the
+          # production alias. A project-specific *.vercel.app host goes stale.
+          ASK_URL: https://cheap-first.vercel.app/api/ask
           # Stripe Payment Link for prepaid keys; the card option only shows when it's set.
           CF_CARD_LINK: ${{ vars.CF_CARD_LINK }}
       - uses: actions/upload-pages-artifact@v3

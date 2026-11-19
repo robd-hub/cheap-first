@@ -10,6 +10,8 @@
     "benchmark": "NODE_USE_ENV_PROXY=1 tsx scripts/benchmark.ts",
     "build": "tsx scripts/build-site.ts",
     "typecheck": "tsc --noEmit",
+    "test": "tsx --test src/limits.test.ts src/mcp.test.ts src/mcpStdio.test.ts",
+    "mcp": "tsx src/mcpStdio.ts",
     "compare-checkers": "NODE_USE_ENV_PROXY=1 tsx scripts/compare-checkers.ts",
     "reppo-sample": "NODE_USE_ENV_PROXY=1 tsx scripts/reppo-sample.ts",
     "hard-benchmark": "NODE_USE_ENV_PROXY=1 tsx scripts/hard-benchmark.ts",

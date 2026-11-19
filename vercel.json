@@ -23,6 +23,9 @@
     },
     "api/near.ts": {
       "maxDuration": 300
+    },
+    "api/mcp.ts": {
+      "maxDuration": 300
     }
   },
   "rewrites": [
@@ -41,6 +44,10 @@
     {
       "source": "/openapi.json",
       "destination": "/api/openapi"
+    },
+    {
+      "source": "/mcp",
+      "destination": "/api/mcp"
     },
     {
       "source": "/openserv",
