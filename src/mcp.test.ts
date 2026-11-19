@@ -270,6 +270,36 @@ test("the ask payload reports an escalation and a saving from the real cost help
   assert.equal(escalated.model, "Premium");
 });
 
+test("directory metadata lists the headers the server actually reads", () => {
+  const server = JSON.parse(readFileSync(new URL("../server.json", import.meta.url), "utf8")) as {
+    description: string;
+    version: string;
+    remotes: { type: string; url: string; headers: { name: string; description: string; isRequired: boolean; isSecret: boolean }[] }[];
+  };
+  assert.ok(server.description.length >= 1 && server.description.length <= 100);
+  assert.equal(server.version, "0.1.0");
+  assert.equal(server.remotes[0]?.type, "streamable-http");
+  assert.equal(server.remotes[0]?.url, "https://cheap-first.vercel.app/mcp");
+  // X-PAYMENT and PAYMENT-SIGNATURE carry a signed x402 payload, not a value a directory asks the user to type.
+  const headers = server.remotes[0]?.headers ?? [];
+  assert.deepEqual(
+    headers.map((header) => header.name),
+    ["Authorization", PAID_HEADER],
+  );
+  assert.equal(headers[0]?.isRequired, false);
+  assert.equal(headers[0]?.isSecret, true);
+  assert.match(headers[0]?.description ?? "", /Bearer cf_/);
+  assert.equal(headers[1]?.isRequired, false);
+  assert.equal(headers[1]?.isSecret, false);
+  assert.match(headers[1]?.description ?? "", /\$0\.005 USDC on Base/);
+  assert.match(headers[1]?.description ?? "", /\b1\b/);
+
+  const client = JSON.parse(readFileSync(new URL("../.mcp.json", import.meta.url), "utf8")) as {
+    mcpServers: { "cheap-first": { url: string; headers?: unknown } };
+  };
+  assert.deepEqual(client.mcpServers["cheap-first"], { url: "https://cheap-first.vercel.app/mcp" });
+});
+
 test("GitHub Pages posts the Try it box at the production alias", () => {
   const workflow = readFileSync(new URL("../.github/workflows/pages.yml", import.meta.url), "utf8");
   assert.match(workflow, /ASK_URL: https:\/\/cheap-first\.vercel\.app\/api\/ask/);
