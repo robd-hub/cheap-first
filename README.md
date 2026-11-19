@@ -225,9 +225,9 @@ Claude Code, in `.mcp.json`:
 
 ## Listing in MCP directories
 
-`server.json` is the metadata for the official MCP Registry. `.mcp.json` is the free demo: `https://cheap-first.vercel.app/mcp` and no headers. The registry entry can also offer an optional `Authorization: Bearer cf_...` prepaid key, and an optional `X-Cheap-First-Paid: 1` header that asks for the $0.005 USDC on Base challenge. Leave both empty for the free demo.
+`server.json` is the metadata for the official MCP Registry. `.mcp.json` is the free demo: `https://cheap-first.vercel.app/mcp` and no headers. The registry entry can also offer an optional `Authorization: Bearer cf_...` prepaid key, and an optional `X-Cheap-First-Paid: 1` header that asks for the $0.005 USDC on Base challenge. Leave both empty for the free demo. Its icon is `https://cheap-first.vercel.app/icon.png`, which the site build copies from `brand/icon.png`.
 
-Run these yourself when you want it listed:
+To publish a change, raise `version` in `server.json` and `SERVER_VERSION` in `src/mcp.ts` together (the registry refuses a version it already has), then run these yourself:
 
 1. Install `mcp-publisher` (`brew install mcp-publisher`, or the binary from the [registry releases](https://github.com/modelcontextprotocol/registry/releases)).
 2. Run `mcp-publisher validate`.

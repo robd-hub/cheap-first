@@ -7,8 +7,17 @@
     "url": "https://github.com/robd-hub/cheap-first",
     "source": "github"
   },
-  "version": "0.1.0",
+  "version": "0.1.1",
   "websiteUrl": "https://cheap-first.vercel.app",
+  "icons": [
+    {
+      "src": "https://cheap-first.vercel.app/icon.png",
+      "mimeType": "image/png",
+      "sizes": [
+        "512x512"
+      ]
+    }
+  ],
   "remotes": [
     {
       "type": "streamable-http",

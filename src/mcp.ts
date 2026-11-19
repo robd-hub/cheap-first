@@ -17,7 +17,7 @@ import type { StatsReport } from "./stats.js";
 import { paymentFrom } from "./x402.js";
 
 export const MCP_PATH = "/mcp";
-export const SERVER_VERSION = "0.1.0";
+export const SERVER_VERSION = "0.1.1";
 /** Newest first. initialize echoes the client's version when it's in this list. */
 export const SUPPORTED_PROTOCOL_VERSIONS = ["2025-11-25", "2025-06-18", "2025-03-26", "2024-11-05"] as const;
 export type ProtocolVersion = (typeof SUPPORTED_PROTOCOL_VERSIONS)[number];
@@ -241,6 +241,7 @@ function initializeResult(params: unknown): Record<string, unknown> {
       title: "Cheap First",
       version: SERVER_VERSION,
       websiteUrl: "https://cheap-first.vercel.app",
+      icons: [{ src: "https://cheap-first.vercel.app/icon.png", mimeType: "image/png", sizes: ["512x512"] }],
     },
     instructions: INSTRUCTIONS,
   };
