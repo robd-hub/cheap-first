@@ -33,7 +33,11 @@ interface CheckerTest {
 }
 
 const REPO = "https://github.com/robd-hub/cheap-first";
-/** Where the live "try it" box sends questions. Same-origin on Vercel; set ASK_URL for other hosts. */
+/**
+ * Where the live "try it" box sends questions. Same-origin on Vercel.
+ * GitHub Pages sets ASK_URL to https://cheap-first.vercel.app/api/ask
+ * (the production alias, not a project-specific vercel.app host).
+ */
 const ASK_URL = process.env.ASK_URL || "/api/ask";
 /** A Stripe Payment Link for prepaid keys. The card option only shows when it's set. */
 const CARD_LINK = process.env.CF_CARD_LINK || "";
@@ -280,7 +284,7 @@ footer a{color:var(--soft)}
 <div class="bg"></div>
 <header class="nav">
   <a class="logo" href="#top"><span class="logo-mark">C</span>Cheap First</a>
-  <nav><a href="#try">Try it</a><a href="#how">How it works</a><a href="#api">API</a><a href="#escalated">Escalations</a><a href="#hard">Hard test</a><a href="#results">All results</a><a class="gh" href="${REPO}">GitHub</a></nav>
+  <nav><a href="#try">Try it</a><a href="#how">How it works</a><a href="#api">API</a><a href="#mcp">MCP</a><a href="#escalated">Escalations</a><a href="#hard">Hard test</a><a href="#results">All results</a><a class="gh" href="${REPO}">GitHub</a></nav>
 </header>
 <main class="wrap" id="top">
 <section class="hero">
@@ -297,7 +301,7 @@ ${gradeCard()}
 <section id="try">
   <p class="eyebrow">Try it live</p>
   <h2>Ask your own question.</h2>
-  <p class="sub">It runs for real: Dolphin answers, SERV checks, and the premium model steps in only if the check fails. You'll see who answered and what it cost.</p>
+  <p class="sub">It runs for real: Dolphin answers, SERV checks, and the premium model steps in only if the check fails. You'll see who answered and what it cost. Calling it from an agent? Use the <a href="#mcp">MCP server</a>.</p>
   <form class="ask" id="ask">
     <textarea id="askq" maxlength="600" rows="3" placeholder="e.g. How many times does the letter r appear in strawberry?" aria-label="Your question"></textarea>
     <div class="askbar">
@@ -375,6 +379,7 @@ const reply = await client.chat.completions.create({
 });
 console.log(reply.choices[0].message.content);</pre>
 </section>
+${mcpSection()}
 <section id="verify">
   <p class="eyebrow">Output verifier</p>
   <h2>Check another agent's work before you pay it.</h2>
@@ -436,6 +441,34 @@ ${m ? `<div class="models">
 <footer><span>Cheap First</span><span>Built for SERV Hackathon 02 · Dolphin + SERV Reasoning · <a href="${REPO}">GitHub</a></span></footer>
 </body></html>
 `;
+}
+
+/** Install notes for the MCP server. Kept out of the page template so the JSON samples stay literal. */
+function mcpSection(): string {
+  const cursor = `{
+  "mcpServers": {
+    "cheap-first": {
+      "url": "https://cheap-first.vercel.app/mcp"
+    }
+  }
+}`;
+  const paid = `{
+  "mcpServers": {
+    "cheap-first": {
+      "url": "https://cheap-first.vercel.app/mcp",
+      "headers": { "Authorization": "Bearer cf_..." }
+    }
+  }
+}`;
+  return `<section id="mcp">
+  <p class="eyebrow">MCP</p>
+  <h2>Give it to Claude, Cursor, or any agent.</h2>
+  <p class="sub">Cheap First is an MCP server at <code>https://cheap-first.vercel.app/mcp</code> (<code>/api/mcp</code> is the same address). <code>ask_cheap_first</code> takes a question and an optional mode (<code>strict</code>, <code>balanced</code>, <code>budget</code>) and returns the answer, whether it escalated, the check score, the cost and the estimated saving. <code>cheap_first_stats</code> returns the benchmark numbers. Free calls use the same limits as the box above. A prepaid key, or $0.005 in USDC on Base with x402, uses the paid API.</p>
+  <p class="sub">Cursor reads <code>~/.cursor/mcp.json</code>. Leave the header off for the free demo.</p>
+  <pre>${esc(cursor)}</pre>
+  <pre style="margin-top:12px">${esc(paid)}</pre>
+  <p class="sub" style="margin-top:16px">Claude Desktop: Settings, Connectors, Add custom connector, and paste the URL. Claude Code wants <code>"type": "http"</code> next to <code>url</code> in <code>.mcp.json</code>. A client that can only launch a process can run <code>npm run mcp</code> from a checkout of this repo (it forwards to the hosted server, so the limits still apply). Set <code>CHEAP_FIRST_API_KEY</code> to a prepaid key. To pay with x402 from an HTTP client, send the header <code>X-Cheap-First-Paid: 1</code> and retry the 402 the way you would for <code>/api/pay</code>.</p>
+</section>`;
 }
 
 const ARC_REPORT = "https://robd-hub.github.io/agent-report-card/agents/cheap-first/";

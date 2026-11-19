@@ -6,19 +6,16 @@
  * real cost. Keys stay on the server (Vercel environment variables).
  *
  * Guard rails, because every call spends real credits:
- *   - questions are capped at MAX_QUESTION characters
- *   - each visitor (by IP) gets PER_IP_PER_HOUR questions an hour
- *   - the demo stops after DAILY_CAP questions a day
+ *   - questions are capped at DEMO_MAX_QUESTION characters
+ *   - each visitor (by IP) gets a fixed number an hour, and the demo a fixed number a day
  *   - escalations stop once the demo's daily premium budget is spent
- * With the shared store connected these hold across all server instances.
+ * Free MCP calls use the same limits (src/limits.ts), so the two can't be
+ * combined into a bigger free tier. With the shared store connected these
+ * hold across all server instances.
  */
 import { demoPremiumBudget as premiumBudget, PREMIUM_MAX_TOKENS } from "../src/budget.js";
-import { incrBy } from "../src/store.js";
 import { cheapFirst, defaultModels, EscalationBlocked, savings, type Models } from "../src/cheapFirst.js";
-
-const MAX_QUESTION = 600;
-const PER_IP_PER_HOUR = Number(process.env.CF_PER_IP_PER_HOUR) || 10;
-const DAILY_CAP = Number(process.env.CF_DAILY_CAP) || 300;
+import { DEMO_MAX_QUESTION, takeDemoSlot } from "../src/limits.js";
 
 let models: Models | null = null;
 
@@ -48,18 +45,10 @@ export async function POST(request: Request): Promise<Response> {
     return json({ error: "Send JSON like {\"question\": \"...\"}." }, 400, origin);
   }
   if (!question) return json({ error: "Type a question first." }, 400, origin);
-  if (question.length > MAX_QUESTION) return json({ error: `Keep it under ${MAX_QUESTION} characters.` }, 400, origin);
+  if (question.length > DEMO_MAX_QUESTION) return json({ error: `Keep it under ${DEMO_MAX_QUESTION} characters.` }, 400, origin);
 
-  const now = new Date();
-  const ip = (request.headers.get("x-forwarded-for") ?? "unknown").split(",")[0].trim().slice(0, 64);
-  const hour = now.toISOString().slice(0, 13);
-  const day = now.toISOString().slice(0, 10);
-  // Count first, then check: a refused request still counts, which is fine for a demo.
-  const [mine, all] = await Promise.all([incrBy(`cf:demo:ip:${ip}:${hour}`, 1, 3600), incrBy(`cf:demo:day:${day}`, 1, 2 * 86_400)]);
-  if (mine > PER_IP_PER_HOUR) {
-    return json({ error: `That's ${PER_IP_PER_HOUR} questions this hour. Try again later.` }, 429, origin);
-  }
-  if (all > DAILY_CAP) return json({ error: "The demo has hit today's limit. Try again tomorrow." }, 429, origin);
+  const slot = await takeDemoSlot(request);
+  if (!slot.ok) return json({ error: slot.error }, slot.status, origin);
 
   try {
     models ??= await defaultModels();
