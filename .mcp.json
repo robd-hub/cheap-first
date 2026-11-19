@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "cheap-first": {
+      "url": "https://cheap-first.vercel.app/mcp"
+    }
+  }
+}

@@ -223,6 +223,19 @@ Claude Code, in `.mcp.json`:
 
 `npm run mcp` runs the same bridge. `CHEAP_FIRST_MCP_URL` overrides the endpoint. `CHEAP_FIRST_PAID=1` sends the x402 header. The package is not on npm yet, so `npx` only works inside a checkout, where `tsx` is installed.
 
+## Listing in MCP directories
+
+`server.json` is the metadata for the official MCP Registry. `.mcp.json` is the free demo: `https://cheap-first.vercel.app/mcp` and no headers. The registry entry can also offer an optional `Authorization: Bearer cf_...` prepaid key, and an optional `X-Cheap-First-Paid: 1` header that asks for the $0.005 USDC on Base challenge. Leave both empty for the free demo.
+
+Run these yourself when you want it listed:
+
+1. Install `mcp-publisher` (`brew install mcp-publisher`, or the binary from the [registry releases](https://github.com/modelcontextprotocol/registry/releases)).
+2. Run `mcp-publisher validate`.
+3. Run `mcp-publisher login github`.
+4. Run `mcp-publisher publish`.
+
+Then submit the same server at [cursor.directory](https://cursor.directory/plugins/new?type=mcp_server). The form reads `.mcp.json` from this repo.
+
 ## Output verifier: check an agent's work before paying it
 
 `api/verify.ts` sells the Cheap First checker on its own. Send `{"task": "...", "answer": "...", "criteria": "optional", "passMark": 75}` and get `{"verdict": "pass" | "fail", "score", "reason", "receipt"}`. The buyer's own code pays the hired agent only on a pass, so we never hold anyone's money.

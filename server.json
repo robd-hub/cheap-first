@@ -1,0 +1,32 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.robd-hub/cheap-first",
+  "title": "Cheap First",
+  "description": "Answers cheaply first, then escalates to a premium model only when a checker fails.",
+  "repository": {
+    "url": "https://github.com/robd-hub/cheap-first",
+    "source": "github"
+  },
+  "version": "0.1.0",
+  "websiteUrl": "https://cheap-first.vercel.app",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://cheap-first.vercel.app/mcp",
+      "headers": [
+        {
+          "name": "Authorization",
+          "description": "Optional prepaid key as Bearer cf_... for paid limits. Leave empty for the free demo.",
+          "isRequired": false,
+          "isSecret": true
+        },
+        {
+          "name": "X-Cheap-First-Paid",
+          "description": "Set to 1 to request the x402 payment challenge ($0.005 USDC on Base) instead of the free demo.",
+          "isRequired": false,
+          "isSecret": false
+        }
+      ]
+    }
+  ]
+}
