@@ -13,7 +13,8 @@
     "compare-checkers": "NODE_USE_ENV_PROXY=1 tsx scripts/compare-checkers.ts",
     "reppo-sample": "NODE_USE_ENV_PROXY=1 tsx scripts/reppo-sample.ts",
     "hard-benchmark": "NODE_USE_ENV_PROXY=1 tsx scripts/hard-benchmark.ts",
-    "verify-test": "NODE_USE_ENV_PROXY=1 tsx scripts/verify-test.ts"
+    "verify-test": "NODE_USE_ENV_PROXY=1 tsx scripts/verify-test.ts",
+    "near-test": "tsx scripts/near-test.ts"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
