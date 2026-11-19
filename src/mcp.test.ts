@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { test } from "node:test";
 import { POST } from "../api/mcp.js";
 import { costOf, type ModelSpec } from "./models.js";
-import { handleMcpRequest, originAllowed, PAID_HEADER, rpcOk, SUPPORTED_PROTOCOL_VERSIONS, toolResult, wantsPaidTier, type AskPayload, type JsonRpcId, type McpDeps } from "./mcp.js";
+import { handleMcpRequest, originAllowed, PAID_HEADER, rpcOk, SERVER_VERSION, SUPPORTED_PROTOCOL_VERSIONS, toolResult, wantsPaidTier, type AskPayload, type JsonRpcId, type McpDeps } from "./mcp.js";
 import { MCP_OFFER, MCP_PRICE_MICRO, toAskPayload } from "./mcpAnswer.js";
 import { sharedStoreConfigured } from "./store.js";
 import { loadBenchmarkReport } from "./stats.js";
@@ -274,10 +274,15 @@ test("directory metadata lists the headers the server actually reads", () => {
   const server = JSON.parse(readFileSync(new URL("../server.json", import.meta.url), "utf8")) as {
     description: string;
     version: string;
+    icons: { src: string; mimeType: string; sizes: string[] }[];
     remotes: { type: string; url: string; headers: { name: string; description: string; isRequired: boolean; isSecret: boolean }[] }[];
   };
   assert.ok(server.description.length >= 1 && server.description.length <= 100);
-  assert.equal(server.version, "0.1.0");
+  // The registry refuses a version it already has, so server.json and serverInfo move together.
+  assert.equal(server.version, SERVER_VERSION);
+  // mcptry and other directories show this icon. The site build copies brand/icon.png to /icon.png.
+  assert.deepEqual(server.icons, [{ src: "https://cheap-first.vercel.app/icon.png", mimeType: "image/png", sizes: ["512x512"] }]);
+  assert.ok(existsSync(new URL("../brand/icon.png", import.meta.url)));
   assert.equal(server.remotes[0]?.type, "streamable-http");
   assert.equal(server.remotes[0]?.url, "https://cheap-first.vercel.app/mcp");
   // X-PAYMENT and PAYMENT-SIGNATURE carry a signed x402 payload, not a value a directory asks the user to type.

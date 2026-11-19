@@ -550,4 +550,6 @@ const reppoSection =
 const checkerTest = fs.existsSync("data/checker-test.json") ? (JSON.parse(fs.readFileSync("data/checker-test.json", "utf8")) as CheckerTest) : null;
 fs.mkdirSync("out", { recursive: true });
 fs.writeFileSync("out/index.html", page(results, checkerTest));
+// The logo, served at /icon.png. server.json and the MCP serverInfo point MCP directories at it.
+fs.copyFileSync("brand/icon.png", "out/icon.png");
 console.log(`Built out/index.html from ${results?.rows.length ?? 0} results.`);
