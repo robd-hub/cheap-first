@@ -38,16 +38,15 @@ model answers, a cheap checker grades it, and only failing answers are paid for 
 ```mermaid
 flowchart LR
     Q([Question]) --> D["<b>1. Dolphin answers</b><br/>DeepSeek V4.1 Flash<br/>$0.07 / M output tokens"]
-    D --> C{"<b>2. SERV checks</b><br/>GPT-6 Luna scores<br/>0 to 100"}
-    C -- "75 or more" --> A([Send Dolphin's answer])
-    C -- "below 75" --> P["<b>3. Escalate</b><br/>Claude Opus 5.5 on SERV"]
+    D --> C{"<b>2. Check</b><br/>another cheap sample<br/>and the arithmetic,<br/>or SERV grades it"}
+    C -- "passes the mode" --> A([Send Dolphin's answer])
+    C -- "below the pass mark" --> P["<b>3. Escalate</b><br/>Claude Opus 5.5 on SERV"]
     P --> B([Send the premium answer])
 ```
 
 1. **Dolphin answers.** DeepSeek V4.1 Flash on the [Dolphin](https://dphn.ai) network, at $0.01 in and $0.07 out per million tokens.
-2. **SERV checks.** A small [SERV Reasoning](https://www.openserv.ai/) model scores the answer for correctness,
-   whether it followed the instructions, and whether anything was made up.
-3. **Escalate only if needed.** Below 75, the question goes to Claude Opus 5.5 on SERV and that answer is returned instead.
+2. **Check.** A number or a multiple-choice question is checked by another cheap sample, which has to land on the same answer, and by evaluating any equation the answer wrote. Anything else is scored by a small [SERV Reasoning](https://www.openserv.ai/) model. Strict (85) asks for two extra samples and keeps the cheap answer only when they all agree. Balanced (75, the default) escalates when its one extra sample disagrees. Budget (60) keeps a disagreement, and escalates when an equation does not evaluate, when the cheap answer has no final number or choice, or when the grader scores below 60.
+3. **Escalate only if needed.** Below the mode's pass mark, the question goes to Claude Opus 5.5 on SERV and that answer is returned instead.
 
 ## Results
 
@@ -137,7 +136,9 @@ console.log(result.answer, result.answeredBy, result.costUsd);
 |---|---|
 | `npm run ask -- "question"` | Answer one question the Cheap First way |
 | `npm run benchmark` | Run the benchmark and save `data/results.json` (pass question ids to run just those) |
-| `npm run public-benchmark` | Run the pinned GSM8K + ARC-Challenge sample and save `data/public-benchmark.json` (`-- --dry-run` checks the files only) |
+| `npm run public-benchmark` | Run the pinned GSM8K + ARC-Challenge sample and save `data/public-benchmark.json` (`-- --dry-run` checks the files only). A finished file is left as it is unless you pass `--rerun` |
+| `npm run public-tune` | Draw a disjoint tuning sample (seed 20261121, 40 GSM8K + 20 ARC) and save `data/public-tuning.json` (`-- --dry-run` checks the draw only) |
+| `npm run public-compare` | Replay the new check on the published 300, reusing cached cheap and premium answers, and save `data/public-compare.json` (`-- --dry-run` makes no model calls) |
 | `npm run hard-benchmark` | Run the hard benchmark, graded by code (`-- --set stress` for round 2, see [docs](docs/hard-benchmark.md)) |
 | `npm run build` | Build the results page into `out/` (no keys needed) |
 | `npx tsx scripts/check-sanity.ts` | Grade deliberately wrong answers and save `data/checker-test.json` |
@@ -151,7 +152,7 @@ it limits questions to 600 characters, 10 an hour per visitor and 300 a day per 
 (`CF_PER_IP_PER_HOUR`, `CF_DAILY_CAP`), and `CF_MAX_TOKENS` caps each model reply. The GitHub Pages
 build points that box at `https://cheap-first.vercel.app/api/ask`.
 
-[Live stats](https://cheap-first.vercel.app/stats) (`/stats`, JSON at `/api/stats?format=json`) count production answers after they are delivered: how many, how often the premium model was used, dollars against always-premium pricing, and real catches. A real catch is a non-blank cheap answer the checker scored below that request's pass mark, so the premium model answered. The page does not keep the question or either answer, so a catch is the checker's decision, not a separate proof the cheap answer was wrong. Escalations where Dolphin returned nothing are counted in the escalation rate and shown apart from catches.
+[Live stats](https://cheap-first.vercel.app/stats) (`/stats`, JSON at `/api/stats?format=json`) count production answers after they are delivered: how many, how often the premium model was used, dollars against always-premium pricing, and real catches. A real catch is a non-blank cheap answer the check scored below that request's pass mark, so the premium model answered. Catches are split by signal: a disagreeing cheap sample, an equation that did not evaluate, or the grader. The page does not keep the question or either answer, so a catch is the check's decision, not a separate proof the cheap answer was wrong. Escalations where Dolphin returned nothing are counted in the escalation rate and shown apart from catches.
 
 The counters use the same Upstash Redis as the other shared limits (`KV_REST_API_URL` and `KV_REST_API_TOKEN`, or `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`). The free plan is enough. If prepaid keys are already connected, no further storage is required. Until one of those pairs is set, the page stays empty and records nothing. **Since** is the time of the first recorded answer. Traffic from before that is not backfilled. For an answer Dolphin kept, the premium price is the estimate the API already returns as `savedUsd` (premium rates on the cheap call's tokens), not a second model call. The saving can be negative when an escalation costs more than that.
 

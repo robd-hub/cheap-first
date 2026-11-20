@@ -308,7 +308,7 @@ ${publicSection()}
 <section id="try">
   <p class="eyebrow">Try it live</p>
   <h2>Ask your own question.</h2>
-  <p class="sub">It runs for real: Dolphin answers, SERV checks, and the premium model steps in only if the check fails. You'll see who answered and what it cost. Calling it from an agent? Use the <a href="#mcp">MCP server</a>.</p>
+  <p class="sub">It runs for real: Dolphin answers, a second cheap sample checks numbers and choices, SERV grades anything else, and the premium model steps in only if the check fails. You'll see who answered and what it cost. Calling it from an agent? Use the <a href="#mcp">MCP server</a>.</p>
   <form class="ask" id="ask">
     <textarea id="askq" maxlength="600" rows="3" placeholder="e.g. How many times does the letter r appear in strawberry?" aria-label="Your question"></textarea>
     <div class="askbar">
@@ -345,7 +345,7 @@ o.innerHTML='<div class="ahead"><span class="pill '+(prem?"prem":"cheap")+'">'+(
   <p class="sub">Every question takes the same three steps. Almost all of them stop at step two.</p>
   <div class="flow">
     <div class="step"><span class="n">01</span><b>Dolphin answers</b><span>DeepSeek V4.1 Flash on the Dolphin network, about $0.07 per million output tokens.</span></div>
-    <div class="step"><span class="n">02</span><b>SERV checks</b><span>A small SERV Reasoning model scores the answer from 0 to 100 for correctness, instructions and anything made up.</span></div>
+    <div class="step"><span class="n">02</span><b>Check</b><span>A number or a choice is checked by another cheap sample and by evaluating any equation. Anything else is scored by a small SERV model.</span></div>
     <div class="step"><span class="n">03</span><b>Escalate only if needed</b><span>Below ${r?.passMark ?? 75}, the question goes to a frontier model on SERV instead.</span></div>
   </div>
 </section>

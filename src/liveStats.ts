@@ -13,7 +13,7 @@
  * serverless instance and would not be the deployment's traffic.
  */
 import { waitUntil } from "@vercel/functions";
-import { savings, type CheapFirstResult, type Models } from "./cheapFirst.js";
+import { savings, type CheapFirstResult, type CheckSignal, type Models } from "./cheapFirst.js";
 import { loadPublicReport } from "./publicReport.js";
 import { redisPipeline, sharedStoreConfigured } from "./store.js";
 
@@ -41,6 +41,8 @@ export interface LiveObservation {
   checkScore: number;
   /** The pass mark used for this request (strict, balanced, or budget). */
   passMark: number;
+  /** Which check rejected or kept the cheap answer. */
+  signal: CheckSignal;
   costUsd: number;
   /** Premium-model price for this answer, from the same helper the API returns. */
   premiumOnlyUsd: number;
@@ -57,6 +59,12 @@ export interface LiveSnapshot {
   escalated: number;
   /** Checker rejected a non-blank cheap answer and the premium model answered. */
   realCatches: number;
+  /** Real catches where a second cheap sample disagreed. */
+  catchAgreement: number;
+  /** Real catches where an equation in the cheap answer did not evaluate. */
+  catchArithmetic: number;
+  /** Real catches where the language-model grader scored below the pass mark. */
+  catchGrader: number;
   /** Escalated because Dolphin returned nothing. */
   blankEscalations: number;
   costUsd: number;
@@ -77,6 +85,9 @@ export function emptySnapshot(configured: boolean, reachable = false): LiveSnaps
     requests: 0,
     escalated: 0,
     realCatches: 0,
+    catchAgreement: 0,
+    catchArithmetic: 0,
+    catchGrader: 0,
     blankEscalations: 0,
     costUsd: 0,
     premiumOnlyUsd: 0,
@@ -113,6 +124,9 @@ export function commandsFor(obs: LiveObservation, sinceIso: string): Cmd[] {
   ];
   if (kind.escalated) cmds.push(["HINCRBY", LIVE_KEY, "escalated", 1]);
   if (kind.realCatch) cmds.push(["HINCRBY", LIVE_KEY, "realCatches", 1]);
+  if (kind.realCatch && obs.signal === "agreement") cmds.push(["HINCRBY", LIVE_KEY, "catchAgreement", 1]);
+  if (kind.realCatch && obs.signal === "arithmetic") cmds.push(["HINCRBY", LIVE_KEY, "catchArithmetic", 1]);
+  if (kind.realCatch && obs.signal === "grader") cmds.push(["HINCRBY", LIVE_KEY, "catchGrader", 1]);
   if (kind.blankEscalation) cmds.push(["HINCRBY", LIVE_KEY, "blankEscalations", 1]);
   return cmds;
 }
@@ -130,6 +144,7 @@ export function observationFrom(source: LiveSource, result: CheapFirstResult, mo
     cheapAnswered: result.cheap.text.trim().length > 0,
     checkScore: result.check.score,
     passMark,
+    signal: result.check.signal,
     costUsd: result.costUsd,
     premiumOnlyUsd,
   };
@@ -212,6 +227,9 @@ export function snapshotFromHash(configured: boolean, flat: unknown): LiveSnapsh
     requests: num("requests"),
     escalated: num("escalated"),
     realCatches: num("realCatches"),
+    catchAgreement: num("catchAgreement"),
+    catchArithmetic: num("catchArithmetic"),
+    catchGrader: num("catchGrader"),
     blankEscalations: num("blankEscalations"),
     costUsd,
     premiumOnlyUsd,
@@ -303,6 +321,7 @@ export function renderStatsPage(snapshot: LiveSnapshot): string {
     <div class="split">
       <p>Spent <b>${formatUsd(snapshot.costUsd)}</b> · always-premium pricing <b>${formatUsd(snapshot.premiumOnlyUsd)}</b></p>
       <p>${snapshot.blankEscalations.toLocaleString("en-US")} escalations happened because Dolphin returned nothing. Those are included in the escalation rate and are not counted as real catches.</p>
+      <p>Of the real catches, ${snapshot.catchAgreement.toLocaleString("en-US")} were a disagreeing cheap sample, ${snapshot.catchArithmetic.toLocaleString("en-US")} were an equation that did not evaluate, and ${snapshot.catchGrader.toLocaleString("en-US")} were the grader scoring below the pass mark.</p>
     </div>
     ${sourcesTable(snapshot)}`
     : "";
@@ -357,8 +376,9 @@ footer{margin-top:28px;color:var(--muted);font-size:.85rem}
   ${publishedBenchmark()}
   <h2>What a real catch is</h2>
   <ul class="notes">
-    <li>A real catch is an answer where Dolphin returned text, the checker scored it below that request's pass mark, and the premium model answered instead.</li>
-    <li>That is the checker's decision. The question and both answers are not stored, so this page cannot show that the cheap answer was factually wrong.</li>
+    <li>A real catch is an answer where Dolphin returned text, the check scored it below that request's pass mark, and the premium model answered instead.</li>
+    <li>On a number or a multiple-choice question the check is another cheap sample plus the answer's own equations. On anything else it is the grader's score. The three counts above split real catches that way.</li>
+    <li>That is the check's decision. The question and both answers are not stored, so this page cannot show that the cheap answer was factually wrong.</li>
     <li>Money saved uses the same premium price the API already returns. For an answer Dolphin kept, that price is applied to the cheap call's token counts. It is not a second call to the premium model. An escalation can cost more than the premium model alone, and the saving is then negative.</li>
     <li>Failed requests, rate limits, and answers that were never delivered are not counted.</li>
   </ul>

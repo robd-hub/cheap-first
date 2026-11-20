@@ -68,14 +68,14 @@ export const SERVICE_NAME = "Cheap First";
 
 /** What /api/pay sells: one answer to one question. */
 export const QUESTION_OFFER: Offer = {
-  description: "One answer from Cheap First: Dolphin answers, SERV checks, and a premium model steps in only if the check fails.",
+  description: "One answer from Cheap First: Dolphin answers, a second cheap sample checks numbers and choices, SERV grades anything else, and a premium model steps in only if the check fails.",
   example: {
     body: { question: "What is the capital of Australia?", mode: "balanced" },
-    output: { answer: "Canberra.", answeredBy: "cheap", model: "Dolphin", check: { score: 98, reason: "Correct and concise." }, costUsd: 0.00004, savedUsd: 0.0021 },
+    output: { answer: "Canberra.", answeredBy: "cheap", model: "Dolphin", check: { score: 98, reason: "Correct and concise.", signal: "grader" }, costUsd: 0.00004, savedUsd: 0.0021 },
   },
   outputSchema: {
     input: { type: "http", method: "POST", bodyType: "json", bodyFields: { question: { type: "string", required: true, description: "Your question, up to 2,000 characters" }, mode: { type: "string", required: false, description: "strict, balanced (default) or budget" } } },
-    output: { answer: "string", answeredBy: "cheap | premium", model: "string", check: { score: "number", reason: "string" }, costUsd: "number", savedUsd: "number" },
+    output: { answer: "string", answeredBy: "cheap | premium", model: "string", check: { score: "number", reason: "string", signal: "agreement | arithmetic | grader | blank" }, costUsd: "number", savedUsd: "number" },
   },
 };
 
