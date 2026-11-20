@@ -4,6 +4,7 @@
  */
 import fs from "node:fs";
 import { STATS_JSON_URL, STATS_PAGE_URL } from "../src/liveStats";
+import { loadPublicReport, publicResultsHtml } from "../src/publicReport";
 
 interface Side {
   answer: string;
@@ -289,7 +290,7 @@ footer a{color:var(--soft)}
 <div class="bg"></div>
 <header class="nav">
   <a class="logo" href="#top"><span class="logo-mark">C</span>Cheap First</a>
-  <nav><a href="#try">Try it</a><a href="#how">How it works</a><a href="#api">API</a><a href="#mcp">MCP</a><a class="stats" href="${statsPage}">Live stats</a><a href="#escalated">Escalations</a><a href="#hard">Hard test</a><a href="#results">All results</a><a class="gh" href="${REPO}">GitHub</a></nav>
+  <nav><a href="#try">Try it</a><a href="#how">How it works</a><a href="#public">Public run</a><a href="#api">API</a><a href="#mcp">MCP</a><a class="stats" href="${statsPage}">Live stats</a><a href="#escalated">Escalations</a><a href="#hard">Hard test</a><a href="#results">All results</a><a class="gh" href="${REPO}">GitHub</a></nav>
 </header>
 <main class="wrap" id="top">
 <section class="hero">
@@ -303,6 +304,7 @@ ${gradeCard()}
 </div>
   ${tiles}
 </section>
+${publicSection()}
 <section id="try">
   <p class="eyebrow">Try it live</p>
   <h2>Ask your own question.</h2>
@@ -411,7 +413,6 @@ ${calc}
 </section>
 ${escalations ? `<section id="escalated"><p class="eyebrow">The safety net</p>${escalations}</section>` : ""}
 ${hardSection()}
-${publicSection()}
 ${checkerTest ? `<section id="checker"><p class="eyebrow">Checker test</p>${checkerTest}</section>` : ""}
 ${reppoSection}
 <section id="results">
@@ -440,7 +441,7 @@ ${m ? `<div class="models">
 </div>` : ""}
 <ul class="notes">
   <li>Every cost comes from the token counts each API returned, nothing is estimated. The checker's cost is included in Cheap First's total.</li>
-  <li>Both final answers are scored by the same checker against the same written criteria. The public GSM8K and ARC-Challenge run, when it has been committed, is graded by code instead, and the checker does not see the answer key.</li>
+  <li>Both final answers on this page are scored by the same checker against the same written criteria. The public GSM8K and ARC-Challenge run is graded by code, and the checker does not see the answer key. That result is the public section above, read from data/public-benchmark.json.</li>
   ${r ? `<li>Last run ${esc(r.ranAt.slice(0, 16).replace("T", " "))} UTC.</li>` : ""}
 </ul>
 </section>
@@ -545,57 +546,18 @@ function liveSection(): string {
 </script>`;
 }
 
-interface PublicSummaryFile {
-  complete?: boolean;
-  ranAt?: string;
-  summary?: {
-    questions: number;
-    correct: { cheapAlone: number; cheapFirst: number; premium: number };
-    accuracy: { cheapAlone: number | null; cheapFirst: number | null; premium: number | null };
-    costUsd: { cheapFirst: number; premium: number };
-    savingPct: number | null;
-    escalated: number;
-    escalationRate: number | null;
-    catches: number;
-    blankEscalations?: number;
-    falseAlarms: number;
-    missed: number;
-    latencyMs: { cheapFirst: { mean: number; median: number }; premium: { mean: number; median: number } };
-  };
-}
-
-/** Shown only from a finished data/public-benchmark.json. An unfinished file is described as not run. */
+/** Shown from a finished data/public-benchmark.json. An unfinished file is described as not run. */
 function publicSection(): string {
-  let file: PublicSummaryFile | null = null;
-  if (fs.existsSync("data/public-benchmark.json")) {
-    try {
-      file = JSON.parse(fs.readFileSync("data/public-benchmark.json", "utf8")) as PublicSummaryFile;
-    } catch {
-      file = null;
-    }
-  }
-  const intro = `<section id="public">
+  const report = loadPublicReport();
+  if (!report) {
+    return `<section id="public">
 <p class="eyebrow">Public questions</p>
-<h2>Questions this project did not write.</h2>`;
-  if (!file?.complete || !file.summary || file.summary.questions < 1) {
-    return `${intro}
-<p class="sub">The figures on this page are the in-house set. <code>npm run public-benchmark</code> repeats the comparison on 200 GSM8K test questions and 100 ARC-Challenge test questions (seed 20261120), graded by code against the published answers. No completed public run is in this build, so there is no public accuracy or cost figure here.</p>
+<h2>Questions this project did not write.</h2>
+<p class="sub">The figures above are the in-house set. <code>npm run public-benchmark</code> repeats the comparison on a fixed GSM8K and ARC-Challenge sample, graded by code against the published answers. No completed public run is in this build, so there is no public accuracy or cost figure here.</p>
 <p class="sub"><a href="${REPO}#public-questions">Sample pins and the command</a></p>
 </section>`;
   }
-  const s = file.summary;
-  const share = (n: number | null) => (n === null ? "—" : `${(n * 100).toFixed(1)}%`);
-  const when = file.ranAt ? file.ranAt.slice(0, 16).replace("T", " ") + " UTC" : "";
-  return `${intro}
-<p class="sub">200 GSM8K test questions and 100 ARC-Challenge test questions, seed 20261120. Both paths are graded by code against the published answers. The checker did not see the answer key.${when ? ` Run ${esc(when)}.` : ""}</p>
-<div class="tiles">
-  <div class="tile accent"><div class="big">${s.savingPct === null ? "—" : `${s.savingPct}%`}</div><div class="lbl">cheaper on ${s.questions} public questions (${usd(s.costUsd.cheapFirst)} vs ${usd(s.costUsd.premium)})</div></div>
-  <div class="tile"><div class="big">${s.correct.cheapFirst}/${s.questions}</div><div class="lbl">correct for Cheap First, and ${s.correct.premium}/${s.questions} for premium only (${share(s.accuracy.cheapFirst)} vs ${share(s.accuracy.premium)})</div></div>
-  <div class="tile"><div class="big">${s.escalationRate === null ? "—" : `${(s.escalationRate * 100).toFixed(1)}%`}</div><div class="lbl">${s.escalated} escalated. ${s.catches} catches, ${s.falseAlarms} false alarms, ${s.missed} misses${s.blankEscalations ? `, ${s.blankEscalations} blank` : ""}</div></div>
-  <div class="tile"><div class="big">${s.latencyMs.cheapFirst.median} ms</div><div class="lbl">median Cheap First latency, vs ${s.latencyMs.premium.median} ms premium only</div></div>
-</div>
-<p class="sub">Dolphin alone was right on ${s.correct.cheapAlone} of ${s.questions}. Full rows: <a href="${REPO}/blob/main/data/public-benchmark.json">data/public-benchmark.json</a>.</p>
-</section>`;
+  return publicResultsHtml(report);
 }
 
 /** The hard benchmark (docs/hard-benchmark.md): answers graded by code, plus the checker on real weak-model mistakes. */

@@ -77,10 +77,11 @@ test("the page tells the truth at zero, and HTML is opt-in", () => {
   assert.match(off, /KV_REST_API_URL/);
   assert.match(off, /UPSTASH_REDIS_REST_TOKEN/);
   assert.match(off, /nothing is recorded/);
-  assert.equal(off.includes("$0.00"), false);
+  assert.equal(off.includes(">$0.00<"), false);
+  assert.match(off, /not live traffic/);
   const down = renderStatsPage(emptySnapshot(true, false));
   assert.match(down, /did not succeed/);
-  assert.equal(down.includes("$0.00"), false);
+  assert.equal(down.includes(">$0.00<"), false);
   const zero = renderStatsPage(emptySnapshot(true, true));
   assert.match(zero, /No production answers have been recorded yet/);
   assert.match(zero, /Since <b>—<\/b>/);

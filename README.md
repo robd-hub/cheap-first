@@ -72,16 +72,30 @@ openly. In a separate test, the checker failed all 8 deliberately wrong answers 
 
 ### Public questions
 
-The 143 questions above were written for this project. `npm run public-benchmark` runs the same Cheap First vs premium-only comparison on a fixed public sample, and grades every answer by code against the published answer. The checker does not see the answer key, and it does not mark the final answers.
+The 143 questions above were written for this project. The table below is a fixed public sample, graded by code against the published answers. The checker did not see the answer key, and it does not mark the final answers.
 
-| Set | What is pinned |
-|---|---|
-| GSM8K test, 200 of 1,319 | [openai/grade-school-math](https://github.com/openai/grade-school-math/commit/b0bb162abedc65e1fdd8e93ed090fd7598ee68bc) `b0bb162abedc65e1fdd8e93ed090fd7598ee68bc`, sha256 `3730d312f6e3440559ace48831e51066acaca737f6eabec99bccb9e4b3c39d14` |
-| ARC-Challenge test, 100 of 1,172 | AI2 `ARC-V1-Feb2018` file `ARC-Challenge-Test.jsonl`, sha256 `9fa8ffb3e3a1f88cb302d53dd95aae81e39209ad9bcf974376b319d8fd35717c` |
+**About 95.5% cheaper, 2 points behind the premium model on 300 public questions.**
 
-Both draws use seed `20261120` (see `src/publicSets.ts`). One command writes `data/public-benchmark.json` with accuracy, total cost, escalation rate, and latency. `--dry-run` checks the files and prints the sample without calling a model. A results file from a different pin is left as it is.
+| | Cheap First | Premium only (SERV · Claude Opus 5.5) |
+|---|---|---|
+| Correct, graded by code | **288/300 (96.0%)** | 294/300 (98.0%) |
+| Cheap model alone (Dolphin · DeepSeek V4.1 Flash) | 288/300 (96.0%) | |
+| Total cost | **$0.088** | $1.945 |
+| Saving | **95.5%** | |
+| Escalated | 5 of 300 (1.7%) | |
+| Median latency | 6.1s | 2.7s |
+| Mean latency | 12.7s | 2.7s |
 
-No completed public run is stored in this repository. There is no public accuracy, cost, escalation rate, or latency to quote. Running it needs `DOLPHIN_API_KEY` and `SERV_API_KEY`. When a finished run is committed, `complete` in that JSON is true, and its measured numbers belong in a table here beside the in-house results.
+| Set | Cheap First | Premium only | Cost |
+|---|---|---|---|
+| GSM8K test, 200 of 1,319 | 194/200 | 198/200 | $0.037 vs $1.304 |
+| ARC-Challenge test, 100 of 1,172 | 94/100 | 96/100 | $0.051 vs $0.641 |
+
+Cheap First is slower: median 6.1s vs 2.7s, mean 12.7s vs 2.7s. It is 2 points behind the premium model (96.0% vs 98.0%). It scored the same as the cheap model alone, 288 of 300. The checker made 0 real catches, let 11 wrong cheap answers through, and 4 of the 5 escalations were false alarms on answers the cheap model already had right. 1 escalation was still wrong.
+
+Seed 20261120. Models: Dolphin · DeepSeek V4.1 Flash answers, SERV · GPT-6 Luna (checker) checks, SERV · Claude Opus 5.5 is the premium model. Run 2026-11-20 13:24 UTC. Full rows: [data/public-benchmark.json](https://github.com/robd-hub/cheap-first/blob/main/data/public-benchmark.json).
+
+File hashes for that sample are in `src/publicSets.ts` and in the JSON. `npm run public-benchmark` repeats the run. `--dry-run` checks the files without calling a model.
 
 ### Harder questions
 
@@ -181,7 +195,7 @@ https://cheap-first.vercel.app/mcp
 | Tool | What you send | What you get back |
 |---|---|---|
 | `ask_cheap_first` | `question`, and an optional `mode` of `strict`, `balanced` (default) or `budget` | `answer`, `escalated`, `checkScore` (0 to 100), `costUsd`, and `savedUsd` (the estimated saving against the premium model alone; it can be negative when an escalation costs more) |
-| `cheap_first_stats` | nothing | The published benchmark: 143 questions, $0.27 against $1.33, how many Dolphin answered, the quality scores, and the harder 97-question run |
+| `cheap_first_stats` | nothing | The published benchmarks: the in-house 143 questions ($0.27 against $1.33), the harder 97-question run, and the public 300-question run (about 95.5% cheaper, 2 points behind the premium model) |
 
 Free calls use the demo limits above: 600 characters, 10 an hour from one IP, 300 a day, and the demo's premium budget. They share those counters with `/api/ask`, so using both does not double the free tier. A prepaid key sent as `Authorization: Bearer cf_...` is charged one credit through the same path as `/api/pay`. An x402 payment of $0.005 USDC on Base works too. Send the header `X-Cheap-First-Paid: 1` and the endpoint replies 402 with the usual challenge, then settles only after the answer is ready. The price is the same $0.005. Card payments stay off until Stripe is configured, which this server does not turn on.
 
@@ -305,7 +319,7 @@ src/publicSets.ts      pinned GSM8K and ARC-Challenge sample
 api/stats.ts           the public /stats page and its JSON
 data/questions.json    143 questions with written criteria
 data/results.json      the latest in-house benchmark run
-data/public-benchmark.json  written by npm run public-benchmark, when a run has been made
+data/public-benchmark.json  the public GSM8K and ARC-Challenge run (300 questions, complete)
 scripts/public-benchmark.ts
 scripts/build-site.ts  builds the public results page
 ```

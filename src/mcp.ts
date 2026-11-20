@@ -114,16 +114,17 @@ export const TOOLS = [
     name: "cheap_first_stats",
     title: "Cheap First benchmark",
     description:
-      "Published benchmark figures. The main run is 143 questions: what Cheap First spent, what the premium model alone would have cost, how many Dolphin answered, and the average quality scores. Also includes the harder 97-question run. Does not call a model.",
+      "Published benchmark figures from the saved result files. The in-house run, the harder run graded by code, and the public GSM8K and ARC-Challenge run when that file is complete. The public summary includes accuracy, cost, escalation, latency, and where the checker missed. Does not call a model.",
     inputSchema: { type: "object", properties: {}, additionalProperties: false },
     outputSchema: {
       type: "object",
       properties: {
-        benchmark: { type: "object", description: "The main benchmark, with costs rounded to cents the way the site quotes them, plus exactUsd." },
+        benchmark: { type: "object", description: "The in-house benchmark, with costs rounded to cents the way the site quotes them, plus exactUsd." },
         hardBenchmark: { type: ["object", "null"], description: "The harder benchmark graded by code, or null if it was not built." },
+        publicBenchmark: { type: ["object", "null"], description: "The public GSM8K and ARC-Challenge run graded by code, or null if that file is missing or incomplete. summary includes the cost, the accuracy gap, and the checker's misses." },
         resultsPage: { type: "string" },
       },
-      required: ["benchmark", "hardBenchmark", "resultsPage"],
+      required: ["benchmark", "hardBenchmark", "publicBenchmark", "resultsPage"],
     },
     annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
   },
