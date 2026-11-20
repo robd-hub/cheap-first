@@ -5,6 +5,7 @@
  */
 import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
+import { loadPublicReport, type PublicReport } from "./publicReport.js";
 
 interface Side {
   score: number;
@@ -62,6 +63,11 @@ export interface StatsReport {
   benchmark: BenchmarkHeadline;
   /** The harder set, graded by code. Null when those files aren't in the build. */
   hardBenchmark: HardHeadline | null;
+  /**
+   * The public GSM8K and ARC-Challenge run, graded by code.
+   * Null when data/public-benchmark.json is missing or incomplete.
+   */
+  publicBenchmark: PublicReport | null;
   resultsPage: string;
 }
 
@@ -90,7 +96,7 @@ export function loadBenchmarkReport(): StatsReport {
   const results = readJson<ResultsFile>("results.json");
   if (!results?.rows?.length) throw new Error("data/results.json has no benchmark rows.");
   const hard = ["hard-results.json", "stress-results.json"].map((name) => readJson<HardFile>(name)?.summary).filter((s): s is NonNullable<HardFile["summary"]> => Boolean(s?.questions));
-  return reportFrom(results, hard);
+  return { ...reportFrom(results, hard), publicBenchmark: loadPublicReport() };
 }
 
 export function reportFrom(results: ResultsFile, hard: NonNullable<HardFile["summary"]>[] = []): StatsReport {
@@ -147,5 +153,5 @@ export function reportFrom(results: ResultsFile, hard: NonNullable<HardFile["sum
     };
   }
 
-  return { benchmark, hardBenchmark, resultsPage: RESULTS_PAGE };
+  return { benchmark, hardBenchmark, publicBenchmark: null, resultsPage: RESULTS_PAGE };
 }

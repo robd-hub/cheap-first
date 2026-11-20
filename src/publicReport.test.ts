@@ -1,0 +1,53 @@
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { test } from "node:test";
+import { loadPublicBenchmarkFile, loadPublicReport, publicDollars, publicPercent, publicResultsMarkdown, publicSeconds } from "./publicReport.js";
+
+test("public figures are the JSON values, shown to a thousandth of a dollar and one decimal elsewhere", () => {
+  const file = loadPublicBenchmarkFile();
+  const report = loadPublicReport();
+  assert.ok(file?.complete);
+  assert.ok(file.summary);
+  assert.ok(report);
+  const summary = file.summary;
+  assert.equal(report.questions, summary.questions);
+  assert.equal(report.correctCheapFirst, summary.correct.cheapFirst);
+  assert.equal(report.correctPremium, summary.correct.premium);
+  assert.equal(report.correctCheapAlone, summary.correct.cheapAlone);
+  assert.equal(report.costCheapFirst, publicDollars(summary.costUsd.cheapFirst));
+  assert.equal(report.costPremium, publicDollars(summary.costUsd.premium));
+  assert.equal(report.savingPct, summary.savingPct);
+  assert.equal(report.accuracyCheapFirst, publicPercent(summary.accuracy.cheapFirst!));
+  assert.equal(report.accuracyPremium, publicPercent(summary.accuracy.premium!));
+  assert.equal(report.escalationPct, publicPercent(summary.escalationRate!));
+  assert.equal(report.medianCheapFirst, publicSeconds(summary.latencyMs.cheapFirst.median));
+  assert.equal(report.medianPremium, publicSeconds(summary.latencyMs.premium.median));
+  assert.equal(report.meanCheapFirst, publicSeconds(summary.latencyMs.cheapFirst.mean));
+  assert.equal(report.meanPremium, publicSeconds(summary.latencyMs.premium.mean));
+  assert.equal(report.catches, summary.catches);
+  assert.equal(report.missed, summary.missed);
+  assert.equal(report.falseAlarms, summary.falseAlarms);
+  assert.equal(report.escalatedStillWrong, summary.escalatedStillWrong);
+  assert.equal(report.correctCheapFirst, report.correctCheapAlone);
+  assert.equal(publicDollars(summary.costUsd.cheapFirst), "$0.088");
+  assert.notEqual(publicDollars(summary.costUsd.cheapFirst), "$0.09");
+  assert.equal(report.claim, "About 95.5% cheaper, 2 points behind the premium model on 300 public questions.");
+  assert.match(report.limits, /slower/);
+  assert.match(report.limits, /0 real catches/);
+  assert.match(report.limits, /11 wrong cheap answers/);
+  assert.match(report.limits, /4 of the 5 escalations were false alarms/);
+  assert.match(report.limits, /same as the cheap model alone/);
+  assert.equal(report.summary.includes("same quality"), false);
+  assert.equal(report.sets[0].correctCheapFirst, summary.byDataset.gsm8k.correct.cheapFirst);
+  assert.equal(report.sets[1].costPremium, publicDollars(summary.byDataset.arc.costUsd.premium));
+});
+
+test("the README publishes the same public-results block the JSON formats", () => {
+  const report = loadPublicReport();
+  assert.ok(report);
+  const readme = readFileSync(new URL("../README.md", import.meta.url), "utf8");
+  const block = publicResultsMarkdown(report);
+  assert.equal(readme.includes(block), true);
+  assert.equal(readme.includes("No completed public run"), false);
+  assert.equal(block.includes("same quality"), false);
+});

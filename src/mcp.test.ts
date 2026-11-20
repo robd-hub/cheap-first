@@ -149,8 +149,24 @@ test("cheap_first_stats returns the published headline", async () => {
   assert.equal(stats.hardBenchmark.cheapFirstUsd, 0.27);
   assert.equal(stats.hardBenchmark.premiumOnlyUsd, 1.42);
   assert.equal(stats.hardBenchmark.savingPct, 81);
+  const pub = res.json.result?.structuredContent as unknown as {
+    publicBenchmark: { questions: number; correctCheapFirst: number; correctPremium: number; costCheapFirst: string; costPremium: string; savingPct: number; catches: number; missed: number; falseAlarms: number; claim: string; summary: string };
+  };
+  assert.equal(pub.publicBenchmark.questions, 300);
+  assert.equal(pub.publicBenchmark.correctCheapFirst, 288);
+  assert.equal(pub.publicBenchmark.correctPremium, 294);
+  assert.equal(pub.publicBenchmark.costCheapFirst, "$0.088");
+  assert.equal(pub.publicBenchmark.costPremium, "$1.945");
+  assert.equal(pub.publicBenchmark.savingPct, 95.5);
+  assert.equal(pub.publicBenchmark.catches, 0);
+  assert.equal(pub.publicBenchmark.missed, 11);
+  assert.equal(pub.publicBenchmark.falseAlarms, 4);
+  assert.match(pub.publicBenchmark.claim, /2 points behind/);
+  assert.match(pub.publicBenchmark.summary, /0 real catches/);
+  assert.equal(pub.publicBenchmark.summary.includes("same quality"), false);
   // The text block is the same object, for clients that ignore structuredContent.
   assert.equal(JSON.parse(res.json.result?.content?.[0].text ?? "").benchmark.questions, 143);
+  assert.equal(JSON.parse(res.json.result?.content?.[0].text ?? "").publicBenchmark.questions, 300);
 });
 
 test("a free ask stays on the demo path and returns the fields an agent needs", async () => {

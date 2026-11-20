@@ -14,6 +14,7 @@
  */
 import { waitUntil } from "@vercel/functions";
 import { savings, type CheapFirstResult, type Models } from "./cheapFirst.js";
+import { loadPublicReport } from "./publicReport.js";
 import { redisPipeline, sharedStoreConfigured } from "./store.js";
 
 export const LIVE_KEY = "cf:live:v1";
@@ -353,6 +354,7 @@ footer{margin-top:28px;color:var(--muted);font-size:.85rem}
   <p class="since">Since <b>${esc(since)}</b></p>
   ${banner}
   ${numbers}
+  ${publishedBenchmark()}
   <h2>What a real catch is</h2>
   <ul class="notes">
     <li>A real catch is an answer where Dolphin returned text, the checker scored it below that request's pass mark, and the premium model answered instead.</li>
@@ -364,6 +366,14 @@ footer{margin-top:28px;color:var(--muted);font-size:.85rem}
 </main>
 </body>
 </html>`;
+}
+
+/** The fixed public run, kept separate from the live counters above. */
+function publishedBenchmark(): string {
+  const report = loadPublicReport();
+  if (!report) return "";
+  return `<h2>Published public benchmark</h2>
+<p class="banner">This is a fixed run, not live traffic. ${esc(report.claim)} ${esc(report.limits)} Seed ${report.seed}. Models: ${esc(report.models.cheap)}; ${esc(report.models.checker)}; ${esc(report.models.premium)}. Run ${esc(report.ranAtLabel)}. <a href="${esc(report.jsonUrl)}">Full results</a>.</p>`;
 }
 
 function sourcesTable(snapshot: LiveSnapshot): string {
