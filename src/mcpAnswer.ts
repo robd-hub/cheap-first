@@ -11,6 +11,7 @@
 import { demoPremiumBudget, paidPremiumBudget, PREMIUM_MAX_TOKENS, type DailyBudget } from "./budget.js";
 import { cheapFirst, defaultModels, EscalationBlocked, MODES, savings, type CheapFirstResult, type Mode, type Models } from "./cheapFirst.js";
 import { takeDemoSlot } from "./limits.js";
+import { noteCheapFirst } from "./liveStats.js";
 import { rpcOk, toolErrorResult, toolResult, type AskPayload, type AnswerOutcome, type JsonRpcId } from "./mcp.js";
 import { paidCall, unpaidChallenge } from "./paid.js";
 import { PRICE_MICRO, type Offer } from "./x402.js";
@@ -57,7 +58,7 @@ export function toAskPayload(result: CheapFirstResult, specs: Models, mode: Mode
   };
 }
 
-async function run(question: string, mode: Mode, budget: DailyBudget): Promise<AskPayload> {
+async function run(question: string, mode: Mode, budget: DailyBudget): Promise<{ payload: AskPayload; result: CheapFirstResult; specs: Models }> {
   models ??= await defaultModels();
   const specs = models;
   const result = await cheapFirst(question, specs, undefined, {
@@ -66,14 +67,16 @@ async function run(question: string, mode: Mode, budget: DailyBudget): Promise<A
     passMark: MODES[mode],
   });
   if (result.premium) await budget.add(result.premium.costUsd);
-  return toAskPayload(result, specs, mode);
+  return { payload: toAskPayload(result, specs, mode), result, specs };
 }
 
 export async function answerFree(request: Request, question: string, mode: Mode): Promise<AnswerOutcome> {
   const slot = await takeDemoSlot(request);
   if (!slot.ok) return { ok: false, message: slot.error };
   try {
-    return { ok: true, payload: await run(question, mode, demoPremiumBudget) };
+    const { payload, result, specs } = await run(question, mode, demoPremiumBudget);
+    noteCheapFirst("mcp", result, specs, MODES[mode]);
+    return { ok: true, payload };
   } catch (e) {
     if (e instanceof EscalationBlocked) {
       return { ok: false, message: "That question needs the premium model, and the free demo has used today's premium budget. Try an easier one, or come back tomorrow." };
@@ -90,10 +93,11 @@ export async function answerPaid(request: Request, id: JsonRpcId, question: stri
   try {
     res = await paidCall(request, MCP_OFFER, async () => {
       try {
-        const payload = await run(question, mode, paidPremiumBudget);
+        const { payload, result, specs } = await run(question, mode, paidPremiumBudget);
         return {
-          respond: (paid, headers) =>
-            rpcOk(
+          respond: (paid, headers) => {
+            noteCheapFirst("mcp", result, specs, MODES[mode]);
+            return rpcOk(
               request,
               id,
               toolResult({
@@ -104,7 +108,8 @@ export async function answerPaid(request: Request, id: JsonRpcId, question: stri
                 ...(paid.transaction ? { transaction: paid.transaction } : {}),
               }),
               headers,
-            ),
+            );
+          },
         };
       } catch (e) {
         if (e instanceof EscalationBlocked) {

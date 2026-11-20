@@ -14,6 +14,7 @@
 import { paidPremiumBudget as premiumBudget, PREMIUM_MAX_TOKENS } from "../src/budget.js";
 import { cheapFirst, defaultModels, EscalationBlocked, MODES, modeFrom, savings, type Models } from "../src/cheapFirst.js";
 import { PAID_MAX_QUESTION } from "../src/limits.js";
+import { noteCheapFirst } from "../src/liveStats.js";
 import { json, paidCall, PAID_CORS, unpaidChallenge } from "../src/paid.js";
 import { QUESTION_OFFER } from "../src/x402.js";
 
@@ -50,8 +51,9 @@ export async function POST(request: Request): Promise<Response> {
       if (result.premium) await premiumBudget.add(result.premium.costUsd);
       const { savedUsd } = savings(result, m);
       return {
-        respond: (paid, headers) =>
-          json(
+        respond: (paid, headers) => {
+          noteCheapFirst("pay", result, m, MODES[mode]);
+          return json(
             {
               answer: result.answer,
               answeredBy: result.answeredBy,
@@ -64,7 +66,8 @@ export async function POST(request: Request): Promise<Response> {
             },
             200,
             headers,
-          ),
+          );
+        },
       };
     } catch (e) {
       if (e instanceof EscalationBlocked) {

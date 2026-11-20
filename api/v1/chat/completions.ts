@@ -19,6 +19,7 @@
  */
 import { paidPremiumBudget as premiumBudget, PREMIUM_MAX_TOKENS } from "../../../src/budget.js";
 import { cheapFirst, defaultModels, EscalationBlocked, MODES, savings, type Mode, type Models } from "../../../src/cheapFirst.js";
+import { noteCheapFirst } from "../../../src/liveStats.js";
 import type { ChatMessage } from "../../../src/models.js";
 import { json, paidCall, PAID_CORS, unpaidChallenge } from "../../../src/paid.js";
 import type { Offer } from "../../../src/x402.js";
@@ -130,6 +131,7 @@ export async function POST(request: Request): Promise<Response> {
       const usage = { prompt_tokens: used.inputTokens, completion_tokens: used.outputTokens, total_tokens: used.inputTokens + used.outputTokens };
       return {
         respond: (paid, headers) => {
+          noteCheapFirst("chat", r, m, MODES[mode]);
           if (!stream) {
             return json(
               {

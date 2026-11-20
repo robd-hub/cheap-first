@@ -50,6 +50,10 @@
       "destination": "/api/mcp"
     },
     {
+      "source": "/stats",
+      "destination": "/api/stats"
+    },
+    {
       "source": "/openserv",
       "destination": "/api/openserv"
     },
