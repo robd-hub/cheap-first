@@ -8,6 +8,7 @@
 <p align="center">
   <a href="https://robd-hub.github.io/cheap-first/"><b>Live results</b></a> ·
   <a href="https://cheap-first.vercel.app/#try"><b>Try it</b></a> ·
+  <a href="https://cheap-first.vercel.app/stats"><b>Live stats</b></a> ·
   <a href="https://youtu.be/QisYhwqbiME"><b>Demo video</b></a> ·
   <a href="https://x.com/agentreportcard/status/2120458951431159898">X post</a> ·
   <a href="#how-it-works">How it works</a> ·
@@ -50,7 +51,7 @@ flowchart LR
 
 ## Results
 
-The benchmark runs every question two ways, Cheap First and premium only, and grades both final
+These figures are the in-house set (`data/questions.json`). The benchmark runs every question two ways, Cheap First and premium only, and grades both final
 answers with the same checker. Every cost comes from the token counts the APIs returned.
 
 | | Cheap First | Premium only |
@@ -68,6 +69,19 @@ openly. In a separate test, the checker failed all 8 deliberately wrong answers 
 <p align="center">
   <img src="docs/escalation.png" alt="Questions that were escalated, with both answers" width="860">
 </p>
+
+### Public questions
+
+The 143 questions above were written for this project. `npm run public-benchmark` runs the same Cheap First vs premium-only comparison on a fixed public sample, and grades every answer by code against the published answer. The checker does not see the answer key, and it does not mark the final answers.
+
+| Set | What is pinned |
+|---|---|
+| GSM8K test, 200 of 1,319 | [openai/grade-school-math](https://github.com/openai/grade-school-math/commit/b0bb162abedc65e1fdd8e93ed090fd7598ee68bc) `b0bb162abedc65e1fdd8e93ed090fd7598ee68bc`, sha256 `3730d312f6e3440559ace48831e51066acaca737f6eabec99bccb9e4b3c39d14` |
+| ARC-Challenge test, 100 of 1,172 | AI2 `ARC-V1-Feb2018` file `ARC-Challenge-Test.jsonl`, sha256 `9fa8ffb3e3a1f88cb302d53dd95aae81e39209ad9bcf974376b319d8fd35717c` |
+
+Both draws use seed `20261120` (see `src/publicSets.ts`). One command writes `data/public-benchmark.json` with accuracy, total cost, escalation rate, and latency. `--dry-run` checks the files and prints the sample without calling a model. A results file from a different pin is left as it is.
+
+No completed public run is stored in this repository. There is no public accuracy, cost, escalation rate, or latency to quote. Running it needs `DOLPHIN_API_KEY` and `SERV_API_KEY`. When a finished run is committed, `complete` in that JSON is true, and its measured numbers belong in a table here beside the in-house results.
 
 ### Harder questions
 
@@ -109,6 +123,7 @@ console.log(result.answer, result.answeredBy, result.costUsd);
 |---|---|
 | `npm run ask -- "question"` | Answer one question the Cheap First way |
 | `npm run benchmark` | Run the benchmark and save `data/results.json` (pass question ids to run just those) |
+| `npm run public-benchmark` | Run the pinned GSM8K + ARC-Challenge sample and save `data/public-benchmark.json` (`-- --dry-run` checks the files only) |
 | `npm run hard-benchmark` | Run the hard benchmark, graded by code (`-- --set stress` for round 2, see [docs](docs/hard-benchmark.md)) |
 | `npm run build` | Build the results page into `out/` (no keys needed) |
 | `npx tsx scripts/check-sanity.ts` | Grade deliberately wrong answers and save `data/checker-test.json` |
@@ -121,6 +136,10 @@ console.log(result.answer, result.answeredBy, result.costUsd);
 it limits questions to 600 characters, 10 an hour per visitor and 300 a day per server
 (`CF_PER_IP_PER_HOUR`, `CF_DAILY_CAP`), and `CF_MAX_TOKENS` caps each model reply. The GitHub Pages
 build points that box at `https://cheap-first.vercel.app/api/ask`.
+
+[Live stats](https://cheap-first.vercel.app/stats) (`/stats`, JSON at `/api/stats?format=json`) count production answers after they are delivered: how many, how often the premium model was used, dollars against always-premium pricing, and real catches. A real catch is a non-blank cheap answer the checker scored below that request's pass mark, so the premium model answered. The page does not keep the question or either answer, so a catch is the checker's decision, not a separate proof the cheap answer was wrong. Escalations where Dolphin returned nothing are counted in the escalation rate and shown apart from catches.
+
+The counters use the same Upstash Redis as the other shared limits (`KV_REST_API_URL` and `KV_REST_API_TOKEN`, or `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`). The free plan is enough. If prepaid keys are already connected, no further storage is required. Until one of those pairs is set, the page stays empty and records nothing. **Since** is the time of the first recorded answer. Traffic from before that is not backfilled. For an answer Dolphin kept, the premium price is the estimate the API already returns as `savedUsd` (premium rates on the cheap call's tokens), not a second model call. The saving can be negative when an escalation costs more than that.
 
 ### Spend guards (free demo and paid `api/pay.ts`)
 
@@ -281,8 +300,13 @@ src/limits.ts          demo rate limits, shared by /api/ask and free MCP calls
 src/paid.ts            the shared x402 verify → answer → settle flow (or a prepaid key)
 src/keys.ts, api/key.ts  prepaid keys bought by card (src/stripe.ts)
 src/store.ts           shared counters on Upstash, with an in-memory fallback
+src/liveStats.ts       aggregate production counters for /stats (no prompts or keys)
+src/publicSets.ts      pinned GSM8K and ARC-Challenge sample
+api/stats.ts           the public /stats page and its JSON
 data/questions.json    143 questions with written criteria
-data/results.json      the latest benchmark run
+data/results.json      the latest in-house benchmark run
+data/public-benchmark.json  written by npm run public-benchmark, when a run has been made
+scripts/public-benchmark.ts
 scripts/build-site.ts  builds the public results page
 ```
 

@@ -14,8 +14,9 @@
  * hold across all server instances.
  */
 import { demoPremiumBudget as premiumBudget, PREMIUM_MAX_TOKENS } from "../src/budget.js";
-import { cheapFirst, defaultModels, EscalationBlocked, savings, type Models } from "../src/cheapFirst.js";
+import { cheapFirst, defaultModels, EscalationBlocked, PASS_MARK, savings, type Models } from "../src/cheapFirst.js";
 import { DEMO_MAX_QUESTION, takeDemoSlot } from "../src/limits.js";
+import { noteCheapFirst } from "../src/liveStats.js";
 
 let models: Models | null = null;
 
@@ -57,6 +58,7 @@ export async function POST(request: Request): Promise<Response> {
       canEscalate: () => premiumBudget.hasRoom(),
     });
     if (r.premium) await premiumBudget.add(r.premium.costUsd);
+    noteCheapFirst("demo", r, models, PASS_MARK);
     return json(
       {
         answer: r.answer,

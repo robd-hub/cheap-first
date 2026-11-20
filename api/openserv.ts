@@ -12,6 +12,7 @@
 import { waitUntil } from "@vercel/functions";
 import { DailyBudget, PREMIUM_MAX_TOKENS } from "../src/budget.js";
 import { cheapFirst, defaultModels, EscalationBlocked, MODES, modeFrom, savings, type Models } from "../src/cheapFirst.js";
+import { noteCheapFirst } from "../src/liveStats.js";
 import { handleOpenServ, type AgentSpec } from "../src/openserv.js";
 import { incrBy } from "../src/store.js";
 
@@ -57,6 +58,7 @@ export const AGENT: AgentSpec = {
             passMark: MODES[mode],
           });
           if (r.premium) await premiumBudget.add(r.premium.costUsd);
+          noteCheapFirst("openserv", r, m, MODES[mode]);
           const { premiumOnlyUsd, savedUsd } = savings(r, m);
           const who = r.answeredBy === "cheap" ? `${m.cheap.label} (the cheap model)` : `${m.premium.label} (escalated after the check scored the cheap answer ${r.check.score}/100)`;
           return `${r.answer}\n\n---\nAnswered by ${who}. Check score ${r.check.score}/100. Cost ${usd(r.costUsd)} instead of ${usd(premiumOnlyUsd)}, saving ${usd(savedUsd)}.`;

@@ -56,6 +56,21 @@ function fallback(e: unknown): void {
   warned = true;
 }
 
+/**
+ * Runs commands against Upstash. Returns null when it isn't configured or
+ * the request fails. Callers that must not fall back to per-instance memory
+ * (the public stats counters) use this and skip the write.
+ */
+export async function redisPipeline(cmds: Cmd[]): Promise<unknown[] | null> {
+  if (!sharedStoreConfigured()) return null;
+  try {
+    return await pipeline(cmds);
+  } catch (e) {
+    fallback(e);
+    return null;
+  }
+}
+
 /** Adds `by` to a number and returns the new total. The key expires after `ttlSeconds` (set on first use). */
 export async function incrBy(key: string, by: number, ttlSeconds: number): Promise<number> {
   if (sharedStoreConfigured()) {

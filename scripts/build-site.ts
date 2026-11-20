@@ -3,6 +3,7 @@
  * No API keys are needed: the page is plain HTML built from saved results.
  */
 import fs from "node:fs";
+import { STATS_JSON_URL, STATS_PAGE_URL } from "../src/liveStats";
 
 interface Side {
   answer: string;
@@ -39,6 +40,10 @@ const REPO = "https://github.com/robd-hub/cheap-first";
  * (the production alias, not a project-specific vercel.app host).
  */
 const ASK_URL = process.env.ASK_URL || "/api/ask";
+/** GitHub Pages is a different origin, so it links at the production Vercel pages. The Vercel build uses its own /stats. */
+const ON_PAGES = Boolean(process.env.ASK_URL);
+const statsPage = ON_PAGES ? STATS_PAGE_URL : "/stats";
+const statsJson = ON_PAGES ? STATS_JSON_URL : "/api/stats?format=json";
 /** A Stripe Payment Link for prepaid keys. The card option only shows when it's set. */
 const CARD_LINK = process.env.CF_CARD_LINK || "";
 
@@ -277,14 +282,14 @@ footer a{color:var(--soft)}
 .err{color:var(--warn);margin:0}.rej{margin-top:10px;color:var(--muted);font-size:.85rem}.rej summary{cursor:pointer}.rej pre{margin-top:8px}
 
 @media (max-width:820px){.tiles{grid-template-columns:1fr 1fr}.tile.accent,.tile:last-child{grid-column:1/-1}.flow,.models,.ct,.calcout{grid-template-columns:1fr}}
-@media (max-width:720px){.nav nav a:not(.gh){display:none}.head{display:none}.row summary{grid-template-columns:1fr auto;grid-template-areas:"cat pill" "q q" "num cost"}.row summary .cat{grid-area:cat}.row summary .pill{grid-area:pill}.row summary .q{grid-area:q}.row summary .num:not(.cost){grid-area:num;text-align:left}.row summary .cost:not(.muted){grid-area:cost}.row summary .muted{display:none}.detail{grid-template-columns:1fr}}
+@media (max-width:720px){.nav nav a:not(.gh):not(.stats){display:none}.head{display:none}.row summary{grid-template-columns:1fr auto;grid-template-areas:"cat pill" "q q" "num cost"}.row summary .cat{grid-area:cat}.row summary .pill{grid-area:pill}.row summary .q{grid-area:q}.row summary .num:not(.cost){grid-area:num;text-align:left}.row summary .cost:not(.muted){grid-area:cost}.row summary .muted{display:none}.detail{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="bg"></div>
 <header class="nav">
   <a class="logo" href="#top"><span class="logo-mark">C</span>Cheap First</a>
-  <nav><a href="#try">Try it</a><a href="#how">How it works</a><a href="#api">API</a><a href="#mcp">MCP</a><a href="#escalated">Escalations</a><a href="#hard">Hard test</a><a href="#results">All results</a><a class="gh" href="${REPO}">GitHub</a></nav>
+  <nav><a href="#try">Try it</a><a href="#how">How it works</a><a href="#api">API</a><a href="#mcp">MCP</a><a class="stats" href="${statsPage}">Live stats</a><a href="#escalated">Escalations</a><a href="#hard">Hard test</a><a href="#results">All results</a><a class="gh" href="${REPO}">GitHub</a></nav>
 </header>
 <main class="wrap" id="top">
 <section class="hero">
@@ -292,7 +297,7 @@ footer a{color:var(--soft)}
   <span class="kicker"><span class="pulse"></span>Live · SERV Hackathon 02 · Dolphin track</span>
   <h1>Frontier quality,<br><span class="grad">cheap-model prices.</span></h1>
   <p class="lede">Most questions don't need a frontier model. Cheap First answers with Dolphin's very cheap model, has SERV Reasoning check the answer, and only pays for a premium model when the check fails.</p>
-  <div class="ctas"><a class="btn primary" href="#try">Try it live</a><a class="btn ghost" href="#calc">Work out your savings</a><a class="btn ghost" href="#escalated">See the safety net</a></div>
+  <div class="ctas"><a class="btn primary" href="#try">Try it live</a><a class="btn ghost" href="${statsPage}">Live stats</a><a class="btn ghost" href="#calc">Work out your savings</a><a class="btn ghost" href="#escalated">See the safety net</a></div>
 </div>
 ${gradeCard()}
 </div>
@@ -342,6 +347,7 @@ o.innerHTML='<div class="ahead"><span class="pill '+(prem?"prem":"cheap")+'">'+(
     <div class="step"><span class="n">03</span><b>Escalate only if needed</b><span>Below ${r?.passMark ?? 75}, the question goes to a frontier model on SERV instead.</span></div>
   </div>
 </section>
+${liveSection()}
 <section id="api">
   <p class="eyebrow">Use it in your app</p>
   <h2>$0.005 per answer. No sign-up.</h2>
@@ -405,6 +411,7 @@ ${calc}
 </section>
 ${escalations ? `<section id="escalated"><p class="eyebrow">The safety net</p>${escalations}</section>` : ""}
 ${hardSection()}
+${publicSection()}
 ${checkerTest ? `<section id="checker"><p class="eyebrow">Checker test</p>${checkerTest}</section>` : ""}
 ${reppoSection}
 <section id="results">
@@ -433,7 +440,7 @@ ${m ? `<div class="models">
 </div>` : ""}
 <ul class="notes">
   <li>Every cost comes from the token counts each API returned, nothing is estimated. The checker's cost is included in Cheap First's total.</li>
-  <li>Both final answers are scored by the same checker against the same written criteria.</li>
+  <li>Both final answers are scored by the same checker against the same written criteria. The public GSM8K and ARC-Challenge run, when it has been committed, is graded by code instead, and the checker does not see the answer key.</li>
   ${r ? `<li>Last run ${esc(r.ranAt.slice(0, 16).replace("T", " "))} UTC.</li>` : ""}
 </ul>
 </section>
@@ -505,6 +512,90 @@ document.getElementById("gc-letter").textContent=r.grade;document.getElementById
 document.getElementById("gc-date").textContent=new Date(r.date).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric",timeZone:"UTC"});
 const c={A:"linear-gradient(135deg,#2ef2a4,#4fe3ff)",B:"linear-gradient(135deg,#a3e635,#2ef2a4)",C:"#ffb547",D:"#fb923c",F:"#ff4d6d"}[r.grade];if(c)document.getElementById("gc-letter").style.background=c;}).catch(()=>{});
 </script>`;
+}
+
+/** A short live-totals strip. The numbers come from /api/stats in the browser, so a rebuild is not required. */
+function liveSection(): string {
+  return `<section id="live">
+  <p class="eyebrow">Production</p>
+  <h2>What the live API is doing.</h2>
+  <p class="sub">Totals from answers the server actually returned. Questions and keys are not stored. <a href="${statsPage}">Open the stats page</a> for the since date, the saving, and what a real catch means.</p>
+  <div id="livetiles"><p class="sub">Loading live totals…</p></div>
+</section>
+<script>
+(function(){
+  var box=document.getElementById("livetiles"), page=${JSON.stringify(statsPage)};
+  function esc(t){return String(t).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+  function num(n){n=Number(n);return Number.isFinite(n)?n.toLocaleString("en-US"):"—"}
+  function money(n){n=Number(n);if(!Number.isFinite(n))return "—";var s=n<0?"-":"",v=Math.abs(n);if(v===0)return "$0.00";if(v>=0.01)return s+"$"+v.toFixed(2);if(v>=0.0001)return s+"$"+v.toFixed(4);return s+"$"+v.toFixed(6)}
+  function rate(part,whole){part=Number(part);whole=Number(whole);return whole>0?((part/whole)*100).toFixed(1)+"%":"—"}
+  fetch(${JSON.stringify(statsJson)}).then(function(r){if(!r.ok)throw new Error();return r.json()}).then(function(s){
+    if(!s||!s.configured){box.innerHTML='<p class="sub">Live totals are not being recorded yet. The stats page names the Upstash variables to set.</p>';return}
+    if(!s.reachable){box.innerHTML='<p class="sub">The store could not be read just now. <a href="'+esc(page)+'">Try the stats page</a>.</p>';return}
+    var since=s.since?esc(String(s.since).slice(0,16).replace("T"," ")+" UTC"):"—";
+    if(!s.requests){box.innerHTML='<p class="sub">No production answers recorded yet. Since '+since+'.</p>';return}
+    var saved=s.savingPct==null?"":" ("+esc(s.savingPct)+"%)";
+    box.innerHTML='<p class="sub">Since <b>'+since+'</b></p><div class="tiles">'+
+      '<div class="tile"><div class="big">'+num(s.requests)+'</div><div class="lbl">answers returned</div></div>'+
+      '<div class="tile"><div class="big">'+rate(s.escalated,s.requests)+'</div><div class="lbl">'+num(s.escalated)+' escalated</div></div>'+
+      '<div class="tile"><div class="big">'+money(s.savedUsd)+'</div><div class="lbl">saved against always-premium pricing'+saved+'</div></div>'+
+      '<div class="tile"><div class="big">'+num(s.realCatches)+'</div><div class="lbl">real catches</div></div></div>';
+  }).catch(function(){box.innerHTML='<p class="sub">Live totals could not be loaded. <a href="'+esc(page)+'">Open the stats page</a>.</p>'});
+})();
+</script>`;
+}
+
+interface PublicSummaryFile {
+  complete?: boolean;
+  ranAt?: string;
+  summary?: {
+    questions: number;
+    correct: { cheapAlone: number; cheapFirst: number; premium: number };
+    accuracy: { cheapAlone: number | null; cheapFirst: number | null; premium: number | null };
+    costUsd: { cheapFirst: number; premium: number };
+    savingPct: number | null;
+    escalated: number;
+    escalationRate: number | null;
+    catches: number;
+    blankEscalations?: number;
+    falseAlarms: number;
+    missed: number;
+    latencyMs: { cheapFirst: { mean: number; median: number }; premium: { mean: number; median: number } };
+  };
+}
+
+/** Shown only from a finished data/public-benchmark.json. An unfinished file is described as not run. */
+function publicSection(): string {
+  let file: PublicSummaryFile | null = null;
+  if (fs.existsSync("data/public-benchmark.json")) {
+    try {
+      file = JSON.parse(fs.readFileSync("data/public-benchmark.json", "utf8")) as PublicSummaryFile;
+    } catch {
+      file = null;
+    }
+  }
+  const intro = `<section id="public">
+<p class="eyebrow">Public questions</p>
+<h2>Questions this project did not write.</h2>`;
+  if (!file?.complete || !file.summary || file.summary.questions < 1) {
+    return `${intro}
+<p class="sub">The figures on this page are the in-house set. <code>npm run public-benchmark</code> repeats the comparison on 200 GSM8K test questions and 100 ARC-Challenge test questions (seed 20261120), graded by code against the published answers. No completed public run is in this build, so there is no public accuracy or cost figure here.</p>
+<p class="sub"><a href="${REPO}#public-questions">Sample pins and the command</a></p>
+</section>`;
+  }
+  const s = file.summary;
+  const share = (n: number | null) => (n === null ? "—" : `${(n * 100).toFixed(1)}%`);
+  const when = file.ranAt ? file.ranAt.slice(0, 16).replace("T", " ") + " UTC" : "";
+  return `${intro}
+<p class="sub">200 GSM8K test questions and 100 ARC-Challenge test questions, seed 20261120. Both paths are graded by code against the published answers. The checker did not see the answer key.${when ? ` Run ${esc(when)}.` : ""}</p>
+<div class="tiles">
+  <div class="tile accent"><div class="big">${s.savingPct === null ? "—" : `${s.savingPct}%`}</div><div class="lbl">cheaper on ${s.questions} public questions (${usd(s.costUsd.cheapFirst)} vs ${usd(s.costUsd.premium)})</div></div>
+  <div class="tile"><div class="big">${s.correct.cheapFirst}/${s.questions}</div><div class="lbl">correct for Cheap First, and ${s.correct.premium}/${s.questions} for premium only (${share(s.accuracy.cheapFirst)} vs ${share(s.accuracy.premium)})</div></div>
+  <div class="tile"><div class="big">${s.escalationRate === null ? "—" : `${(s.escalationRate * 100).toFixed(1)}%`}</div><div class="lbl">${s.escalated} escalated. ${s.catches} catches, ${s.falseAlarms} false alarms, ${s.missed} misses${s.blankEscalations ? `, ${s.blankEscalations} blank` : ""}</div></div>
+  <div class="tile"><div class="big">${s.latencyMs.cheapFirst.median} ms</div><div class="lbl">median Cheap First latency, vs ${s.latencyMs.premium.median} ms premium only</div></div>
+</div>
+<p class="sub">Dolphin alone was right on ${s.correct.cheapAlone} of ${s.questions}. Full rows: <a href="${REPO}/blob/main/data/public-benchmark.json">data/public-benchmark.json</a>.</p>
+</section>`;
 }
 
 /** The hard benchmark (docs/hard-benchmark.md): answers graded by code, plus the checker on real weak-model mistakes. */
