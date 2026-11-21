@@ -7,11 +7,19 @@
  *
  * The body is totals only. See src/liveStats.ts.
  */
+import { hitPost, visitsPage } from "../src/hitHandler.js";
 import { readLive, renderStatsJson, renderStatsPage, wantsHtml } from "../src/liveStats.js";
 
+/** Visit beacons (rewritten from /api/hit). */
+export async function POST(request: Request): Promise<Response> {
+  if (new URL(request.url).searchParams.get("visits")) return hitPost(request);
+  return new Response("Not found", { status: 404 });
+}
+
 export async function GET(request: Request): Promise<Response> {
-  const snapshot = await readLive();
   const url = new URL(request.url);
+  if (url.searchParams.get("visits")) return visitsPage();
+  const snapshot = await readLive();
   if (wantsHtml(request.headers.get("accept"), url.searchParams.get("format"))) {
     return new Response(renderStatsPage(snapshot), {
       status: 200,
