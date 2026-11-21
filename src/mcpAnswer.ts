@@ -18,7 +18,7 @@ import { PRICE_MICRO, type Offer } from "./x402.js";
 
 /** Same price as /api/pay. priceMicro is left unset so it tracks PRICE_MICRO. */
 export const MCP_OFFER: Offer = {
-  description: "One Cheap First answer through the MCP tool ask_cheap_first: Dolphin answers, SERV checks, and a premium model steps in only if the check fails.",
+  description: "One Cheap First answer through the MCP tool ask_cheap_first: Dolphin answers, a second cheap sample checks numbers and choices, SERV grades anything else, and a premium model steps in only if the check fails.",
   example: {
     body: {
       jsonrpc: "2.0",
@@ -55,6 +55,7 @@ export function toAskPayload(result: CheapFirstResult, specs: Models, mode: Mode
     model: result.answeredBy === "cheap" ? specs.cheap.label : specs.premium.label,
     mode,
     checkReason: result.check.reason,
+    checkSignal: result.check.signal,
   };
 }
 

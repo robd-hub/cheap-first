@@ -64,7 +64,7 @@ export async function POST(request: Request): Promise<Response> {
         answer: r.answer,
         answeredBy: r.answeredBy,
         model: r.answeredBy === "cheap" ? models.cheap.label : models.premium.label,
-        check: { score: r.check.score, reason: r.check.reason },
+        check: { score: r.check.score, reason: r.check.reason, signal: r.check.signal },
         cheapAnswer: r.answeredBy === "premium" ? r.cheap.text : undefined,
         costUsd: r.costUsd,
         savedUsd: savings(r, models).savedUsd,

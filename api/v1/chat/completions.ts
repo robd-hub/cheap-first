@@ -36,7 +36,7 @@ export const MODEL_MODES: Record<string, Mode> = {
 };
 
 export const OFFER: Offer = {
-  description: "One OpenAI-style chat completion from Cheap First: Dolphin answers, SERV checks, and a premium model steps in only if the check fails.",
+  description: "One OpenAI-style chat completion from Cheap First: Dolphin answers, a second cheap sample checks numbers and choices, SERV grades anything else, and a premium model steps in only if the check fails.",
   example: {
     body: { model: "cheap-first", messages: [{ role: "user", content: "What is the capital of Australia?" }] },
     output: { object: "chat.completion", model: "cheap-first", choices: [{ index: 0, message: { role: "assistant", content: "Canberra." }, finish_reason: "stop" }] },
@@ -123,7 +123,7 @@ export async function POST(request: Request): Promise<Response> {
         answered_by: r.answeredBy,
         answered_by_model: r.answeredBy === "cheap" ? m.cheap.label : m.premium.label,
         mode,
-        check: { score: r.check.score, reason: r.check.reason },
+        check: { score: r.check.score, reason: r.check.reason, signal: r.check.signal },
         cost_usd: r.costUsd,
         premium_only_usd: premiumOnlyUsd,
         saved_usd: savedUsd,

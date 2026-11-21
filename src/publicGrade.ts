@@ -64,7 +64,7 @@ export function normalizeNumber(raw: string): string | null {
   return String(n);
 }
 
-function extractGsmNumber(text: string): { value: string; how: string } | null {
+export function extractGsmNumber(text: string): { value: string; how: string } | null {
   const finals = [...text.matchAll(/final answer\s*:\s*(.*)/gi)];
   if (finals.length) {
     const fromLine = firstNumber(finals[finals.length - 1][1]);
@@ -88,7 +88,7 @@ function firstNumber(text: string): string | null {
   return m ? normalizeNumber(m[0]) : null;
 }
 
-function extractArcLabel(text: string, labels: string[]): { value: string; how: string } | null {
+export function extractArcLabel(text: string, labels: string[]): { value: string; how: string } | null {
   const allowed = labels.map((l) => l.trim()).filter(Boolean);
   if (!allowed.length) return null;
   const finals = [...text.matchAll(/final answer\s*:\s*(.*)/gi)];
@@ -156,6 +156,20 @@ export function datasetSeed(name: string, seed = SAMPLE_SEED): number {
  * Fisher-Yates sample, then ordered by id so the run order does not depend
  * on the shuffle. The set of ids is what the seed fixes.
  */
+/**
+ * Like `selectSample`, after removing `exclude` ids. The reported benchmark
+ * and the tuning sample both use this so a shared seed cannot leak an item
+ * from one into the other.
+ */
+export function selectDisjoint<T>(items: readonly T[], count: number, seed: number, exclude: ReadonlySet<string>, idOf: (item: T) => string): T[] {
+  return selectSample(
+    items.filter((item) => !exclude.has(idOf(item))),
+    count,
+    seed,
+    idOf,
+  );
+}
+
 export function selectSample<T>(items: readonly T[], count: number, seed: number, idOf: (item: T) => string): T[] {
   if (!Number.isInteger(count) || count < 0 || count > items.length) {
     throw new Error(`Sample size ${count} is outside 0..${items.length}.`);

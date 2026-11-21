@@ -73,7 +73,7 @@ export interface ChatMessage {
 }
 
 /** `maxTokens` caps the answer length (and so its cost) for this one call. */
-export async function chat(spec: ModelSpec, system: string, user: string, maxTokens = MAX_TOKENS): Promise<CallResult> {
+export async function chat(spec: ModelSpec, system: string, user: string, maxTokens = MAX_TOKENS, temperature?: number): Promise<CallResult> {
   return chatMessages(
     spec,
     [
@@ -81,11 +81,12 @@ export async function chat(spec: ModelSpec, system: string, user: string, maxTok
       { role: "user", content: user },
     ],
     maxTokens,
+    temperature,
   );
 }
 
 /** Like `chat`, but with a whole conversation (system, user and assistant turns). */
-export async function chatMessages(spec: ModelSpec, messages: ChatMessage[], maxTokens = MAX_TOKENS): Promise<CallResult> {
+export async function chatMessages(spec: ModelSpec, messages: ChatMessage[], maxTokens = MAX_TOKENS, temperature?: number): Promise<CallResult> {
   const key = spec.provider === "dolphin" ? dolphinKey() : process.env.SERV_API_KEY;
   if (!key) throw new Error(spec.provider === "dolphin" ? "DOLPHIN_API_KEY is not set" : "SERV_API_KEY is not set");
   const url = spec.provider === "dolphin" ? DOLPHIN_URL : SERV_URL;
@@ -100,6 +101,8 @@ export async function chatMessages(spec: ModelSpec, messages: ChatMessage[], max
         // Set explicitly: SERV's own default can exceed the model's limit and fail with a 400.
         // SERV's OpenAI models want the newer parameter name.
         ...(spec.provider === "serv" ? { max_completion_tokens: maxTokens } : { max_tokens: maxTokens }),
+        // Omitted by default so a normal answer keeps the provider's own sampling.
+        ...(temperature !== undefined ? { temperature } : {}),
         messages,
       }),
     });

@@ -22,17 +22,24 @@ const kept: LiveObservation = {
   cheapAnswered: true,
   checkScore: 90,
   passMark: 75,
+  signal: "grader",
   costUsd: 0.01,
   premiumOnlyUsd: 0.05,
 };
 
 test("a real catch is a rejected cheap answer, and a blank reply is not one", () => {
   const catchObs: LiveObservation = { ...kept, source: "pay", answeredBy: "premium", checkScore: 40, costUsd: 0.08, premiumOnlyUsd: 0.05 };
+  const disagreed: LiveObservation = { ...catchObs, source: "chat", signal: "agreement", checkScore: 70 };
   const blank: LiveObservation = { ...kept, source: "mcp", answeredBy: "premium", cheapAnswered: false, checkScore: 0, costUsd: 0.04, premiumOnlyUsd: 0.05 };
   const catchCmds = commandsFor(catchObs, "2026-11-20T10:30:00.000Z").map((cmd) => cmd[2]);
   assert.ok(catchCmds.includes("realCatches"));
+  assert.ok(catchCmds.includes("catchGrader"));
+  assert.equal(catchCmds.includes("catchAgreement"), false);
   assert.ok(catchCmds.includes("escalated"));
   assert.equal(catchCmds.includes("blankEscalations"), false);
+  const disagreeCmds = commandsFor(disagreed, "2026-11-20T10:30:00.000Z").map((cmd) => cmd[2]);
+  assert.ok(disagreeCmds.includes("catchAgreement"));
+  assert.equal(disagreeCmds.includes("catchGrader"), false);
   const blankCmds = commandsFor(blank, "2026-11-20T10:30:00.000Z").map((cmd) => cmd[2]);
   assert.ok(blankCmds.includes("blankEscalations"));
   assert.equal(blankCmds.includes("realCatches"), false);

@@ -7,25 +7,17 @@
  *   npm run public-benchmark -- gsm8k-0007   # rerun these ids, keeping the rest
  *   npm run public-benchmark -- --dry-run    # download, check hashes, print the sample, no model calls
  *   npm run public-benchmark -- --regrade    # apply the grader again, no model calls
+ *   npm run public-benchmark -- --rerun      # replace a finished file (the published run refuses without this)
  *
  * The sample, seed, and file hashes live in src/publicSets.ts. A results
  * file from a different pin is left untouched.
  */
-import { createHash } from "node:crypto";
 import fs from "node:fs";
-import { inflateRawSync } from "node:zlib";
 import { cheapFirst, defaultModels, PASS_MARK, SYSTEM_PROMPT } from "../src/cheapFirst";
 import { chat } from "../src/models";
-import { arcPrompt, datasetSeed, gradeArc, gradeGsm8kNumber, gsm8kGold, gsm8kPrompt, selectSample, summarizePublic, type Grade, type ScoredRun } from "../src/publicGrade";
+import { gradeArc, gradeGsm8kNumber, summarizePublic, type Grade, type ScoredRun } from "../src/publicGrade";
 import { ARC, GSM8K, PUBLIC_GRADING, SAMPLE_SEED } from "../src/publicSets";
-
-interface Item {
-  dataset: "gsm8k" | "arc";
-  id: string;
-  prompt: string;
-  gold: string;
-  labels?: string[];
-}
+import { loadPopulations, reportedItems, reportedPinMatches, sampleMeta, type PublicItem } from "./public-load";
 
 interface Side extends Grade {
   answer: string;
@@ -33,7 +25,7 @@ interface Side extends Grade {
   ms: number;
 }
 
-interface Row extends Item {
+interface Row extends PublicItem {
   answeredBy: "cheap" | "premium";
   checkScore: number;
   checkReason: string;
@@ -50,6 +42,7 @@ interface Failure {
 }
 
 interface Saved {
+  complete?: boolean;
   sample?: { seed?: number; datasets?: { id?: string; sha256?: string; sampleSize?: number }[] };
   models?: unknown;
   ranAt?: string;
@@ -61,106 +54,12 @@ const RESULTS = "data/public-benchmark.json";
 const CONCURRENCY = 4;
 const args = process.argv.slice(2);
 
-function sha256(buf: Buffer): string {
-  return createHash("sha256").update(buf).digest("hex");
-}
-
-function expectHash(buf: Buffer, expected: string, label: string): void {
-  const got = sha256(buf);
-  if (got !== expected) throw new Error(`${label} sha256 is ${got}, expected ${expected}. The pinned file changed or the download was cut off.`);
-}
-
-async function download(url: string, headers?: Record<string, string>): Promise<{ status: number; body: Buffer }> {
-  const res = await fetch(url, { headers, redirect: "follow", signal: AbortSignal.timeout(60_000) });
-  return { status: res.status, body: Buffer.from(await res.arrayBuffer()) };
-}
-
-async function loadGsm8k(): Promise<Item[]> {
-  const { status, body } = await download(GSM8K.url);
-  if (status !== 200) throw new Error(`GSM8K download returned ${status}.`);
-  expectHash(body, GSM8K.sha256, "GSM8K test.jsonl");
-  const items: Item[] = [];
-  for (const line of body.toString("utf8").split("\n")) {
-    if (!line.trim()) continue;
-    const row = JSON.parse(line) as { question: string; answer: string };
-    items.push({
-      dataset: "gsm8k",
-      id: `gsm8k-${String(items.length).padStart(4, "0")}`,
-      prompt: gsm8kPrompt(row.question),
-      gold: gsm8kGold(row.answer),
-    });
-  }
-  if (items.length !== GSM8K.population) throw new Error(`GSM8K has ${items.length} questions, expected ${GSM8K.population}.`);
-  return selectSample(items, GSM8K.sampleSize, datasetSeed(GSM8K.id), (item) => item.id);
-}
-
-async function loadArc(): Promise<Item[]> {
-  const end = ARC.rangeStart + ARC.rangeLength - 1;
-  const { status, body } = await download(ARC.url, { Range: `bytes=${ARC.rangeStart}-${end}` });
-  if (status !== 206) throw new Error(`ARC range request returned ${status}. The full archive is not downloaded.`);
-  if (body.length !== ARC.rangeLength) throw new Error(`ARC range was ${body.length} bytes, expected ${ARC.rangeLength}.`);
-  const raw = inflateRawSync(body);
-  expectHash(raw, ARC.sha256, "ARC-Challenge-Test.jsonl");
-  const items: Item[] = [];
-  for (const line of raw.toString("utf8").split("\n")) {
-    if (!line.trim()) continue;
-    const row = JSON.parse(line) as { id: string; answerKey: string; question: { stem: string; choices: { text: string; label: string }[] } };
-    const labels = row.question.choices.map((choice) => choice.label);
-    items.push({
-      dataset: "arc",
-      id: `arc:${row.id}`,
-      prompt: arcPrompt(row.question.stem, row.question.choices),
-      gold: row.answerKey,
-      labels,
-    });
-  }
-  if (items.length !== ARC.population) throw new Error(`ARC-Challenge test has ${items.length} questions, expected ${ARC.population}.`);
-  return selectSample(items, ARC.sampleSize, datasetSeed(ARC.id), (item) => item.id);
-}
-
-function sampleMeta() {
-  return {
-    seed: SAMPLE_SEED,
-    datasets: [
-      {
-        id: GSM8K.id,
-        name: GSM8K.name,
-        split: GSM8K.split,
-        population: GSM8K.population,
-        sampleSize: GSM8K.sampleSize,
-        source: GSM8K.url,
-        revision: GSM8K.revision,
-        sha256: GSM8K.sha256,
-      },
-      {
-        id: ARC.id,
-        name: ARC.name,
-        split: ARC.split,
-        population: ARC.population,
-        sampleSize: ARC.sampleSize,
-        source: ARC.url,
-        member: ARC.member,
-        sha256: ARC.sha256,
-        byteRange: [ARC.rangeStart, ARC.rangeStart + ARC.rangeLength - 1],
-      },
-    ],
-  };
-}
-
-function samePin(prev: Saved): boolean {
-  if (prev.sample?.seed !== SAMPLE_SEED) return false;
-  const sets = prev.sample.datasets ?? [];
-  const gsm = sets.find((d) => d.id === "gsm8k");
-  const arc = sets.find((d) => d.id === "arc");
-  return gsm?.sha256 === GSM8K.sha256 && gsm.sampleSize === GSM8K.sampleSize && arc?.sha256 === ARC.sha256 && arc.sampleSize === ARC.sampleSize;
-}
-
-function gradeText(item: Item, answer: string): Grade {
+function gradeText(item: PublicItem, answer: string): Grade {
   return item.dataset === "gsm8k" ? gradeGsm8kNumber(answer, item.gold) : gradeArc(answer, item.gold, item.labels ?? []);
 }
 
 function applyGrades(row: Row): Row {
-  const item: Item = { dataset: row.dataset, id: row.id, prompt: row.prompt, gold: row.gold, labels: row.labels };
+  const item: PublicItem = { dataset: row.dataset, id: row.id, prompt: row.prompt, gold: row.gold, labels: row.labels };
   return {
     ...row,
     cheap: { ...row.cheap, ...gradeText(item, row.cheap.answer) },
@@ -189,7 +88,7 @@ function readSaved(): Saved {
   return JSON.parse(fs.readFileSync(RESULTS, "utf8")) as Saved;
 }
 
-function save(items: Item[], rows: Row[], failures: Failure[], models: unknown, ranAt: string): void {
+function save(items: PublicItem[], rows: Row[], failures: Failure[], models: unknown, ranAt: string): void {
   const order = new Map(items.map((item, index) => [item.id, index]));
   const kept = rows.filter((row) => order.has(row.id)).sort((a, b) => (order.get(a.id) ?? 0) - (order.get(b.id) ?? 0));
   const missing = new Set(items.map((item) => item.id).filter((id) => !kept.some((row) => row.id === id)));
@@ -212,7 +111,7 @@ function save(items: Item[], rows: Row[], failures: Failure[], models: unknown, 
   fs.writeFileSync(RESULTS, JSON.stringify(out, null, 2) + "\n");
 }
 
-async function runOne(item: Item, models: Awaited<ReturnType<typeof defaultModels>>): Promise<Row> {
+async function runOne(item: PublicItem, models: Awaited<ReturnType<typeof defaultModels>>): Promise<Row> {
   const cf = await cheapFirst(item.prompt, models, undefined, { fallbackOnCheapError: false });
   const premium = cf.premium ?? (await chat(models.premium, SYSTEM_PROMPT, item.prompt));
   const cfMs = cf.cheap.ms + cf.check.call.ms + (cf.premium?.ms ?? 0);
@@ -230,7 +129,7 @@ async function runOne(item: Item, models: Awaited<ReturnType<typeof defaultModel
 }
 
 async function main(): Promise<void> {
-  const items = [...(await loadGsm8k()), ...(await loadArc())];
+  const items = reportedItems(await loadPopulations());
   console.log(
     `Public sample: ${items.length} questions (GSM8K ${GSM8K.sampleSize} of ${GSM8K.population}, ARC-Challenge ${ARC.sampleSize} of ${ARC.population}), seed ${SAMPLE_SEED}.`,
   );
@@ -244,7 +143,7 @@ async function main(): Promise<void> {
   }
 
   const previous = readSaved();
-  if (fs.existsSync(RESULTS) && !samePin(previous)) {
+  if (fs.existsSync(RESULTS) && !reportedPinMatches(previous.sample)) {
     throw new Error(`${RESULTS} was produced with a different sample pin. Delete it to start over. It was not overwritten.`);
   }
   if (args.includes("--regrade")) {
@@ -253,6 +152,12 @@ async function main(): Promise<void> {
     save(items, rows, previous.failures ?? [], previous.models ?? null, previous.ranAt ?? new Date().toISOString());
     console.log(JSON.stringify(summarizePublic(rows.map(toScored)), null, 2));
     return;
+  }
+
+  if (previous.complete && !args.includes("--rerun")) {
+    throw new Error(
+      `${RESULTS} is the published ${previous.rows?.length ?? 0}-question run. It was not changed. Replay the check on those cached answers with npm run public-compare. Pass --rerun only to replace that file.`,
+    );
   }
 
   const only = args.filter((arg) => !arg.startsWith("--"));

@@ -42,6 +42,7 @@ const sample: AskPayload = {
   model: "Dolphin",
   mode: "balanced",
   checkReason: "Correct.",
+  checkSignal: "grader",
 };
 
 function fakes(overrides: Partial<McpDeps> = {}): McpDeps & { calls: string[] } {
@@ -255,7 +256,7 @@ test("the ask payload reports an escalation and a saving from the real cost help
       answer: "Canberra.",
       answeredBy: "cheap",
       cheap: { text: "Canberra.", inputTokens: 1_000_000, outputTokens: 0, costUsd: 0.01, ms: 1 },
-      check: { score: 90, reason: "Right.", call: { text: "", inputTokens: 0, outputTokens: 0, costUsd: 0.001, ms: 1 } },
+      check: { score: 90, reason: "Right.", signal: "grader", call: { text: "", inputTokens: 0, outputTokens: 0, costUsd: 0.001, ms: 1 } },
       costUsd: 0.011,
     },
     specs,
@@ -272,7 +273,7 @@ test("the ask payload reports an escalation and a saving from the real cost help
       answer: "Premium answer",
       answeredBy: "premium",
       cheap: { text: "wrong", inputTokens: 10, outputTokens: 10, costUsd: 0.001, ms: 1 },
-      check: { score: 10, reason: "Wrong.", call: { text: "", inputTokens: 0, outputTokens: 0, costUsd: 0.01, ms: 1 } },
+      check: { score: 10, reason: "Wrong.", signal: "agreement", call: { text: "", inputTokens: 0, outputTokens: 0, costUsd: 0.01, ms: 1 } },
       premium: { text: "Premium answer", inputTokens: 10, outputTokens: 20, costUsd: 0.05, ms: 1 },
       costUsd: 0.061,
     },

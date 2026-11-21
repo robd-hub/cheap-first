@@ -10,6 +10,18 @@
 
 export const SAMPLE_SEED = 20_261_120;
 
+/**
+ * Seed for the threshold sample. Different from SAMPLE_SEED, and the draw
+ * also drops every id in the reported sample, so the two sets cannot overlap.
+ */
+export const TUNING_SEED = 20_261_121;
+
+/** GSM8K questions in the tuning sample. Small on purpose: it pays for a premium answer each time. */
+export const TUNING_GSM8K_SIZE = 40;
+
+/** ARC-Challenge questions in the tuning sample. */
+export const TUNING_ARC_SIZE = 20;
+
 export const GSM8K = {
   id: "gsm8k" as const,
   name: "GSM8K",

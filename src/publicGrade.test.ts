@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { datasetSeed, gradeArc, gradeGsm8k, gradeGsm8kNumber, gsm8kGold, gsm8kPrompt, arcPrompt, selectSample, summarizePublic, type ScoredRun } from "./publicGrade.js";
-import { ARC, GSM8K, SAMPLE_SEED } from "./publicSets.js";
+import { datasetSeed, gradeArc, gradeGsm8k, gradeGsm8kNumber, gsm8kGold, gsm8kPrompt, arcPrompt, selectDisjoint, selectSample, summarizePublic, type ScoredRun } from "./publicGrade.js";
+import { ARC, GSM8K, SAMPLE_SEED, TUNING_SEED } from "./publicSets.js";
 
 test("GSM8K gold is the number after ####, and the prompt does not carry it", () => {
   const field = "She sells the rest.\n#### 1,000";
@@ -63,6 +63,12 @@ test("the seeded sample is stable, ordered by id, and independent per dataset", 
   assert.equal(datasetSeed("gsm8k", SAMPLE_SEED), datasetSeed("gsm8k"));
   assert.notEqual(datasetSeed("gsm8k"), datasetSeed("arc"));
   assert.throws(() => selectSample(items, 41, 1, (item) => item.id));
+  const population = Array.from({ length: 100 }, (_, i) => ({ id: `q${String(i).padStart(3, "0")}` }));
+  const reported = new Set(selectSample(population, 30, datasetSeed("gsm8k", SAMPLE_SEED), (item) => item.id).map((item) => item.id));
+  const tuning = selectDisjoint(population, 20, datasetSeed("gsm8k", TUNING_SEED), reported, (item) => item.id);
+  assert.equal(tuning.length, 20);
+  assert.equal(tuning.some((item) => reported.has(item.id)), false);
+  assert.notEqual(TUNING_SEED, SAMPLE_SEED);
 });
 
 test("public dataset pins name the files the harness downloads", () => {

@@ -33,7 +33,7 @@ export const MCP_CORS: Record<string, string> = {
 };
 
 const INSTRUCTIONS =
-  "Cheap First answers with Dolphin's cheap model, has SERV Reasoning score the answer, and calls a premium model only when that score misses the pass mark. " +
+  "Cheap First answers with Dolphin's cheap model. A number or a choice is checked by another cheap sample and by evaluating any equation; anything else is scored by SERV Reasoning. A premium model is called only when that check misses the pass mark. " +
   "Use ask_cheap_first for a question and cheap_first_stats for the published benchmark. " +
   "Free calls share the public demo limits: 600 characters, 10 an hour from one IP, 300 a day, and the demo's daily premium budget. " +
   "A prepaid key (Authorization: Bearer cf_...) uses the paid API, one credit per answer. " +
@@ -52,6 +52,8 @@ export interface AskPayload {
   model: string;
   mode: Mode;
   checkReason: string;
+  /** agreement, arithmetic, grader, or blank. */
+  checkSignal: "agreement" | "arithmetic" | "grader" | "blank";
 }
 
 export type AnswerOutcome = { ok: true; payload: AskPayload } | { ok: false; message: string };
@@ -79,7 +81,8 @@ const askOutputSchema = {
     answeredBy: { type: "string", enum: ["cheap", "premium"], description: "cheap is Dolphin. premium is the frontier model." },
     model: { type: "string", description: "Label of the model that produced the answer." },
     mode: { type: "string", enum: ["strict", "balanced", "budget"] },
-    checkReason: { type: "string", description: "The checker's one-line reason." },
+    checkReason: { type: "string", description: "Why the check passed or failed, in one line." },
+    checkSignal: { type: "string", enum: ["agreement", "arithmetic", "grader", "blank"], description: "agreement: extra cheap samples. arithmetic: an equation did not evaluate. grader: the language-model grade. blank: Dolphin returned nothing." },
     tier: { type: "string", enum: ["free", "paid"] },
     paidUsd: { type: "number", description: "What the caller paid, on the paid tier." },
     creditsLeft: { type: "number", description: "Prepaid answers left on the key, when one was used." },
@@ -93,7 +96,7 @@ export const TOOLS = [
     name: "ask_cheap_first",
     title: "Ask Cheap First",
     description:
-      "Answer a question the Cheap First way: Dolphin answers, SERV Reasoning scores it, and a premium model answers instead only if the score misses the pass mark. " +
+      "Answer a question the Cheap First way: Dolphin answers, another cheap sample checks numbers and choices, SERV Reasoning grades anything else, and a premium model answers instead only if the check misses the pass mark. " +
       "Returns the answer, whether it escalated, the check score, the cost and the estimated saving. " +
       `Free calls use the public demo limits (${DEMO_MAX_QUESTION} characters, 10 an hour per IP, 300 a day). ` +
       `Send Authorization: Bearer cf_... or an x402 payment of $0.005 USDC on Base for the paid limits (${PAID_MAX_QUESTION} characters). ` +
