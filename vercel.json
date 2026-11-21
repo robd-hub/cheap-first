@@ -26,9 +26,16 @@
     },
     "api/mcp.ts": {
       "maxDuration": 300
+    },
+    "api/hit.ts": {
+      "maxDuration": 10
     }
   },
   "rewrites": [
+    {
+      "source": "/visits",
+      "destination": "/api/hit"
+    },
     {
       "source": "/api/verify/quick",
       "destination": "/api/verify?level=quick"

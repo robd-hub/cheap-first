@@ -5,6 +5,7 @@
 import fs from "node:fs";
 import { STATS_JSON_URL, STATS_PAGE_URL } from "../src/liveStats";
 import { loadPublicReport, publicResultsHtml } from "../src/publicReport";
+import { HIT_URL, visitSnippet } from "../src/visits";
 
 interface Side {
   answer: string;
@@ -447,6 +448,7 @@ ${m ? `<div class="models">
 </section>
 </main>
 <footer><span>Cheap First</span><span>Built for SERV Hackathon 02 · Dolphin + SERV Reasoning · <a href="${REPO}">GitHub</a></span></footer>
+${visitSnippet("cf", ON_PAGES ? HIT_URL : "/api/hit")}
 </body></html>
 `;
 }
