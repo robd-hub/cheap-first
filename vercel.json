@@ -26,15 +26,16 @@
     },
     "api/mcp.ts": {
       "maxDuration": 300
-    },
-    "api/hit.ts": {
-      "maxDuration": 10
     }
   },
   "rewrites": [
     {
       "source": "/visits",
-      "destination": "/api/hit"
+      "destination": "/api/stats?visits=page"
+    },
+    {
+      "source": "/api/hit",
+      "destination": "/api/stats?visits=1"
     },
     {
       "source": "/api/verify/quick",
