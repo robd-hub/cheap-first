@@ -202,7 +202,7 @@ a{color:var(--cyan)}
 .gradecard .by{font-size:.85rem;color:var(--soft);margin-top:6px}
 .gradecard .gm{font-size:.82rem;color:var(--muted);margin:0 0 12px}
 .gradecard .go{font-weight:600;font-size:.9rem;color:var(--cyan)}
-.parrotbadge{display:inline-block;margin-top:14px;line-height:0}.parrotbadge img{height:28px;width:auto}
+.parrotbadge{display:inline-block;margin-top:14px;line-height:0}.parrotbadge img{height:40px;width:auto;max-width:100%}
 @media (max-width:820px){.herogrid{grid-template-columns:1fr;gap:24px}.gradecard{max-width:360px}}
 .nav nav{display:flex;gap:20px;font-size:.9rem}.nav nav a{text-decoration:none;color:var(--muted);transition:color .2s}.nav nav a:hover{color:var(--text)}
 .wrap{max-width:1040px;margin:0 auto;padding:24px 16px 64px}
@@ -304,7 +304,7 @@ footer a{color:var(--soft)}
 </div>
 <div>
 ${gradeCard()}
-<a class="parrotbadge" href="https://parrot.designimp.com/agents/cheap-first?from=badge" title="Cheap First on Agent Parrot"><img src="https://parrot.designimp.com/badge.svg?ref=cheap-first" alt="Agent Parrot"></a>
+<a class="parrotbadge" href="https://parrot.designimp.com/agents/cheap-first?from=badge" title="Cheap First on Agent Parrot"><img src="https://parrot.designimp.com/badge.svg?ref=cheap-first&amp;style=dark&amp;accent=2ef2a4" alt="Agent Parrot" height="40"></a>
 </div>
 </div>
   ${tiles}
