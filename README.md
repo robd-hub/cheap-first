@@ -1,6 +1,9 @@
 <h1 align="center">Cheap First</h1>
 <p align="center">
-<a href="https://parrot.designimp.com/agents/cheap-first?from=badge"><img src="https://parrot.designimp.com/badge.svg?ref=cheap-first" alt="Agent Parrot"></a>
+<a href="https://parrot.designimp.com/agents/cheap-first?from=badge"><picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://parrot.designimp.com/badge.svg?ref=cheap-first&style=dark&accent=2ef2a4">
+  <img src="https://parrot.designimp.com/badge.svg?ref=cheap-first&style=light&accent=0f9f6e" alt="Agent Parrot" height="40">
+</picture></a>
 </p>
 
 <p align="center">
