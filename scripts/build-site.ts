@@ -202,6 +202,7 @@ a{color:var(--cyan)}
 .gradecard .by{font-size:.85rem;color:var(--soft);margin-top:6px}
 .gradecard .gm{font-size:.82rem;color:var(--muted);margin:0 0 12px}
 .gradecard .go{font-weight:600;font-size:.9rem;color:var(--cyan)}
+.parrotbadge{display:inline-block;margin-top:14px;line-height:0}.parrotbadge img{height:28px;width:auto}
 @media (max-width:820px){.herogrid{grid-template-columns:1fr;gap:24px}.gradecard{max-width:360px}}
 .nav nav{display:flex;gap:20px;font-size:.9rem}.nav nav a{text-decoration:none;color:var(--muted);transition:color .2s}.nav nav a:hover{color:var(--text)}
 .wrap{max-width:1040px;margin:0 auto;padding:24px 16px 64px}
@@ -301,7 +302,10 @@ footer a{color:var(--soft)}
   <p class="lede">Most questions don't need a frontier model. Cheap First answers with Dolphin's very cheap model, has SERV Reasoning check the answer, and only pays for a premium model when the check fails.</p>
   <div class="ctas"><a class="btn primary" href="#try">Try it live</a><a class="btn ghost" href="${statsPage}">Live stats</a><a class="btn ghost" href="#calc">Work out your savings</a><a class="btn ghost" href="#escalated">See the safety net</a></div>
 </div>
+<div>
 ${gradeCard()}
+<a class="parrotbadge" href="https://parrot.designimp.com/agents/cheap-first?from=badge" title="Cheap First on Agent Parrot"><img src="https://parrot.designimp.com/badge.svg?ref=cheap-first" alt="Agent Parrot"></a>
+</div>
 </div>
   ${tiles}
 </section>
