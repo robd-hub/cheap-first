@@ -1,5 +1,6 @@
 <h1 align="center">Cheap First</h1>
-
+<p align="center">
+<a href="https://parrot.designimp.com/agents/cheap-first?from=badge"><img src="https://parrot.designimp.com/badge.svg?ref=cheap-first" alt="Agent Parrot"></a>
 <p align="center">
   <b>Frontier quality at cheap-model prices.</b><br>
   Dolphin answers first. SERV Reasoning checks it. A premium model steps in only when the check fails.
