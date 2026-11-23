@@ -382,7 +382,7 @@ footer{margin-top:28px;color:var(--muted);font-size:.85rem}
     <li>Money saved uses the same premium price the API already returns. For an answer Dolphin kept, that price is applied to the cheap call's token counts. It is not a second call to the premium model. An escalation can cost more than the premium model alone, and the saving is then negative.</li>
     <li>Failed requests, rate limits, and answers that were never delivered are not counted.</li>
   </ul>
-  <footer><a href="/">Cheap First</a> · <a href="https://github.com/robd-hub/cheap-first#public-questions">Public benchmark</a> · <a href="/api/stats?format=json">JSON</a></footer>
+  <footer><a href="/">Cheap First</a> · <a href="https://github.com/robd-hub/cheap-first#public-questions">Public benchmark</a> · <a href="/api/stats?format=json">JSON</a> · <a href="https://stats.uptimerobot.com/qX2nWP1BOo">Uptime</a></footer>
 </main>
 </body>
 </html>`;

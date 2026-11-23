@@ -451,7 +451,7 @@ ${m ? `<div class="models">
 </ul>
 </section>
 </main>
-<footer><span>Cheap First</span><span>Built for SERV Hackathon 02 · Dolphin + SERV Reasoning · <a href="${REPO}">GitHub</a></span></footer>
+<footer><span>Cheap First</span><span>Built for SERV Hackathon 02 · Dolphin + SERV Reasoning · <a href="${REPO}">GitHub</a> · <a href="https://stats.uptimerobot.com/qX2nWP1BOo">Uptime</a></span></footer>
 ${visitSnippet("cf", ON_PAGES ? HIT_URL : "/api/hit")}
 </body></html>
 `;
