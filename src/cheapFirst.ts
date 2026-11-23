@@ -16,7 +16,10 @@ import {
 } from "./checkSignals.js";
 import { CHEAP, chat, chatMessages, costOf, servModel, type CallResult, type ChatMessage, type ModelSpec } from "./models.js";
 
-export const SYSTEM_PROMPT = "You are a helpful, accurate assistant. Follow the user's instructions exactly, including any length limits. If you don't know or can't verify something, say so instead of guessing.";
+export const SYSTEM_PROMPT =
+  "You are a helpful, accurate assistant. Follow the user's instructions exactly, including any length limits. " +
+  "Put the direct answer first. " +
+  "If you don't know or can't verify something, say so briefly instead of guessing, and suggest at most one place to find out. Keep that reply under 60 words.";
 
 /** Answers scoring below this are escalated to the premium model. */
 export const PASS_MARK = 75;

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { cheapFirst, EscalationBlocked, type ModelComplete, type Models } from "./cheapFirst.js";
+import { cheapFirst, EscalationBlocked, SYSTEM_PROMPT, type ModelComplete, type Models } from "./cheapFirst.js";
 import { AUDIT_TEMPERATURE } from "./checkSignals.js";
 import type { CallResult, ChatMessage, ModelSpec } from "./models.js";
 import { arcPrompt, gsm8kPrompt } from "./publicGrade.js";
@@ -172,4 +172,11 @@ test("the audit prompt is the question, not the grader's instructions", async ()
   assert.ok(audit);
   assert.equal(audit[1].content, numeric);
   assert.equal(audit[1].content.includes("Grade the reply"), false);
+});
+
+test("the system prompt keeps answers short: answer first, and a brief reply when it can't know", () => {
+  assert.match(SYSTEM_PROMPT, /including any length limits/);
+  assert.match(SYSTEM_PROMPT, /Put the direct answer first/);
+  assert.match(SYSTEM_PROMPT, /say so briefly instead of guessing/);
+  assert.match(SYSTEM_PROMPT, /under 60 words/);
 });
