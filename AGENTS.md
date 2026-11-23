@@ -75,6 +75,10 @@ State the limits with the saving. Cheap First is slower, 2 points behind the pre
 
 The in-house 143 in `data/results.json` is a different run. The checker scores it, and on some questions it sees a written guide. Do not quote those figures as the public result.
 
+## Cheap First Local (hybrid/)
+
+`hybrid/` is a separate Vite web app for Google's #BuildHybridAI hackathon (closes 30 November 2026, 2 PM PT). Gemini Nano answers on the device through Firebase AI Logic hybrid inference, `src/checkSignals.ts` and `src/arithmetic.ts` check number and choice answers, and a cloud Gemini model answers only when the check fails. Logic is `hybrid/src/router.ts` (no Firebase imports); Firebase setup is `hybrid/src/firebase.ts`. It has its own `package.json`, tests (`cd hybrid && npm test`) and CI job. Firebase web config comes from `VITE_FIREBASE_*`; the App Check debug token is never committed.
+
 ## Open work
 
 [PR #30](https://github.com/robd-hub/cheap-first/pull/30), branch `cursor/checker-escalation-d10e`, replaces grading for number and multiple-choice questions with sample agreement plus an arithmetic check. Other prompts stay with GPT-6 Luna. That branch does not modify `data/public-benchmark.json`.

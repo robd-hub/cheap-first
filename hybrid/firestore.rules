@@ -1,0 +1,26 @@
+rules_version = '2';
+// Only one document: shared counts. No questions or answers are ever stored.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /stats/global {
+      allow read: if true;
+      allow create: if request.auth != null && validStep(request.resource.data, {});
+      allow update: if request.auth != null && validStep(request.resource.data, resource.data);
+    }
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Each write adds 1 to questions and at most 1 to the other counters.
+    function validStep(next, prev) {
+      return next.keys().hasOnly(['questions', 'onDevice', 'escalated', 'noDevice'])
+        && next.questions == prev.get('questions', 0) + 1
+        && step(next, prev, 'onDevice')
+        && step(next, prev, 'escalated')
+        && step(next, prev, 'noDevice');
+    }
+    function step(next, prev, key) {
+      return next.get(key, 0) - prev.get(key, 0) in [0, 1];
+    }
+  }
+}
