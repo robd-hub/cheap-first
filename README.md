@@ -27,6 +27,7 @@
   <img alt="143 questions" src="https://img.shields.io/badge/benchmark-143_questions-4fe3ff?style=flat-square&labelColor=11151f">
   <a href="https://robd-hub.github.io/agent-report-card/agents/cheap-first/"><img alt="Agent Report Card grade" src="https://robd-hub.github.io/agent-report-card/badge/cheap-first.svg"></a>
   <img alt="SERV Hackathon 02" src="https://img.shields.io/badge/SERV_Hackathon_02-Dolphin_track-9b7bff?style=flat-square&labelColor=11151f">
+  <a href="https://mcprush.com/to/cheap-first-mcp?ref=badge"><img height="20" src="https://mcprush.com/badge/cheap-first-mcp/score.svg" alt="Cheap First MCP on mcprush" /></a>
 </p>
 
 <p align="center">
@@ -275,6 +276,10 @@ To publish a change, raise `version` in `server.json` and `SERVER_VERSION` in `s
 4. Run `mcp-publisher publish`.
 
 Then submit the same server at [cursor.directory](https://cursor.directory/plugins/new?type=mcp_server). The form reads `.mcp.json` from this repo.
+
+The server is also listed, free, on mcprush as [robd-hub/cheap-first-mcp](https://mcprush.com/robd-hub/cheap-first-mcp). The badge at the top of this README is the compact one from that listing's "Get badge" button; the same button gives a larger card:
+
+[![Cheap First MCP server](https://mcprush.com/badge/cheap-first-mcp/card.svg)](https://mcprush.com/to/cheap-first-mcp?ref=badge)
 
 ## Output verifier: check an agent's work before paying it
 
