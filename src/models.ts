@@ -18,6 +18,11 @@ export interface ModelSpec {
   /** US dollars per million input / output tokens. */
   inputPerM: number;
   outputPerM: number;
+  /**
+   * Sent as `reasoning_effort` when set. Both models think before they answer,
+   * and that hidden thinking is most of the wait (see reasoningEffort below).
+   */
+  reasoningEffort?: string;
 }
 
 export interface CallResult {
@@ -32,13 +37,32 @@ const DOLPHIN_URL = "https://lighthouse.dphn.ai/run/text-v/v1/chat/completions";
 const SERV_URL = "https://inference-api.openserv.ai/v1/chat/completions";
 const SERV_MODELS_URL = "https://inference-api.openserv.ai/v1/models";
 
-/** Dolphin's published price: $0.01 in / $0.07 out per million tokens. */
+/**
+ * How hard a model thinks before answering, from an environment variable.
+ * Unset gives `fallback`; "default" sends nothing, so the provider decides.
+ */
+export function reasoningEffort(envValue: string | undefined, fallback: string | undefined): string | undefined {
+  const value = (envValue ?? "").trim().toLowerCase();
+  if (!value) return fallback;
+  return value === "default" ? undefined : value;
+}
+
+/**
+ * Dolphin's published price: $0.01 in / $0.07 out per million tokens.
+ *
+ * DeepSeek V4.1 Flash thinks before it answers, and on Dolphin's default
+ * setting it sometimes thinks for thousands of tokens. "low" scored the same
+ * 288 of 300 on the published public questions, with the slowest answer
+ * 8.3 s instead of 28.8 s and a third fewer output tokens. Turning thinking
+ * off was faster still but scored 284. Set CF_CHEAP_REASONING=default to undo.
+ */
 export const CHEAP: ModelSpec = {
   label: "Dolphin · DeepSeek V4.1 Flash",
   provider: "dolphin",
   model: "deepseek-ai/DeepSeek-V4.1-Flash",
   inputPerM: 0.01,
   outputPerM: 0.07,
+  reasoningEffort: reasoningEffort(process.env.CF_CHEAP_REASONING, "low"),
 };
 
 export function dolphinKey(): string | undefined {
@@ -46,18 +70,44 @@ export function dolphinKey(): string | undefined {
   return process.env.DOLPHIN_API_KEY || process.env.DOLHPIN_API_KEY;
 }
 
+type ServList = { items: { modelId: string; pricing: { input: number; output: number } }[] };
+
+let servList: Promise<ServList> | null = null;
+
+/**
+ * SERV's model list, fetched once per server instance and shared by every
+ * model looked up from it. Fetching it once per model added about a second
+ * to every cold start. A failed fetch is forgotten, so the next call retries.
+ */
+function servModelList(): Promise<ServList> {
+  servList ??= (async () => {
+    const res = await fetch(SERV_MODELS_URL, { headers: { Authorization: `Bearer ${process.env.SERV_API_KEY}` }, signal: AbortSignal.timeout(15_000) });
+    if (!res.ok) throw new Error(`SERV model list returned ${res.status}`);
+    return (await res.json()) as ServList;
+  })();
+  servList.catch(() => {
+    servList = null;
+  });
+  return servList;
+}
+
 /**
  * Looks up a SERV model's price from SERV's own model list. SERV lists
  * prices in US cents per million tokens.
  */
 export async function servModel(label: string, model: string): Promise<ModelSpec> {
-  const res = await fetch(SERV_MODELS_URL, { headers: { Authorization: `Bearer ${process.env.SERV_API_KEY}` } });
-  if (!res.ok) throw new Error(`SERV model list returned ${res.status}`);
-  const body = (await res.json()) as { items: { modelId: string; pricing: { input: number; output: number } }[] };
+  const body = await servModelList();
   const found = body.items.find((m) => m.modelId === model);
   if (!found) throw new Error(`SERV has no model ${model}`);
   return { label, provider: "serv", model, inputPerM: found.pricing.input / 100, outputPerM: found.pricing.output / 100 };
 }
+
+/**
+ * Waits before each retry when Dolphin says too many requests are running.
+ * About 9 seconds in all, so a cheap answer still comes back sooner than
+ * one 10-second wait did; after that the caller's fallback takes over.
+ */
+export const DOLPHIN_BUSY_WAITS_MS = [250, 500, 750, 1000, 1500, 2000, 3000];
 
 /** Room for long answers (and reasoning tokens) without hitting any model's cap. */
 const MAX_TOKENS = Number(process.env.CF_MAX_TOKENS) || 16_000;
@@ -103,14 +153,22 @@ export async function chatMessages(spec: ModelSpec, messages: ChatMessage[], max
         ...(spec.provider === "serv" ? { max_completion_tokens: maxTokens } : { max_tokens: maxTokens }),
         // Omitted by default so a normal answer keeps the provider's own sampling.
         ...(temperature !== undefined ? { temperature } : {}),
+        ...(spec.reasoningEffort ? { reasoning_effort: spec.reasoningEffort } : {}),
         messages,
       }),
     });
   const started = Date.now();
   let res = await request();
   // Both APIs can return a brief 429 or 5xx; back off and retry a few times.
-  for (let attempt = 1; attempt <= 3 && (res.status === 429 || res.status >= 500); attempt++) {
-    const wait = Number(res.headers.get("retry-after")) * 1000 || attempt * 5000;
+  // Dolphin's 429 is a cap on requests running at once ("retry after one
+  // finishes"), and a slot is usually free within a second, so it is retried
+  // quickly instead of waiting the 10 seconds its retry-after header asks for.
+  const dolphin = spec.provider === "dolphin";
+  for (let attempt = 0; ; attempt++) {
+    const busy = dolphin && res.status === 429;
+    if (!(res.status === 429 || res.status >= 500) || attempt >= (busy ? DOLPHIN_BUSY_WAITS_MS.length : 3)) break;
+    const wait = busy ? DOLPHIN_BUSY_WAITS_MS[attempt] + Math.random() * 250 : Number(res.headers.get("retry-after")) * 1000 || (attempt + 1) * 5000;
+    await res.body?.cancel().catch(() => {});
     await new Promise((r) => setTimeout(r, wait));
     res = await request();
   }

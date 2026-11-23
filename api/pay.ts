@@ -12,13 +12,15 @@
  * is never charged. For an OpenAI-style API, see api/v1/chat/completions.ts.
  */
 import { paidPremiumBudget as premiumBudget, PREMIUM_MAX_TOKENS } from "../src/budget.js";
-import { cheapFirst, defaultModels, EscalationBlocked, MODES, modeFrom, savings, type Models } from "../src/cheapFirst.js";
+import { cheapFirst, prewarmModels, sharedModels, EscalationBlocked, MODES, modeFrom, savings, type Models } from "../src/cheapFirst.js";
 import { PAID_MAX_QUESTION } from "../src/limits.js";
 import { noteCheapFirst } from "../src/liveStats.js";
 import { json, paidCall, PAID_CORS, unpaidChallenge } from "../src/paid.js";
 import { QUESTION_OFFER } from "../src/x402.js";
 
 let models: Models | null = null;
+// Look up model prices while the first request is still being read.
+prewarmModels();
 
 export function OPTIONS(): Response {
   return new Response(null, { status: 204, headers: PAID_CORS });
@@ -41,7 +43,7 @@ export async function POST(request: Request): Promise<Response> {
 
   return paidCall(request, QUESTION_OFFER, async () => {
     try {
-      models ??= await defaultModels();
+      models ??= await sharedModels();
       const m = models;
       const result = await cheapFirst(question, m, undefined, {
         premiumMaxTokens: PREMIUM_MAX_TOKENS,

@@ -18,7 +18,7 @@
  * score, what it cost and what it saved against the premium model alone.
  */
 import { paidPremiumBudget as premiumBudget, PREMIUM_MAX_TOKENS } from "../../../src/budget.js";
-import { cheapFirst, defaultModels, EscalationBlocked, MODES, savings, type Mode, type Models } from "../../../src/cheapFirst.js";
+import { cheapFirst, prewarmModels, sharedModels, EscalationBlocked, MODES, savings, type Mode, type Models } from "../../../src/cheapFirst.js";
 import { noteCheapFirst } from "../../../src/liveStats.js";
 import type { ChatMessage } from "../../../src/models.js";
 import { json, paidCall, PAID_CORS, unpaidChallenge } from "../../../src/paid.js";
@@ -28,6 +28,8 @@ import type { Offer } from "../../../src/x402.js";
 const MAX_CHARS = 6000;
 const MAX_MESSAGES = 40;
 let models: Models | null = null;
+// Look up model prices while the first request is still being read.
+prewarmModels();
 
 export const MODEL_MODES: Record<string, Mode> = {
   "cheap-first": "balanced",
@@ -107,7 +109,7 @@ export async function POST(request: Request): Promise<Response> {
 
   return paidCall(request, OFFER, async () => {
     try {
-      models ??= await defaultModels();
+      models ??= await sharedModels();
       const m = models;
       const r = await cheapFirst(messages, m, undefined, {
         premiumMaxTokens: PREMIUM_MAX_TOKENS,

@@ -11,7 +11,7 @@
  */
 import { waitUntil } from "@vercel/functions";
 import { DailyBudget, PREMIUM_MAX_TOKENS } from "../src/budget.js";
-import { cheapFirst, defaultModels, EscalationBlocked, MODES, modeFrom, savings, type Models } from "../src/cheapFirst.js";
+import { cheapFirst, prewarmModels, sharedModels, EscalationBlocked, MODES, modeFrom, savings, type Models } from "../src/cheapFirst.js";
 import { noteCheapFirst } from "../src/liveStats.js";
 import { handleOpenServ, type AgentSpec } from "../src/openserv.js";
 import { incrBy } from "../src/store.js";
@@ -21,6 +21,8 @@ const MAX_QUESTION = 2000;
 const DAILY_ANSWERS = Number(process.env.CF_OPENSERV_DAILY_ANSWERS) || 300;
 const premiumBudget = new DailyBudget("openserv", Number(process.env.CF_OPENSERV_PREMIUM_BUDGET_USD) || 1);
 let models: Models | null = null;
+// Look up model prices while the first request is still being read.
+prewarmModels();
 
 const usd = (n: number) => (n >= 0.01 ? `$${n.toFixed(3)}` : `$${n.toFixed(5)}`);
 
@@ -49,7 +51,7 @@ export const AGENT: AgentSpec = {
           return "Cheap First has answered its daily limit of free questions on OpenServ. Try again tomorrow, or pay per answer at https://cheap-first.vercel.app/api/pay.";
         }
         const mode = modeFrom(args.mode);
-        models ??= await defaultModels();
+        models ??= await sharedModels();
         const m = models;
         try {
           const r = await cheapFirst(question, m, undefined, {
