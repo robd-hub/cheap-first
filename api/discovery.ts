@@ -16,3 +16,9 @@ export function GET(request: Request): Response {
     { status: 200, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=300" } },
   );
 }
+
+/** Uptime checkers (UptimeRobot) send HEAD: answer with GET's status and headers, no body. */
+export async function HEAD(request: Request): Promise<Response> {
+  const res = await GET(request);
+  return new Response(null, { status: res.status, headers: res.headers });
+}
