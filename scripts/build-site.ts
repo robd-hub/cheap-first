@@ -451,7 +451,7 @@ ${m ? `<div class="models">
 </ul>
 </section>
 </main>
-<footer><span>Cheap First</span><span>Built for SERV Hackathon 02 · Dolphin + SERV Reasoning · <a href="${REPO}">GitHub</a> · <a href="https://stats.uptimerobot.com/qX2nWP1BOo">Uptime</a></span></footer>
+<footer><span>Cheap First</span><span>Built for SERV Hackathon 02 · Dolphin + SERV Reasoning · <a href="${REPO}">GitHub</a> · <a href="https://stats.uptimerobot.com/qX2nWP1BOo">Uptime</a> · <a href="https://mcprush.com/to/cheap-first-mcp?ref=badge">MCP on mcprush</a></span></footer>
 ${visitSnippet("cf", ON_PAGES ? HIT_URL : "/api/hit")}
 </body></html>
 `;
@@ -482,6 +482,7 @@ function mcpSection(): string {
   <pre>${esc(cursor)}</pre>
   <pre style="margin-top:12px">${esc(paid)}</pre>
   <p class="sub" style="margin-top:16px">Claude Desktop: Settings, Connectors, Add custom connector, and paste the URL. Claude Code wants <code>"type": "http"</code> next to <code>url</code> in <code>.mcp.json</code>. A client that can only launch a process can run <code>npm run mcp</code> from a checkout of this repo (it forwards to the hosted server, so the limits still apply). Set <code>CHEAP_FIRST_API_KEY</code> to a prepaid key. To pay with x402 from an HTTP client, send the header <code>X-Cheap-First-Paid: 1</code> and retry the 402 the way you would for <code>/api/pay</code>.</p>
+<p class="sub" style="margin-top:16px">Also listed on mcprush: <a href="https://mcprush.com/to/cheap-first-mcp?ref=badge"><img height="20" src="https://mcprush.com/badge/cheap-first-mcp/score.svg" alt="Cheap First MCP on mcprush" style="vertical-align:middle" /></a></p>
 </section>`;
 }
 
