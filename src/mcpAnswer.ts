@@ -9,7 +9,7 @@
  * never settles an x402 payment when this returns an error response.
  */
 import { demoPremiumBudget, paidPremiumBudget, PREMIUM_MAX_TOKENS, type DailyBudget } from "./budget.js";
-import { cheapFirst, defaultModels, EscalationBlocked, MODES, savings, type CheapFirstResult, type Mode, type Models } from "./cheapFirst.js";
+import { cheapFirst, prewarmModels, sharedModels, EscalationBlocked, MODES, savings, type CheapFirstResult, type Mode, type Models } from "./cheapFirst.js";
 import { takeDemoSlot } from "./limits.js";
 import { noteCheapFirst } from "./liveStats.js";
 import { rpcOk, toolErrorResult, toolResult, type AskPayload, type AnswerOutcome, type JsonRpcId } from "./mcp.js";
@@ -43,6 +43,8 @@ export const MCP_OFFER: Offer = {
 };
 
 let models: Models | null = null;
+// Look up model prices while the first request is still being read.
+prewarmModels();
 
 export function toAskPayload(result: CheapFirstResult, specs: Models, mode: Mode): AskPayload {
   return {
@@ -60,7 +62,7 @@ export function toAskPayload(result: CheapFirstResult, specs: Models, mode: Mode
 }
 
 async function run(question: string, mode: Mode, budget: DailyBudget): Promise<{ payload: AskPayload; result: CheapFirstResult; specs: Models }> {
-  models ??= await defaultModels();
+  models ??= await sharedModels();
   const specs = models;
   const result = await cheapFirst(question, specs, undefined, {
     premiumMaxTokens: PREMIUM_MAX_TOKENS,

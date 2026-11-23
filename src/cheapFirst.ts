@@ -66,11 +66,79 @@ export interface Models {
  */
 export async function defaultModels(): Promise<Models> {
   const dolphinChecks = (process.env.CF_CHECKER ?? "").toLowerCase() === "dolphin";
-  return {
-    cheap: CHEAP,
-    checker: dolphinChecks ? { ...CHEAP, label: "Dolphin · DeepSeek V4.1 Flash (checker)" } : await servModel("SERV · GPT-6 Luna (checker)", "gpt-6-luna"),
-    premium: await servModel("SERV · Claude Opus 5.5", "claude-opus-5.5"),
-  };
+  const [checker, premium] = await Promise.all([
+    dolphinChecks ? { ...CHEAP, label: "Dolphin · DeepSeek V4.1 Flash (checker)" } : servModel("SERV · GPT-6 Luna (checker)", "gpt-6-luna"),
+    servModel("SERV · Claude Opus 5.5", "claude-opus-5.5"),
+  ]);
+  return { cheap: CHEAP, checker, premium };
+}
+
+let shared: Promise<Models> | null = null;
+
+/**
+ * defaultModels(), loaded once per server instance. The endpoints call it when
+ * the file loads, so on a cold start the price lookup runs while the request
+ * is still being read and rate-limited, not after. A failure is forgotten so
+ * the next request tries again.
+ */
+export function sharedModels(): Promise<Models> {
+  shared ??= defaultModels();
+  shared.catch(() => {
+    shared = null;
+  });
+  return shared;
+}
+
+/** Starts sharedModels() on a deployed server (not in tests or scripts). Never throws. */
+export function prewarmModels(): void {
+  if (process.env.VERCEL && process.env.SERV_API_KEY) sharedModels().catch(() => {});
+}
+
+/**
+ * If the cheap model hasn't answered after this long, a second identical
+ * request is sent and whichever answers first is used. Dolphin is usually
+ * under a second, but under load single requests have waited minutes in a
+ * queue. A duplicate cheap call costs at most about a tenth of a cent, and
+ * the slower copy's tokens are not counted in costUsd. 0 turns it off.
+ */
+export const CHEAP_HEDGE_MS = Number(process.env.CF_CHEAP_HEDGE_MS ?? 8000);
+
+/**
+ * Runs `call`, and if it hasn't settled after `afterMs`, runs it again and
+ * takes whichever succeeds first. Fails only when every started copy failed.
+ * An early failure (before the second copy starts) fails straight away, so
+ * the caller's own fallback isn't delayed.
+ */
+export function hedged<T>(call: () => Promise<T>, afterMs: number): Promise<T> {
+  if (!(afterMs > 0)) return call();
+  return new Promise<T>((resolve, reject) => {
+    let settled = false;
+    let running = 0;
+    let lastError: unknown;
+    const start = () => {
+      running++;
+      call().then(
+        (value) => {
+          if (settled) return;
+          settled = true;
+          clearTimeout(timer);
+          resolve(value);
+        },
+        (error) => {
+          lastError = error;
+          running--;
+          if (settled || running > 0) return;
+          settled = true;
+          clearTimeout(timer);
+          reject(lastError);
+        },
+      );
+    };
+    const timer = setTimeout(() => {
+      if (!settled) start();
+    }, afterMs);
+    start();
+  });
 }
 
 /** Score cap for an answer that breaks an explicit instruction in the question. Below every pass mark. */
@@ -122,6 +190,8 @@ export interface CheapFirstOptions {
   canEscalate?: () => boolean | Promise<boolean>;
   /** Escalate answers scoring below this. Defaults to PASS_MARK. */
   passMark?: number;
+  /** Send a second cheap request after this many ms without an answer. Defaults to CHEAP_HEDGE_MS. */
+  hedgeAfterMs?: number;
   /** Test seam. Defaults to the real model client. */
   complete?: ModelComplete;
   /** Test seam. Defaults to checkAnswer. */
@@ -194,7 +264,7 @@ async function oneAudit(complete: ModelComplete, spec: ModelSpec, asked: string)
  * messages); the answer replies to its last user message.
  */
 export async function cheapFirst(input: string | ChatMessage[], models: Models, criteria?: string, options: CheapFirstOptions = {}): Promise<CheapFirstResult> {
-  const { premiumMaxTokens, fallbackOnCheapError = true, canEscalate = () => true, passMark = PASS_MARK, grade = checkAnswer } = options;
+  const { premiumMaxTokens, fallbackOnCheapError = true, canEscalate = () => true, passMark = PASS_MARK, grade = checkAnswer, hedgeAfterMs = CHEAP_HEDGE_MS } = options;
   const complete: ModelComplete = options.complete ?? ((spec, messages, maxTokens, temperature) => chatMessages(spec, messages, maxTokens, temperature));
   const messages = withSystem(typeof input === "string" ? [{ role: "user", content: input }] : input);
   const prompt = typeof input === "string" ? input : transcript(input);
@@ -209,7 +279,10 @@ export async function cheapFirst(input: string | ChatMessage[], models: Models, 
 
   let cheap: CallResult;
   try {
-    cheap = await complete(models.cheap, messages);
+    const cheapStarted = Date.now();
+    cheap = await hedged(() => complete(models.cheap, messages), hedgeAfterMs);
+    // With a second copy, the wait is from the first request, not from the copy that won.
+    cheap = { ...cheap, ms: Math.max(cheap.ms, Date.now() - cheapStarted) };
   } catch (e) {
     await auditPromise;
     if (!fallbackOnCheapError) throw e;

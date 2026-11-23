@@ -14,11 +14,13 @@
  * hold across all server instances.
  */
 import { demoPremiumBudget as premiumBudget, PREMIUM_MAX_TOKENS } from "../src/budget.js";
-import { cheapFirst, defaultModels, EscalationBlocked, PASS_MARK, savings, type Models } from "../src/cheapFirst.js";
+import { cheapFirst, prewarmModels, sharedModels, EscalationBlocked, PASS_MARK, savings, type Models } from "../src/cheapFirst.js";
 import { DEMO_MAX_QUESTION, takeDemoSlot } from "../src/limits.js";
 import { noteCheapFirst } from "../src/liveStats.js";
 
 let models: Models | null = null;
+// Look up model prices while the first request is still being read.
+prewarmModels();
 
 function cors(origin: string | null): Record<string, string> {
   return {
@@ -52,7 +54,7 @@ export async function POST(request: Request): Promise<Response> {
   if (!slot.ok) return json({ error: slot.error }, slot.status, origin);
 
   try {
-    models ??= await defaultModels();
+    models ??= await sharedModels();
     const r = await cheapFirst(question, models, undefined, {
       premiumMaxTokens: PREMIUM_MAX_TOKENS,
       canEscalate: () => premiumBudget.hasRoom(),

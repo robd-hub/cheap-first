@@ -14,7 +14,9 @@ Quote the saving and the accuracy gap together. On the published public run that
 | Checker | SERV · GPT-6 Luna | `SERV_API_KEY` | `gpt-6-luna` |
 | Premium | SERV · Claude Opus 5.5 | `SERV_API_KEY` | `claude-opus-5.5` |
 
-The checker scores 0 to 100. The default pass mark is 75 (`balanced`). `strict` is 85 and `budget` is 60. Below the mark, or when Dolphin returns nothing, the premium model answers. `CF_CHECKER=dolphin` makes the cheap model grade itself; leave it unset for GPT-6 Luna. SERV prices are read from SERV's model list on each run. Dolphin's published rates in `src/models.ts` are $0.01 in and $0.07 out per million tokens.
+The checker scores 0 to 100. The default pass mark is 75 (`balanced`). `strict` is 85 and `budget` is 60. Below the mark, or when Dolphin returns nothing, the premium model answers. `CF_CHECKER=dolphin` makes the cheap model grade itself; leave it unset for GPT-6 Luna. SERV prices are read from SERV's model list once per server instance (`sharedModels`, started when an endpoint file loads). Dolphin's published rates in `src/models.ts` are $0.01 in and $0.07 out per million tokens.
+
+Speed settings: the cheap model is sent `reasoning_effort` `low` (`CF_CHEAP_REASONING`; `default` sends nothing). Dolphin's 429 means too many requests are running at once, so it is retried after short waits (`DOLPHIN_BUSY_WAITS_MS`, about 9 seconds in all) instead of its 10-second `retry-after`. If the cheap answer hasn't arrived after `CF_CHEAP_HEDGE_MS` (8000), a second copy is sent and the first answer wins (`hedged`). The checker keeps SERV's default effort: `low` let a planted error through once on `scripts/trap-test.ts` cases.
 
 ## Live stats
 
@@ -42,7 +44,7 @@ export SERV_API_KEY=...      # console.openserv.ai
 npm run ask -- "How many seconds are there in 3.5 hours?"
 ```
 
-`npm test` runs `src/limits.test.ts`, `src/mcp.test.ts`, `src/mcpStdio.test.ts`, `src/publicGrade.test.ts`, `src/publicReport.test.ts`, and `src/liveStats.test.ts`. `npm run build` writes the results site to `out/` from the JSON.
+`npm test` runs `src/limits.test.ts`, `src/mcp.test.ts`, `src/mcpStdio.test.ts`, `src/publicGrade.test.ts`, `src/publicReport.test.ts`, `src/liveStats.test.ts`, `src/checkSignals.test.ts`, `src/cheapFirst.test.ts`, `src/speed.test.ts`, and `src/visits.test.ts`. `npm run build` writes the results site to `out/` from the JSON.
 
 Commands in `package.json`:
 
@@ -52,7 +54,7 @@ Commands in `package.json`:
 | `npm run benchmark` | `data/results.json`, from the 143 questions in `data/questions.json`. Pass ids to run a subset. |
 | `npm run hard-benchmark` | `data/hard-results.json` from `data/hard-questions.json` (60). `-- --set stress` writes `data/stress-results.json` from `data/stress-questions.json` (37). `-- --regrade` skips model calls. |
 
-The published hard headline is both rounds together: 97 questions in `docs/hard-benchmark.md`. `src/stats.ts` sums those two summaries for `cheap_first_stats`. Also in `package.json`: `compare-checkers`, `reppo-sample`, `verify-test`, `near-test`. Not wired as npm scripts: `npx tsx scripts/check-sanity.ts` and `npx tsx scripts/probe.ts`.
+The published hard headline is both rounds together: 97 questions in `docs/hard-benchmark.md`. `src/stats.ts` sums those two summaries for `cheap_first_stats`. Also in `package.json`: `latency` (times ten everyday questions end to end; median and slowest), `compare-checkers`, `reppo-sample`, `verify-test`, `near-test`. Not wired as npm scripts: `npx tsx scripts/check-sanity.ts` and `npx tsx scripts/probe.ts`.
 
 ## Published public numbers
 
