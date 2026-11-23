@@ -146,6 +146,7 @@ console.log(result.answer, result.answeredBy, result.costUsd);
 | `npm run public-benchmark` | Run the pinned GSM8K + ARC-Challenge sample and save `data/public-benchmark.json` (`-- --dry-run` checks the files only). A finished file is left as it is unless you pass `--rerun` |
 | `npm run public-tune` | Draw a disjoint tuning sample (seed 20261121, 40 GSM8K + 20 ARC) and save `data/public-tuning.json` (`-- --dry-run` checks the draw only) |
 | `npm run public-compare` | Replay the new check on the published 300, reusing cached cheap and premium answers, and save `data/public-compare.json` (`-- --dry-run` makes no model calls) |
+| `npm run pilot -- questions.csv` | Savings pilot on a builder's own questions: Cheap First against the premium model alone, with a report to send them (see [docs](docs/pilot.md)). Output stays in the gitignored `pilots/` folder |
 | `npm run hard-benchmark` | Run the hard benchmark, graded by code (`-- --set stress` for round 2, see [docs](docs/hard-benchmark.md)) |
 | `npm run build` | Build the results page into `out/` (no keys needed) |
 | `npx tsx scripts/check-sanity.ts` | Grade deliberately wrong answers and save `data/checker-test.json` |

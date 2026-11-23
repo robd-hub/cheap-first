@@ -1,0 +1,13 @@
+id,question,reference
+s01,"A customer writes: ""My order #4471 arrived with a cracked screen."" Write a two-sentence reply that apologises and says a replacement ships within 3 working days.",
+s02,"Classify this support ticket as one of billing, shipping, technical or other. Reply with the label only: ""I was charged twice for my subscription this month.""",billing
+s03,"Extract the date and the total from this text as JSON with keys date and total: ""Invoice 2291, issued 14 March 2026, total due £1,240.50.""","{""date"": ""2026-03-14"", ""total"": 1240.50}"
+s04,"A plan costs $29 a month or $290 a year. How much does a customer save per year by paying yearly?",$58
+s05,"Summarise in one sentence: Our new API lets developers send a question and get back an answer from the cheapest model that passes a quality check, falling back to a premium model when the check fails.",
+s06,"Write a SQL query that returns the 5 customers with the highest total order value from tables customers(id, name) and orders(id, customer_id, amount).",
+s07,"What is the capital of Australia? Answer with the city name only.",Canberra
+s08,"Translate into French: ""Your refund has been processed and should appear within five working days.""",
+s09,"A recipe for 4 people needs 300 g of flour. How much flour is needed for 10 people?",750 g
+s10,"Write a regular expression that matches a UK postcode such as SW1A 1AA or M1 1AE.",
+s11,"Which is larger, 9.11 or 9.9? Answer with the number only.",9.9
+s12,"Give three short bullet points on why a startup might cache LLM responses.",

@@ -44,7 +44,7 @@ export SERV_API_KEY=...      # console.openserv.ai
 npm run ask -- "How many seconds are there in 3.5 hours?"
 ```
 
-`npm test` runs `src/limits.test.ts`, `src/mcp.test.ts`, `src/mcpStdio.test.ts`, `src/publicGrade.test.ts`, `src/publicReport.test.ts`, `src/liveStats.test.ts`, `src/checkSignals.test.ts`, `src/cheapFirst.test.ts`, `src/speed.test.ts`, and `src/visits.test.ts`. `npm run build` writes the results site to `out/` from the JSON.
+`npm test` runs `src/limits.test.ts`, `src/mcp.test.ts`, `src/mcpStdio.test.ts`, `src/publicGrade.test.ts`, `src/publicReport.test.ts`, `src/liveStats.test.ts`, `src/checkSignals.test.ts`, `src/cheapFirst.test.ts`, `src/speed.test.ts`, `src/visits.test.ts`, and `src/pilot.test.ts`. `npm run build` writes the results site to `out/` from the JSON.
 
 Commands in `package.json`:
 
@@ -52,6 +52,7 @@ Commands in `package.json`:
 |---|---|
 | `npm run public-benchmark` | `data/public-benchmark.json`. Pins and hashes are in `src/publicSets.ts` (seed `20261120`). `-- --dry-run` checks the files and calls no model. `-- --regrade` regrades saved answers. Other arguments are question ids to rerun. |
 | `npm run benchmark` | `data/results.json`, from the 143 questions in `data/questions.json`. Pass ids to run a subset. |
+| `npm run pilot -- <questions file>` | `pilots/<name>/` (gitignored): a builder's own questions through Cheap First and premium alone, judged, with `report.html` and `summary.html`. See `docs/pilot.md`. Never commit customer questions. |
 | `npm run hard-benchmark` | `data/hard-results.json` from `data/hard-questions.json` (60). `-- --set stress` writes `data/stress-results.json` from `data/stress-questions.json` (37). `-- --regrade` skips model calls. |
 
 The published hard headline is both rounds together: 97 questions in `docs/hard-benchmark.md`. `src/stats.ts` sums those two summaries for `cheap_first_stats`. Also in `package.json`: `latency` (times ten everyday questions end to end; median and slowest), `compare-checkers`, `reppo-sample`, `verify-test`, `near-test`. Not wired as npm scripts: `npx tsx scripts/check-sanity.ts` and `npx tsx scripts/probe.ts`.
