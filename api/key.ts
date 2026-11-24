@@ -4,7 +4,7 @@
  *
  * Stripe's Payment Link redirects here after a card payment (see src/stripe.ts).
  */
-import { creditsFor, creditsLeft, issueKey, keyFrom, keysAvailable } from "../src/keys.js";
+import { creditsFor, creditsLeft, issueKey, keyFrom, keysAvailable, readKeyMeta } from "../src/keys.js";
 import { paidSession } from "../src/stripe.js";
 
 const MAX_AGE_DAYS = 30;
@@ -22,7 +22,14 @@ export async function GET(request: Request): Promise<Response> {
   const apiKey = keyFrom(request);
   if (apiKey) {
     if (!keysAvailable()) return Response.json({ error: "Prepaid keys aren't available right now." }, { status: 503 });
-    return Response.json({ creditsLeft: Math.max(0, await creditsLeft(apiKey)) }, { headers: { "Cache-Control": "no-store" } });
+    const meta = await readKeyMeta(apiKey);
+    return Response.json(
+      {
+        creditsLeft: Math.max(0, await creditsLeft(apiKey)),
+        ...(meta ? { answers: meta.answers, kind: meta.kind, ...(meta.label ? { label: meta.label } : {}) } : {}),
+      },
+      { headers: { "Cache-Control": "no-store" } },
+    );
   }
 
   const session = new URL(request.url).searchParams.get("session") ?? "";

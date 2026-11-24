@@ -11,8 +11,9 @@
  * The payment is only settled after the answer is ready, so a failed request
  * is never charged. For an OpenAI-style API, see api/v1/chat/completions.ts.
  */
-import { paidPremiumBudget as premiumBudget, PREMIUM_MAX_TOKENS } from "../src/budget.js";
+import { addKeySpend, paidPremiumBudget as premiumBudget, PREMIUM_MAX_TOKENS } from "../src/budget.js";
 import { cheapFirst, prewarmModels, sharedModels, EscalationBlocked, MODES, modeFrom, savings, type Models } from "../src/cheapFirst.js";
+import { keyFrom } from "../src/keys.js";
 import { PAID_MAX_QUESTION } from "../src/limits.js";
 import { noteCheapFirst } from "../src/liveStats.js";
 import { json, paidCall, PAID_CORS, unpaidChallenge } from "../src/paid.js";
@@ -53,6 +54,7 @@ export async function POST(request: Request): Promise<Response> {
       if (result.premium) await premiumBudget.add(result.premium.costUsd);
       const { savedUsd } = savings(result, m);
       return {
+        costUsd: result.costUsd,
         respond: (paid, headers) => {
           noteCheapFirst("pay", result, m, MODES[mode]);
           return json(
@@ -73,6 +75,7 @@ export async function POST(request: Request): Promise<Response> {
       };
     } catch (e) {
       if (e instanceof EscalationBlocked) {
+        if (keyFrom(request)) await addKeySpend(e.costUsd);
         return json({ error: "This question needs the premium model, which has hit today's limit. You haven't been charged. Please try again tomorrow." }, 503);
       }
       console.error(e);

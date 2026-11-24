@@ -18,6 +18,16 @@ export function sharedStoreConfigured(): boolean {
 }
 
 const memory = new Map<string, { value: string; expires: number }>();
+let memoryOnly = false;
+
+/** Test hook: skip Upstash and use the in-memory store. */
+export function forceMemoryStore(on: boolean): void {
+  memoryOnly = on;
+}
+
+function useRedis(): boolean {
+  return sharedStoreConfigured() && !memoryOnly;
+}
 
 function memGet(key: string): string | null {
   const v = memory.get(key);
@@ -62,7 +72,7 @@ function fallback(e: unknown): void {
  * (the public stats counters) use this and skip the write.
  */
 export async function redisPipeline(cmds: Cmd[]): Promise<unknown[] | null> {
-  if (!sharedStoreConfigured()) return null;
+  if (!useRedis()) return null;
   try {
     return await pipeline(cmds);
   } catch (e) {
@@ -73,7 +83,7 @@ export async function redisPipeline(cmds: Cmd[]): Promise<unknown[] | null> {
 
 /** Adds `by` to a number and returns the new total. The key expires after `ttlSeconds` (set on first use). */
 export async function incrBy(key: string, by: number, ttlSeconds: number): Promise<number> {
-  if (sharedStoreConfigured()) {
+  if (useRedis()) {
     try {
       const [total] = await pipeline([["INCRBYFLOAT", key, by], ["EXPIRE", key, ttlSeconds, "NX"]]);
       return Number(total);
@@ -92,7 +102,7 @@ export async function getNumber(key: string): Promise<number> {
 }
 
 export async function getString(key: string): Promise<string | null> {
-  if (sharedStoreConfigured()) {
+  if (useRedis()) {
     try {
       const [v] = await pipeline([["GET", key]]);
       return v === null || v === undefined ? null : String(v);
@@ -105,7 +115,7 @@ export async function getString(key: string): Promise<string | null> {
 
 /** Sets a value. With `onlyIfNew`, does nothing (and returns false) if the key already exists. */
 export async function setString(key: string, value: string, opts: { ttlSeconds?: number; onlyIfNew?: boolean } = {}): Promise<boolean> {
-  if (sharedStoreConfigured()) {
+  if (useRedis()) {
     try {
       const cmd: Cmd = ["SET", key, value];
       if (opts.ttlSeconds) cmd.push("EX", opts.ttlSeconds);

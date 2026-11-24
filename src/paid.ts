@@ -2,9 +2,12 @@
  * The x402 pay-per-answer flow shared by the paid endpoints:
  * no payment -> 402 with the price; payment -> verify, produce the answer,
  * then settle. If producing the answer fails, the payment is never settled,
- * so the caller isn't charged.
+ * so the caller isn't charged. A cf_ key is the other way in: an unknown key
+ * is 401, and a used-up key, the per-key rate limit, or the daily spend cap
+ * is 429. Those are not 402s. 402 stays the x402 challenge.
  */
-import { creditsLeft, keyFrom, keysAvailable, refundCredit, spendCredit } from "./keys.js";
+import { addKeySpend } from "./budget.js";
+import { claimKey, creditsLeft, keyFrom, refundCredit, type KeyDenial } from "./keys.js";
 import { decodePayment, encodeHeader, paymentFrom, paymentRequired, paymentRequiredV2, requirements, settlePayment, settlePaymentV2, verifyPayment, verifyPaymentV2, type Offer, type PaymentRequirements } from "./x402.js";
 
 export const PAID_CORS: Record<string, string> = {
@@ -40,23 +43,34 @@ export function unpaidChallenge(request: Request, offer: Offer): Response | null
 }
 
 export interface Produced {
+  /** Model dollars (cheap + check + premium) to count against the key-path daily cap. Ignored for x402. */
+  costUsd?: number;
   /** Builds the response once the payment has settled. */
   respond: (paid: { amountUsd: number; transaction?: string; creditsLeft?: number }, paymentHeader: Record<string, string>) => Response;
+}
+
+export type KeyErrorFormat = "plain" | "openai";
+
+/** Key-path errors. OpenAI clients want `{error:{message,type,code}}`. Other endpoints keep a string. */
+export function keyDenialResponse(denial: KeyDenial, format: KeyErrorFormat): Response {
+  const extra: Record<string, string> = denial.retryAfter ? { "Retry-After": String(denial.retryAfter) } : {};
+  if (format === "openai") return json({ error: { message: denial.message, type: denial.type, code: denial.code } }, denial.status, extra);
+  return json({ error: denial.message }, denial.status, extra);
 }
 
 /**
  * Runs `produce` only for a valid payment, and settles only if it returns a
  * result. `produce` returns a Response instead to reply with an error, uncharged.
  */
-export async function paidCall(request: Request, offer: Offer, produce: () => Promise<Produced | Response>): Promise<Response> {
+export async function paidCall(request: Request, offer: Offer, produce: () => Promise<Produced | Response>, options: { keyErrors?: KeyErrorFormat } = {}): Promise<Response> {
   const resource = new URL(request.url).toString();
   const req = requirements(resource, offer);
 
-  // A prepaid key (bought by card) instead of an x402 payment.
+  // A prepaid or trial key instead of an x402 payment. 402 stays the x402 signal.
   const apiKey = keyFrom(request);
   if (apiKey) {
-    if (!keysAvailable()) return json({ error: "Prepaid keys aren't available right now. Please try again later." }, 503);
-    if (!(await spendCredit(apiKey))) return json({ error: "This key has no answers left, or isn't a key we issued. Buy more on the Cheap First site." }, 402);
+    const claimed = await claimKey(apiKey);
+    if (!claimed.ok) return keyDenialResponse(claimed.denial, options.keyErrors ?? "plain");
     let produced: Produced | Response;
     try {
       produced = await produce();
@@ -68,6 +82,7 @@ export async function paidCall(request: Request, offer: Offer, produce: () => Pr
       await refundCredit(apiKey);
       return produced;
     }
+    if (produced.costUsd && produced.costUsd > 0) await addKeySpend(produced.costUsd);
     return produced.respond({ amountUsd: Number(req.maxAmountRequired) / 1e6, creditsLeft: await creditsLeft(apiKey) }, {});
   }
 

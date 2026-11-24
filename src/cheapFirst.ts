@@ -230,9 +230,12 @@ function withSystem(messages: ChatMessage[]): ChatMessage[] {
 
 /** Thrown when an answer needs the premium model but `canEscalate` said no. */
 export class EscalationBlocked extends Error {
-  constructor() {
+  /** What the cheap answer and the check had already cost when escalation was refused. */
+  readonly costUsd: number;
+  constructor(costUsd = 0) {
     super("The premium model isn't available right now.");
     this.name = "EscalationBlocked";
+    this.costUsd = costUsd;
   }
 }
 
@@ -326,7 +329,7 @@ export async function cheapFirst(input: string | ChatMessage[], models: Models, 
     return { prompt, answer: cheap.text, answeredBy: "cheap", cheap, check, costUsd: cheap.costUsd + check.call.costUsd };
   }
 
-  if (!(await canEscalate())) throw new EscalationBlocked();
+  if (!(await canEscalate())) throw new EscalationBlocked(cheap.costUsd + check.call.costUsd);
   const premium = await complete(models.premium, messages, premiumMaxTokens);
   return {
     prompt,
