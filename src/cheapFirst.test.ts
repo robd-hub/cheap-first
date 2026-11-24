@@ -181,6 +181,8 @@ test("the audit prompt is the question, not the grader's instructions", async ()
 test("the system prompt keeps answers short: answer first, and a brief reply when it can't know", () => {
   assert.match(SYSTEM_PROMPT, /including any length limits/);
   assert.match(SYSTEM_PROMPT, /Put the direct answer first/);
+  assert.match(SYSTEM_PROMPT, /when it has to be calculated: then show the working briefly/);
+  assert.match(SYSTEM_PROMPT, /Use only the figures given in the request/);
   assert.match(SYSTEM_PROMPT, /say so briefly instead of guessing/);
   assert.match(SYSTEM_PROMPT, /under 60 words/);
 });

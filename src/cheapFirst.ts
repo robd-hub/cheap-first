@@ -18,7 +18,8 @@ import { CHEAP, chat, chatMessages, costOf, servModel, type CallResult, type Cha
 
 export const SYSTEM_PROMPT =
   "You are a helpful, accurate assistant. Follow the user's instructions exactly, including any length limits. " +
-  "Put the direct answer first. " +
+  "Put the direct answer first, except when it has to be calculated: then show the working briefly and end with the result on its own line. " +
+  "Use only the figures given in the request; if one you need is missing, say so instead of filling it in. " +
   "If you don't know or can't verify something, say so briefly instead of guessing, and suggest at most one place to find out. Keep that reply under 60 words.";
 
 /** Answers scoring below this are escalated to the premium model. */
