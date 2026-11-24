@@ -18,7 +18,7 @@
  * never charged. Uses the same grader as Cheap First (src/cheapFirst.ts).
  */
 import { createHash, randomUUID } from "node:crypto";
-import { checkAnswer, PASS_MARK } from "../src/cheapFirst.js";
+import { checkAnswer, PASS_MARK, type Check } from "../src/cheapFirst.js";
 import { CHEAP, servModel, type ModelSpec } from "../src/models.js";
 import { json, paidCall, PAID_CORS, unpaidChallenge } from "../src/paid.js";
 import { incrBy } from "../src/store.js";
@@ -166,8 +166,13 @@ export async function POST(request: Request): Promise<Response> {
 
   return paidCall(request, offer, async () => {
     try {
-      const result = await verify(input, level);
-      return { respond: (paid, headers) => json({ ...result, paid }, 200, headers) };
+      let costUsd = 0;
+      const result = await verify(input, level, async (checker, task, answer, criteria) => {
+        const graded: Check = await checkAnswer(checker, task, answer, criteria);
+        costUsd += graded.call.costUsd;
+        return graded;
+      });
+      return { costUsd, respond: (paid, headers) => json({ ...result, paid }, 200, headers) };
     } catch (e) {
       console.error(e);
       return json({ error: "Couldn't reach the checker. You haven't been charged. Please try again." }, 502);

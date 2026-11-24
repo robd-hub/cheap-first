@@ -33,6 +33,19 @@ Speed settings: the cheap model is sent `reasoning_effort` `low` (`CF_CHEAP_REAS
 
 `npm run mcp` (`src/mcpStdio.ts`) reads stdin and posts to the hosted endpoint. Free calls share the `/api/ask` demo limits: 600 characters, 10 an hour per IP, and 300 a day.
 
+## Trial keys
+
+Card payments stay off. Rob mints a free `cf_` key for `/api/v1/chat/completions` with `CF_ADMIN_TOKEN` (and the Upstash pair keys already need):
+
+```bash
+curl -sS -X POST https://cheap-first.vercel.app/api/admin/keys \
+  -H "Authorization: Bearer $CF_ADMIN_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"answers":200,"label":"ada"}'
+```
+
+`npm run trial-key -- --answers 200 --label ada` does the same against the store in the environment. `POST /api/admin/keys` is a rewrite to `api/key.ts`: Vercel Hobby allows 12 serverless functions and `api/` is already at 12, so do not add a thirteenth file there. The default cap is 200 answers (`CF_TRIAL_ANSWERS`). Each key allows `CF_KEY_RATE_PER_MIN` requests a minute (default 20). All keys together stop at `CF_DAILY_SPEND_CAP_USD` of cheap + checker + premium spend a day (default $3), on top of `CF_PAID_PREMIUM_BUDGET_USD`. A used-up key, the rate limit, and that cap are 429 with an OpenAI error object. An unknown key is 401. No key still gets the x402 402.
+
 ## Run, test, benchmarks
 
 CI (`.github/workflows/ci.yml`) is Node 22: `npm ci`, `npm run typecheck`, `npm test`, `npm run build`. No API keys.
@@ -44,7 +57,7 @@ export SERV_API_KEY=...      # console.openserv.ai
 npm run ask -- "How many seconds are there in 3.5 hours?"
 ```
 
-`npm test` runs `src/limits.test.ts`, `src/mcp.test.ts`, `src/mcpStdio.test.ts`, `src/publicGrade.test.ts`, `src/publicReport.test.ts`, `src/liveStats.test.ts`, `src/checkSignals.test.ts`, `src/cheapFirst.test.ts`, `src/speed.test.ts`, `src/visits.test.ts`, and `src/pilot.test.ts`. `npm run build` writes the results site to `out/` from the JSON.
+`npm test` runs `src/limits.test.ts`, `src/keys.test.ts`, `src/mcp.test.ts`, `src/mcpStdio.test.ts`, `src/publicGrade.test.ts`, `src/publicReport.test.ts`, `src/liveStats.test.ts`, `src/checkSignals.test.ts`, `src/cheapFirst.test.ts`, `src/speed.test.ts`, `src/visits.test.ts`, and `src/pilot.test.ts`. `npm run build` writes the results site to `out/` from the JSON.
 
 Commands in `package.json`:
 

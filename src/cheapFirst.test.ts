@@ -150,7 +150,11 @@ test("a blocked escalation throws and a cheap outage can be left visible", async
   const blocked = fakeComplete("Final answer: 5", ["Final answer: 9"]);
   await assert.rejects(
     () => cheapFirst(numeric, models, undefined, { complete: blocked.complete, passMark: 75, canEscalate: () => false }),
-    EscalationBlocked,
+    (e: unknown) => {
+      assert.ok(e instanceof EscalationBlocked);
+      assert.equal(e.costUsd, 0.00005);
+      return true;
+    },
   );
   const down = fakeComplete("THROW", []);
   await assert.rejects(

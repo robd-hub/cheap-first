@@ -191,6 +191,25 @@ with x402 like `/api/pay`. An app using an OpenAI-style client changes its base 
 the check). Each reply has a `cheap_first` field with who answered, the check score, the cost and the
 saving. `GET /api/v1/models` lists the model names.
 
+### Trial keys
+
+Card payments stay off. With the Upstash env vars set, Rob creates a free key for that API (200 answers unless `answers` says otherwise):
+
+```bash
+curl -sS -X POST https://cheap-first.vercel.app/api/admin/keys \
+  -H "Authorization: Bearer $CF_ADMIN_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"answers":200,"label":"ada"}'
+```
+
+The same mint, from a checkout that has the Upstash variables:
+
+```bash
+npm run trial-key -- --answers 200 --label ada
+```
+
+`CF_ADMIN_TOKEN` is the admin secret. The key is shown once and sent as `Authorization: Bearer cf_...`. Each key allows `CF_KEY_RATE_PER_MIN` requests a minute (default 20). Every key together stops at `CF_DAILY_SPEND_CAP_USD` of model spend a day (default $3), on top of the paid premium budget. A used-up key, the rate limit, and that cap return 429 with `{error:{message,type,code}}`. An unknown key returns 401. A request with no key still gets the x402 402.
+
 ## MCP: Claude, Cursor, and other agents
 
 Cheap First speaks the [Model Context Protocol](https://modelcontextprotocol.io) over Streamable HTTP, on the same deployment as the rest of the API:

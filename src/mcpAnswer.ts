@@ -8,8 +8,9 @@
  * A failed paid answer is not charged: paidCall refunds a key credit and
  * never settles an x402 payment when this returns an error response.
  */
-import { demoPremiumBudget, paidPremiumBudget, PREMIUM_MAX_TOKENS, type DailyBudget } from "./budget.js";
+import { addKeySpend, demoPremiumBudget, paidPremiumBudget, PREMIUM_MAX_TOKENS, type DailyBudget } from "./budget.js";
 import { cheapFirst, prewarmModels, sharedModels, EscalationBlocked, MODES, savings, type CheapFirstResult, type Mode, type Models } from "./cheapFirst.js";
+import { keyFrom } from "./keys.js";
 import { takeDemoSlot } from "./limits.js";
 import { noteCheapFirst } from "./liveStats.js";
 import { rpcOk, toolErrorResult, toolResult, type AskPayload, type AnswerOutcome, type JsonRpcId } from "./mcp.js";
@@ -98,6 +99,7 @@ export async function answerPaid(request: Request, id: JsonRpcId, question: stri
       try {
         const { payload, result, specs } = await run(question, mode, paidPremiumBudget);
         return {
+          costUsd: result.costUsd,
           respond: (paid, headers) => {
             noteCheapFirst("mcp", result, specs, MODES[mode]);
             return rpcOk(
@@ -116,6 +118,7 @@ export async function answerPaid(request: Request, id: JsonRpcId, question: stri
         };
       } catch (e) {
         if (e instanceof EscalationBlocked) {
+          if (keyFrom(request)) await addKeySpend(e.costUsd);
           return rpcOk(request, id, toolErrorResult("This question needs the premium model, which has hit today's limit. You haven't been charged. Please try again tomorrow."));
         }
         console.error(e);

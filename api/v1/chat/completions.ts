@@ -3,7 +3,8 @@
  *
  * Cheap First behind the OpenAI chat completions format, so an app that
  * already uses an OpenAI-style client only changes its base URL to
- * https://cheapfirst.designimp.com/api/v1 (and pays with x402, like /api/pay).
+ * https://cheapfirst.designimp.com/api/v1. Pay with x402, like /api/pay, or send
+ * a trial or prepaid key as Authorization: Bearer cf_...
  *
  * Supports the parts most apps use: `messages` (system, user and assistant
  * turns), `model` and `stream`. Models:
@@ -17,12 +18,13 @@
  * Each reply also carries a `cheap_first` field: who answered, the check
  * score, what it cost and what it saved against the premium model alone.
  */
-import { paidPremiumBudget as premiumBudget, PREMIUM_MAX_TOKENS } from "../../../src/budget.js";
+import { addKeySpend, paidPremiumBudget as premiumBudget, PREMIUM_MAX_TOKENS } from "../../../src/budget.js";
 import { cheapFirst, prewarmModels, sharedModels, EscalationBlocked, MODES, savings, type Mode, type Models } from "../../../src/cheapFirst.js";
+import { keyFrom, presentedAuth } from "../../../src/keys.js";
 import { noteCheapFirst } from "../../../src/liveStats.js";
 import type { ChatMessage } from "../../../src/models.js";
 import { json, paidCall, PAID_CORS, unpaidChallenge } from "../../../src/paid.js";
-import type { Offer } from "../../../src/x402.js";
+import { paymentFrom, type Offer } from "../../../src/x402.js";
 
 /** Total characters across all messages. Long conversations are pricey on the premium model. */
 const MAX_CHARS = 6000;
@@ -58,9 +60,9 @@ export const OFFER: Offer = {
   },
 };
 
-/** OpenAI-style error body. */
-function error(message: string, status: number, type = "invalid_request_error"): Response {
-  return json({ error: { message, type } }, status);
+/** OpenAI-style error body: `{error:{message,type,code}}`. */
+function error(message: string, status: number, type = "invalid_request_error", code = type): Response {
+  return json({ error: { message, type, code } }, status);
 }
 
 /** Reads and checks the messages. Returns an error message instead if they aren't usable. */
@@ -93,6 +95,11 @@ export function OPTIONS(): Response {
 }
 
 export async function POST(request: Request): Promise<Response> {
+  // A Bearer token that isn't a cf_ key is an invalid API key. No Authorization
+  // header still falls through to the x402 402, which is how directories learn the price.
+  if (presentedAuth(request).kind === "invalid" && !paymentFrom(request)) {
+    return error("Invalid API key. Send Authorization: Bearer cf_... or pay with the x402 headers.", 401, "invalid_request_error", "invalid_api_key");
+  }
   const unpaid = unpaidChallenge(request, OFFER);
   if (unpaid) return unpaid;
   let body: { messages?: unknown; model?: unknown; stream?: unknown };
@@ -132,6 +139,7 @@ export async function POST(request: Request): Promise<Response> {
       };
       const usage = { prompt_tokens: used.inputTokens, completion_tokens: used.outputTokens, total_tokens: used.inputTokens + used.outputTokens };
       return {
+        costUsd: r.costUsd,
         respond: (paid, headers) => {
           noteCheapFirst("chat", r, m, MODES[mode]);
           if (!stream) {
@@ -160,10 +168,11 @@ export async function POST(request: Request): Promise<Response> {
       };
     } catch (e) {
       if (e instanceof EscalationBlocked) {
-        return error("This request needs the premium model, which has hit today's limit. You haven't been charged. Please try again tomorrow.", 503, "server_error");
+        if (keyFrom(request)) await addKeySpend(e.costUsd);
+        return error("This request needs the premium model, which has hit today's limit. You haven't been charged. Please try again tomorrow.", 503, "server_error", "premium_budget");
       }
       console.error(e);
-      return error("Something went wrong reaching the models. You haven't been charged. Please try again.", 502, "server_error");
+      return error("Something went wrong reaching the models. You haven't been charged. Please try again.", 502, "server_error", "server_error");
     }
-  });
+  }, { keyErrors: "openai" });
 }

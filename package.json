@@ -13,7 +13,7 @@
     "public-compare": "NODE_USE_ENV_PROXY=1 tsx scripts/public-compare.ts",
     "build": "tsx scripts/build-site.ts",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/limits.test.ts src/mcp.test.ts src/mcpStdio.test.ts src/publicGrade.test.ts src/publicReport.test.ts src/liveStats.test.ts src/checkSignals.test.ts src/cheapFirst.test.ts src/speed.test.ts src/visits.test.ts src/pilot.test.ts",
+    "test": "tsx --test src/limits.test.ts src/keys.test.ts src/mcp.test.ts src/mcpStdio.test.ts src/publicGrade.test.ts src/publicReport.test.ts src/liveStats.test.ts src/checkSignals.test.ts src/cheapFirst.test.ts src/speed.test.ts src/visits.test.ts src/pilot.test.ts",
     "mcp": "tsx src/mcpStdio.ts",
     "latency": "NODE_USE_ENV_PROXY=1 tsx scripts/latency.ts",
     "compare-checkers": "NODE_USE_ENV_PROXY=1 tsx scripts/compare-checkers.ts",
@@ -21,7 +21,8 @@
     "hard-benchmark": "NODE_USE_ENV_PROXY=1 tsx scripts/hard-benchmark.ts",
     "verify-test": "NODE_USE_ENV_PROXY=1 tsx scripts/verify-test.ts",
     "near-test": "tsx scripts/near-test.ts",
-    "pilot": "NODE_USE_ENV_PROXY=1 tsx scripts/pilot.ts"
+    "pilot": "NODE_USE_ENV_PROXY=1 tsx scripts/pilot.ts",
+    "trial-key": "NODE_USE_ENV_PROXY=1 tsx scripts/trial-key.ts"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
