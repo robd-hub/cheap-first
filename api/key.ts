@@ -1,10 +1,21 @@
 /**
  * GET /api/key?session=cs_...   Turns a paid Stripe checkout into a prepaid API key (shown once).
  * GET /api/key  (Authorization: Bearer cf_...)   How many answers the key has left, as JSON.
+ * POST /api/key and POST /api/admin/keys   Creates a trial key. Needs CF_ADMIN_TOKEN.
  *
- * Stripe's Payment Link redirects here after a card payment (see src/stripe.ts).
+ * The admin URL is a rewrite onto this file (see vercel.json). Vercel Hobby
+ * allows 12 serverless functions, and api/ is already at that cap, so this
+ * route stays in the existing key function. Stripe's Payment Link redirects
+ * here after a card payment (see src/stripe.ts). Card payments stay off until
+ * that is configured. Creating a trial key does not turn Stripe on.
+ *
+ *   curl -sS -X POST https://cheap-first.vercel.app/api/admin/keys \
+ *     -H "Authorization: Bearer $CF_ADMIN_TOKEN" \
+ *     -H "Content-Type: application/json" \
+ *     -d '{"answers":200,"label":"ada"}'
  */
-import { creditsFor, creditsLeft, issueKey, keyFrom, keysAvailable, readKeyMeta } from "../src/keys.js";
+import { dailyKeySpendCapUsd } from "../src/budget.js";
+import { adminTokenMatches, creditsFor, creditsLeft, issueKey, issueTrialKey, keyFrom, keyRatePerMin, keysAvailable, parseAnswerCap, parseLabel, readKeyMeta } from "../src/keys.js";
 import { paidSession } from "../src/stripe.js";
 
 const MAX_AGE_DAYS = 30;
@@ -54,5 +65,58 @@ export async function GET(request: Request): Promise<Response> {
   apiKey: "${esc(key)}",
 });</pre>
 <p>Or send <code>Authorization: Bearer ${esc(key.slice(0, 8))}…</code> to <code>/api/pay</code>. Check what's left at <code>GET /api/key</code> with the same header.</p>`,
+  );
+}
+
+function json(body: unknown, status: number): Response {
+  return Response.json(body, { status, headers: { "Cache-Control": "no-store" } });
+}
+
+function presentedToken(request: Request): string {
+  const header = request.headers.get("x-admin-token");
+  if (header?.trim()) return header.trim();
+  const match = (request.headers.get("authorization") ?? "").match(/^Bearer\s+(\S+)$/i);
+  return match?.[1] ?? "";
+}
+
+/** Creates one trial key. The plaintext is returned once and is not stored. */
+export async function POST(request: Request): Promise<Response> {
+  if (!(process.env.CF_ADMIN_TOKEN ?? "")) {
+    return json({ error: "Set CF_ADMIN_TOKEN to issue trial keys." }, 503);
+  }
+  if (!adminTokenMatches(presentedToken(request))) {
+    return json({ error: "Send Authorization: Bearer and the CF_ADMIN_TOKEN value." }, 401);
+  }
+  if (!keysAvailable()) {
+    return json({ error: "Trial keys need Upstash. Set KV_REST_API_URL and KV_REST_API_TOKEN (or the UPSTASH_REDIS_REST pair)." }, 503);
+  }
+
+  let body: { answers?: unknown; label?: unknown } = {};
+  const text = await request.text();
+  if (text.trim()) {
+    try {
+      body = JSON.parse(text) as typeof body;
+    } catch {
+      return json({ error: 'Send JSON like {"answers":200,"label":"name"}.' }, 400);
+    }
+  }
+  if (!body || typeof body !== "object" || Array.isArray(body)) {
+    return json({ error: 'Send JSON like {"answers":200,"label":"name"}.' }, 400);
+  }
+  const answers = parseAnswerCap(body.answers);
+  if (typeof answers === "string") return json({ error: answers }, 400);
+  const label = parseLabel(body.label);
+  if (label === "invalid") return json({ error: "label must be text." }, 400);
+
+  const issued = await issueTrialKey({ answers, label });
+  return json(
+    {
+      key: issued.key,
+      answers: issued.answers,
+      ...(issued.label ? { label: issued.label } : {}),
+      ratePerMinute: keyRatePerMin(),
+      dailySpendCapUsd: dailyKeySpendCapUsd(),
+    },
+    201,
   );
 }

@@ -1,7 +1,9 @@
 import assert from "node:assert/strict";
+import { readdirSync, statSync } from "node:fs";
+import { join } from "node:path";
 import { afterEach, beforeEach, describe, test } from "node:test";
-import { POST as issueTrial } from "../api/admin/keys.js";
-import { GET as keyBalance } from "../api/key.js";
+import { fileURLToPath } from "node:url";
+import { GET as keyBalance, POST as issueTrial } from "../api/key.js";
 import { POST as chat } from "../api/v1/chat/completions.js";
 import { parseTrialArgs } from "../scripts/trial-key.js";
 import { addKeySpend, dailyKeySpendCapUsd, keySpendHasRoom, paidPremiumBudget } from "./budget.js";
@@ -322,6 +324,22 @@ describe("trial keys", { concurrency: false }, () => {
     assert.equal(down.status, 503);
     assertOpenAI(down.body, "keys_unavailable");
     assert.match((down.body.error as { message: string }).message, /aren't available/);
+  });
+
+  test("api routes stay within Vercel Hobby's 12 serverless functions", () => {
+    const root = fileURLToPath(new URL("../api", import.meta.url));
+    const walk = (dir: string): string[] => {
+      const found: string[] = [];
+      for (const name of readdirSync(dir)) {
+        if (name.startsWith("_")) continue;
+        const path = join(dir, name);
+        if (statSync(path).isDirectory()) found.push(...walk(path));
+        else if (name.endsWith(".ts") || name.endsWith(".js")) found.push(path);
+      }
+      return found;
+    };
+    const files = walk(root);
+    assert.ok(files.length <= 12, `Vercel Hobby allows 12 functions and api/ has ${files.length}:\n${files.join("\n")}`);
   });
 
   test("the trial-key command accepts answers and a label", () => {

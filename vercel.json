@@ -62,6 +62,10 @@
       "destination": "/api/stats"
     },
     {
+      "source": "/api/admin/keys",
+      "destination": "/api/key"
+    },
+    {
       "source": "/openserv",
       "destination": "/api/openserv"
     },

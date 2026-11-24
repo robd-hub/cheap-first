@@ -44,7 +44,7 @@ curl -sS -X POST https://cheap-first.vercel.app/api/admin/keys \
   -d '{"answers":200,"label":"ada"}'
 ```
 
-`npm run trial-key -- --answers 200 --label ada` does the same against the store in the environment. The default cap is 200 answers (`CF_TRIAL_ANSWERS`). Each key allows `CF_KEY_RATE_PER_MIN` requests a minute (default 20). All keys together stop at `CF_DAILY_SPEND_CAP_USD` of cheap + checker + premium spend a day (default $3), on top of `CF_PAID_PREMIUM_BUDGET_USD`. A used-up key, the rate limit, and that cap are 429 with an OpenAI error object. An unknown key is 401. No key still gets the x402 402.
+`npm run trial-key -- --answers 200 --label ada` does the same against the store in the environment. `POST /api/admin/keys` is a rewrite to `api/key.ts`: Vercel Hobby allows 12 serverless functions and `api/` is already at 12, so do not add a thirteenth file there. The default cap is 200 answers (`CF_TRIAL_ANSWERS`). Each key allows `CF_KEY_RATE_PER_MIN` requests a minute (default 20). All keys together stop at `CF_DAILY_SPEND_CAP_USD` of cheap + checker + premium spend a day (default $3), on top of `CF_PAID_PREMIUM_BUDGET_USD`. A used-up key, the rate limit, and that cap are 429 with an OpenAI error object. An unknown key is 401. No key still gets the x402 402.
 
 ## Run, test, benchmarks
 
