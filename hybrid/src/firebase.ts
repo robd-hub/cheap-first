@@ -11,7 +11,7 @@ import { getAI, getGenerativeModel, GoogleAIBackend, InferenceMode, InferenceSou
 import { fetchAndActivate, getRemoteConfig, getString } from "firebase/remote-config";
 import { getAuth, signInAnonymously } from "firebase/auth";
 import { doc, getFirestore, increment, onSnapshot, setDoc } from "firebase/firestore";
-import { JUDGE_SCHEMA, type Gen, type Models, type Mode, type Outcome, type Source } from "./router";
+import { JUDGE_SCHEMA, withFallback, type Gen, type Models, type Mode, type Outcome, type Source } from "./router";
 
 const env = import.meta.env;
 
@@ -126,12 +126,13 @@ export function getModels(): Models {
       generationConfig: { responseMimeType: "application/json", responseJsonSchema: JUDGE_SCHEMA as unknown as Record<string, unknown> },
     },
   });
-  const cloud = getGenerativeModel(ai, {
-    mode: InferenceMode.ONLY_IN_CLOUD,
-    inCloudParams: { model: settings.cloud_model, systemInstruction: ANSWER_SYSTEM },
-  });
+  const cloudModel = (model: string) =>
+    getGenerativeModel(ai, { mode: InferenceMode.ONLY_IN_CLOUD, inCloudParams: { model, systemInstruction: ANSWER_SYSTEM } });
+  // When the stronger model is busy (Google returns 500/503 at peak times), the fallback model answers.
+  const cloud = withFallback(wrap(cloudModel(settings.cloud_model)), wrap(cloudModel(settings.fallback_model)));
+  const judge = withFallback(wrap(cloudJudge), wrap(cloudModel(settings.cloud_model)));
 
-  models = { first: wrap(firstModel), localSample: wrap(localSample), localJudge: wrap(localJudge), cloudJudge: wrap(cloudJudge), cloud: wrap(cloud) };
+  models = { first: wrap(firstModel), localSample: wrap(localSample), localJudge: wrap(localJudge), cloudJudge: judge, cloud };
   return models;
 }
 

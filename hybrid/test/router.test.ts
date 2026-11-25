@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { askCheapFirst, parseJudge, prepareQuestion, warningSigns, type Gen, type Models, type Source } from "../src/router";
+import { askCheapFirst, parseJudge, withFallback, prepareQuestion, warningSigns, type Gen, type Models, type Source } from "../src/router";
 
 const NUMBER_Q = "A shop sells pens at 3 for £2. How much do 18 pens cost?";
 
@@ -119,4 +119,14 @@ test("warning signs", () => {
   assert.equal(warningSigns("")?.score, 0);
   assert.equal(warningSigns("Paris is the capital of France."), null);
   assert.equal(warningSigns("As an AI, I can't be sure.")?.score, 40);
+});
+
+test("withFallback hands a failing cloud model over to the next one", async () => {
+  const busy: Gen = async () => {
+    throw new Error("[500] This model is currently experiencing high demand");
+  };
+  const backup: Gen = async () => ({ text: "Final answer: 42", source: "IN_CLOUD" });
+  const result = await withFallback(busy, backup)("q");
+  assert.equal(result.text, "Final answer: 42");
+  await assert.rejects(withFallback(busy, busy)("q"), /high demand/);
 });

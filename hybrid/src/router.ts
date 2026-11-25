@@ -33,6 +33,21 @@ export interface GenResult {
 /** One model call. */
 export type Gen = (prompt: string) => Promise<GenResult>;
 
+/** Try each model in turn: a busy or failing cloud model hands over to the next. */
+export function withFallback(...gens: Gen[]): Gen {
+  return async (prompt) => {
+    let last: unknown;
+    for (const gen of gens) {
+      try {
+        return await gen(prompt);
+      } catch (error) {
+        last = error;
+      }
+    }
+    throw last;
+  };
+}
+
 export interface Models {
   /** PREFER_ON_DEVICE: Gemini Nano, or the small cloud model when this device has none. */
   first: Gen;
