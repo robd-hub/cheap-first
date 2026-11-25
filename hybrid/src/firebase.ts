@@ -141,14 +141,17 @@ export async function initializeDeviceModel(onProgress: (fraction: number) => vo
   await firstModel!.initializeDeviceModel(onProgress);
 }
 
-export type DeviceStatus = "no-api" | "unavailable" | "downloadable" | "downloading" | "available";
+export type DeviceStatus = "no-api" | "unavailable" | "downloadable" | "downloading" | "available" | "slow";
 
 /** Chrome's Prompt API, read directly so the page can say what is going on. */
 export async function deviceStatus(): Promise<DeviceStatus> {
   const api = (self as unknown as { LanguageModel?: { availability: () => Promise<string> } }).LanguageModel;
   if (!api) return "no-api";
   try {
-    const value = await api.availability();
+    // Chrome can take a long time to answer just after the flag is switched on.
+    const timeout = new Promise<string>((resolve) => setTimeout(() => resolve("timeout"), 8000));
+    const value = await Promise.race([api.availability(), timeout]);
+    if (value === "timeout") return "slow";
     if (value === "available" || value === "downloadable" || value === "downloading" || value === "unavailable") return value;
     return "unavailable";
   } catch {

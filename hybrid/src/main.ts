@@ -29,6 +29,7 @@ const STATUS_TEXT: Record<DeviceStatus, string> = {
   downloading: "Gemini Nano is downloading",
   unavailable: "No on-device model here: answers come from the cloud",
   "no-api": "This browser has no on-device AI: answers come from the cloud",
+  slow: "Chrome is still setting up on-device AI…",
 };
 
 async function refreshStatus() {
@@ -38,6 +39,8 @@ async function refreshStatus() {
   pill.dataset.state = status === "available" ? "ok" : status === "downloadable" || status === "downloading" ? "wait" : "off";
   $("enable").hidden = deviceReady || !(status === "downloadable" || status === "downloading" || status === "available");
   if (status === "available") $("enable").textContent = "Turn on on-device AI";
+  // Just after the flag is switched on Chrome can be slow to answer. Ask again.
+  if (status === "slow") setTimeout(() => void refreshStatus(), 10000);
 }
 
 async function enableDevice() {
