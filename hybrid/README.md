@@ -43,7 +43,7 @@ When the answer stays on the device, the question never leaves it. When the chec
 ```bash
 cd hybrid
 npm install
-cp .env.example .env.local   # fill in your Firebase web config and reCAPTCHA site key
+cp .env.example .env.local   # only needed for your own Firebase project or a debug token
 npm run dev                  # http://localhost:5173
 npm test                     # router tests, no keys needed
 npm run typecheck
