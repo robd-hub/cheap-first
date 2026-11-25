@@ -91,11 +91,11 @@ export function defaultMode(): Mode {
   return settings.default_mode === "strict" || settings.default_mode === "budget" ? settings.default_mode : "balanced";
 }
 
-function wrap(model: GenerativeModel): Gen {
+function wrap(model: GenerativeModel, name?: string): Gen {
   return async (prompt) => {
     const result = await model.generateContent(prompt);
     const source: Source = result.response.inferenceSource === InferenceSource.ON_DEVICE ? "ON_DEVICE" : "IN_CLOUD";
-    return { text: result.response.text(), source };
+    return { text: result.response.text(), source, model: source === "IN_CLOUD" ? name : undefined };
   };
 }
 
@@ -129,10 +129,10 @@ export function getModels(): Models {
   const cloudModel = (model: string) =>
     getGenerativeModel(ai, { mode: InferenceMode.ONLY_IN_CLOUD, inCloudParams: { model, systemInstruction: ANSWER_SYSTEM } });
   // When the stronger model is busy (Google returns 500/503 at peak times), the fallback model answers.
-  const cloud = withFallback(wrap(cloudModel(settings.cloud_model)), wrap(cloudModel(settings.fallback_model)));
-  const judge = withFallback(wrap(cloudJudge), wrap(cloudModel(settings.cloud_model)));
+  const cloud = withFallback(wrap(cloudModel(settings.cloud_model), settings.cloud_model), wrap(cloudModel(settings.fallback_model), settings.fallback_model));
+  const judge = withFallback(wrap(cloudJudge, settings.judge_model), wrap(cloudModel(settings.cloud_model), settings.cloud_model));
 
-  models = { first: wrap(firstModel), localSample: wrap(localSample), localJudge: wrap(localJudge), cloudJudge: judge, cloud };
+  models = { first: wrap(firstModel, settings.fallback_model), localSample: wrap(localSample), localJudge: wrap(localJudge), cloudJudge: judge, cloud };
   return models;
 }
 

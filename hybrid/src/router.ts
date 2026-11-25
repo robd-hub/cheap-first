@@ -28,6 +28,8 @@ export const PASS_MARK: Record<Mode, number> = { strict: 85, balanced: 75, budge
 export interface GenResult {
   text: string;
   source: Source;
+  /** Cloud model that answered, when known (shown so a fallback is visible). */
+  model?: string;
 }
 
 /** One model call. */
@@ -201,7 +203,7 @@ export async function askCheapFirst(question: string, models: Models, options: A
   const call = async (what: string, gen: Gen, text: string): Promise<GenResult> => {
     const t = now();
     const result = await gen(text);
-    steps.push({ what, where: result.source, ms: Math.round(now() - t) });
+    steps.push({ what: result.model ? `${what} (${result.model})` : what, where: result.source, ms: Math.round(now() - t) });
     if (result.source === "ON_DEVICE") deviceCalls++;
     else cloudCalls++;
     return result;
