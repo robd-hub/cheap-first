@@ -15,14 +15,29 @@ import { JUDGE_SCHEMA, type Gen, type Models, type Mode, type Outcome, type Sour
 
 const env = import.meta.env;
 
-const firebaseConfig: FirebaseOptions = {
-  apiKey: env.VITE_FIREBASE_API_KEY,
-  authDomain: env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: env.VITE_FIREBASE_APP_ID,
+/** The cheap-first-local project. Public by design; VITE_FIREBASE_* overrides it for your own project. */
+const DEFAULT_CONFIG: FirebaseOptions = {
+  apiKey: "AIzaSyAMLQ7oH3ai0C-3oI14Hda3sL-o809N_3c",
+  authDomain: "cheap-first-local.firebaseapp.com",
+  projectId: "cheap-first-local",
+  storageBucket: "cheap-first-local.firebasestorage.app",
+  messagingSenderId: "359588364014",
+  appId: "1:359588364014:web:fb021eb8db8e8624297dff",
 };
+
+const firebaseConfig: FirebaseOptions = env.VITE_FIREBASE_PROJECT_ID
+  ? {
+      apiKey: env.VITE_FIREBASE_API_KEY,
+      authDomain: env.VITE_FIREBASE_AUTH_DOMAIN,
+      projectId: env.VITE_FIREBASE_PROJECT_ID,
+      storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET,
+      messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+      appId: env.VITE_FIREBASE_APP_ID,
+    }
+  : DEFAULT_CONFIG;
+
+/** reCAPTCHA Enterprise site key for App Check (public). */
+const RECAPTCHA_SITE_KEY = env.VITE_RECAPTCHA_SITE_KEY || "";
 
 export const configured = Boolean(firebaseConfig.apiKey && firebaseConfig.projectId && firebaseConfig.appId);
 
@@ -48,7 +63,7 @@ if (app) {
       env.VITE_APPCHECK_DEBUG_TOKEN || true;
   }
   initializeAppCheck(app, {
-    provider: new ReCaptchaEnterpriseProvider(env.VITE_RECAPTCHA_SITE_KEY || "missing-site-key"),
+    provider: new ReCaptchaEnterpriseProvider(RECAPTCHA_SITE_KEY || "missing-site-key"),
     isTokenAutoRefreshEnabled: true,
   });
 }
