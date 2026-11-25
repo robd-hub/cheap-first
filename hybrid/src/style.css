@@ -96,3 +96,5 @@ td small { color: var(--muted); }
 footer { text-align: center; color: var(--muted); font-size: 13px; padding: 24px 16px 40px; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 [hidden] { display: none !important; }
+.q-full { margin: 6px 0; }
+.q-ans { color: var(--muted); margin-bottom: 6px; }
