@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cheap First Local</title>
+    <meta name="description" content="Gemini Nano answers on your device first. A check decides, and the cloud only answers when the local answer isn't good enough." />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <header class="top">
+      <div class="brand">
+        <img src="/favicon.svg" alt="" width="28" height="28" />
+        <span>Cheap First <b>Local</b></span>
+      </div>
+      <div id="device" class="pill">Checking this device…</div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <h1>Your laptop answers first. The cloud only when it has to.</h1>
+        <p>
+          Gemini Nano answers on this device, free and private. Cheap First checks that answer, and only sends
+          the question to a stronger Gemini model in the cloud when the check fails.
+        </p>
+        <button id="enable" class="secondary" hidden>Turn on on-device AI</button>
+        <div id="download" class="download" hidden><div class="bar"><span></span></div><small></small></div>
+      </section>
+
+      <section class="ask card">
+        <form id="ask">
+          <label for="q" class="sr">Your question</label>
+          <textarea id="q" rows="3" placeholder="Ask anything. Try: A shop sells pens at 3 for £2. How much do 18 pens cost?" required maxlength="4000"></textarea>
+          <div class="row">
+            <div class="modes" role="radiogroup" aria-label="How strict the check is">
+              <label><input type="radio" name="mode" value="budget" /> Budget</label>
+              <label><input type="radio" name="mode" value="balanced" checked /> Balanced</label>
+              <label><input type="radio" name="mode" value="strict" /> Strict</label>
+            </div>
+            <button type="submit" id="go">Ask</button>
+          </div>
+        </form>
+        <div id="result" class="result" hidden></div>
+      </section>
+
+      <section class="totals">
+        <div class="stat"><b id="s-asked">0</b><span>asked here</span></div>
+        <div class="stat"><b id="s-local">0</b><span>answered on this device</span></div>
+        <div class="stat"><b id="s-cloud">0</b><span>cloud calls</span></div>
+        <div class="stat"><b id="s-saved">0</b><span>cloud answers avoided</span></div>
+      </section>
+      <p class="community" id="community" hidden></p>
+
+      <section class="card bench">
+        <h2>Test it on public questions</h2>
+        <p>
+          Runs real questions from GSM8K and ARC-Challenge through Cheap First Local, one at a time, and marks each
+          final answer with code against the published answer key. The checker never sees the key.
+        </p>
+        <div class="row">
+          <select id="set"></select>
+          <button id="run" class="secondary">Run</button>
+        </div>
+        <p id="set-note" class="muted"></p>
+        <div id="bench-summary" class="bench-summary" hidden></div>
+        <table id="bench-table" hidden>
+          <thead><tr><th>#</th><th>Question</th><th>Answered</th><th>Check</th><th>Right?</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <section class="how">
+        <h2>How it decides</h2>
+        <ol>
+          <li><b>On device first.</b> Firebase AI Logic runs the question on Gemini Nano in Chrome. If this device has no model, Firebase sends it to a small cloud model instead, and you see that.</li>
+          <li><b>Check the answer.</b> For a number or a multiple-choice answer, a second local answer solved from scratch has to agree, and any equation has to add up. For anything else, code looks for warning signs, then a judge scores it: Gemini Nano in Budget and Balanced, a small cloud model in Strict.</li>
+          <li><b>Escalate only when needed.</b> Below the pass mark (Budget 60, Balanced 75, Strict 85) a stronger Gemini model answers in the cloud. You can see both answers.</li>
+        </ol>
+        <p class="muted">
+          When the answer stays on this device, your question never leaves it. When it goes to the cloud, it is sent to
+          Google's Gemini API through Firebase. Only counts are stored, never questions or answers.
+          A small model judging open questions misses things: on number and choice questions the check is code and a
+          second answer, which a model can't rubber-stamp.
+        </p>
+      </section>
+    </main>
+
+    <footer>
+      Built on <a href="https://firebase.google.com/docs/ai-logic/hybrid">Firebase AI Logic hybrid inference</a> ·
+      From <a href="https://cheap-first.vercel.app">Cheap First</a> ·
+      <a href="https://github.com/robd-hub/cheap-first/tree/main/hybrid">Source (MIT)</a>
+    </footer>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

@@ -18,3 +18,21 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npm run build
+
+  hybrid:
+    # Cheap First Local (hybrid/): the browser app for #BuildHybridAI. No keys needed.
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: hybrid
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: hybrid/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build

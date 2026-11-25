@@ -1,0 +1,8 @@
+{
+  "parameters": {
+    "cloud_model": { "defaultValue": { "value": "gemini-3.8-flash" }, "description": "Stronger cloud model that answers when the check fails." },
+    "fallback_model": { "defaultValue": { "value": "gemini-3.5-flash-lite" }, "description": "Cloud model Firebase uses when this device has no on-device model." },
+    "judge_model": { "defaultValue": { "value": "gemini-3.5-flash-lite" }, "description": "Cloud judge for open questions in Strict mode." },
+    "default_mode": { "defaultValue": { "value": "balanced" }, "description": "budget, balanced or strict." }
+  }
+}
