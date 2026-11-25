@@ -50,6 +50,20 @@ export function withFallback(...gens: Gen[]): Gen {
   };
 }
 
+/** Retry one model a few times after short waits, so a busy spell doesn't hand work to a weaker model too soon. */
+export function withRetry(gen: Gen, waitsMs: number[] = [1500, 3000], sleep: (ms: number) => Promise<void> = (ms) => new Promise((r) => setTimeout(r, ms))): Gen {
+  return async (prompt) => {
+    for (let i = 0; ; i++) {
+      try {
+        return await gen(prompt);
+      } catch (error) {
+        if (i >= waitsMs.length) throw error;
+        await sleep(waitsMs[i]);
+      }
+    }
+  };
+}
+
 export interface Models {
   /** PREFER_ON_DEVICE: Gemini Nano, or the small cloud model when this device has none. */
   first: Gen;

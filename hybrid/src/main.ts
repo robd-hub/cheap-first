@@ -179,7 +179,8 @@ async function runBench() {
         tally.escalated++;
         if (g.correct) tally.escalatedRight++;
       } else tally.noDevice++;
-      const where = outcome.answeredBy === "device" ? "device" : outcome.answeredBy === "cloud-escalated" ? "cloud (escalated)" : "cloud (no device)";
+      const cloudModel = outcome.steps.find((st) => st.where === "IN_CLOUD" && st.what.startsWith("Stronger"))?.what.match(/\(([^)]+)\)/)?.[1];
+      const where = outcome.answeredBy === "device" ? "device" : outcome.answeredBy === "cloud-escalated" ? `cloud (escalated)${cloudModel ? ` · ${cloudModel}` : ""}` : "cloud (no device)";
       body.insertAdjacentHTML(
         "beforeend",
         `<tr><td>${i + 1}</td><td><details><summary>${esc(q.prompt.split("\n")[0].slice(0, 90))}…</summary><div class="answer q-full">${esc(q.prompt)}</div><div class="answer q-ans"><b>Answer:</b> ${esc(outcome.answer)}</div></details></td><td>${where}</td><td>${outcome.check ? outcome.check.score : "–"}</td><td class="${g.correct ? "yes" : "no"}">${g.correct ? "✓" : "✗"} <small>${esc(g.note)}</small></td></tr>`,

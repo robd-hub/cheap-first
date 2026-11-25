@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { askCheapFirst, parseJudge, withFallback, prepareQuestion, warningSigns, type Gen, type Models, type Source } from "../src/router";
+import { askCheapFirst, parseJudge, withFallback, withRetry, prepareQuestion, warningSigns, type Gen, type Models, type Source } from "../src/router";
 
 const NUMBER_Q = "A shop sells pens at 3 for £2. How much do 18 pens cost?";
 
@@ -129,4 +129,16 @@ test("withFallback hands a failing cloud model over to the next one", async () =
   const result = await withFallback(busy, backup)("q");
   assert.equal(result.text, "Final answer: 42");
   await assert.rejects(withFallback(busy, busy)("q"), /high demand/);
+});
+
+test("withRetry tries the same model again after a busy error", async () => {
+  let calls = 0;
+  const flaky: Gen = async () => {
+    calls++;
+    if (calls < 3) throw new Error("[503] busy");
+    return { text: "ok", source: "IN_CLOUD" };
+  };
+  const result = await withRetry(flaky, [1, 1], async () => {})("q");
+  assert.equal(result.text, "ok");
+  assert.equal(calls, 3);
 });

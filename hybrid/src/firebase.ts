@@ -11,7 +11,7 @@ import { getAI, getGenerativeModel, GoogleAIBackend, InferenceMode, InferenceSou
 import { fetchAndActivate, getRemoteConfig, getString } from "firebase/remote-config";
 import { getAuth, signInAnonymously } from "firebase/auth";
 import { doc, getFirestore, increment, onSnapshot, setDoc } from "firebase/firestore";
-import { JUDGE_SCHEMA, withFallback, type Gen, type Models, type Mode, type Outcome, type Source } from "./router";
+import { JUDGE_SCHEMA, withFallback, withRetry, type Gen, type Models, type Mode, type Outcome, type Source } from "./router";
 
 const env = import.meta.env;
 
@@ -129,7 +129,7 @@ export function getModels(): Models {
   const cloudModel = (model: string) =>
     getGenerativeModel(ai, { mode: InferenceMode.ONLY_IN_CLOUD, inCloudParams: { model, systemInstruction: ANSWER_SYSTEM } });
   // When the stronger model is busy (Google returns 500/503 at peak times), the fallback model answers.
-  const cloud = withFallback(wrap(cloudModel(settings.cloud_model), settings.cloud_model), wrap(cloudModel(settings.fallback_model), settings.fallback_model));
+  const cloud = withFallback(withRetry(wrap(cloudModel(settings.cloud_model), settings.cloud_model)), wrap(cloudModel(settings.fallback_model), settings.fallback_model));
   const judge = withFallback(wrap(cloudJudge, settings.judge_model), wrap(cloudModel(settings.cloud_model), settings.cloud_model));
 
   models = { first: wrap(firstModel, settings.fallback_model), localSample: wrap(localSample), localJudge: wrap(localJudge), cloudJudge: judge, cloud };
