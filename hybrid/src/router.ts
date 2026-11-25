@@ -39,11 +39,16 @@ export type Gen = (prompt: string) => Promise<GenResult>;
 export function withFallback(...gens: Gen[]): Gen {
   return async (prompt) => {
     let last: unknown;
+    let firstFailure = "";
     for (const gen of gens) {
       try {
-        return await gen(prompt);
+        const result = await gen(prompt);
+        if (firstFailure && result.model) result.model = `${result.model}, after the first choice failed: ${firstFailure}`;
+        return result;
       } catch (error) {
         last = error;
+        if (!firstFailure) firstFailure = String((error as Error)?.message ?? error).slice(0, 140);
+        console.warn("Model failed, trying the next one.", error);
       }
     }
     throw last;
