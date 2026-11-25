@@ -36,8 +36,8 @@ const firebaseConfig: FirebaseOptions = env.VITE_FIREBASE_PROJECT_ID
     }
   : DEFAULT_CONFIG;
 
-/** reCAPTCHA Enterprise site key for App Check (public). */
-const RECAPTCHA_SITE_KEY = env.VITE_RECAPTCHA_SITE_KEY || "";
+/** reCAPTCHA Enterprise site key for App Check (public, like the config above). */
+const RECAPTCHA_SITE_KEY = env.VITE_RECAPTCHA_SITE_KEY || "6LfjaDEuAAAAAKx4K-9KzdrgLlaq_TAqENyl3sP9";
 
 export const configured = Boolean(firebaseConfig.apiKey && firebaseConfig.projectId && firebaseConfig.appId);
 
