@@ -47,7 +47,7 @@ export function withFallback(...gens: Gen[]): Gen {
         return result;
       } catch (error) {
         last = error;
-        if (!firstFailure) firstFailure = String((error as Error)?.message ?? error).slice(0, 140);
+        if (!firstFailure) firstFailure = String((error as Error)?.message ?? error).slice(120, 330);
         console.warn("Model failed, trying the next one.", error);
       }
     }
